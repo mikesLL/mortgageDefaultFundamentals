@@ -1,5 +1,5 @@
 /*
-ufnEV2.cpp
+ufnEV2.h
 Class ufnEV2 contains data related to value function evaluation and stores data in a
 way which speeds up computing home price and value function expecations
 Copyright A. Michael Sharifi, 2016
@@ -42,6 +42,10 @@ public:
 	int t_i2;              // tenure in next period
 	double hu;             // housing utility
 	double ph_2e, ph1;     // home price expectation, current home price
+
+
+	double mort_add_equity; // MOD HERE: increasing wealth by home equity
+	// equity increases by this amount
 
 	eval_res res1;
 	eval_res res1_move;

@@ -112,11 +112,13 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 	double h_step1 = 0.0;
 	
 	while (opt_flag) {
-		x0[3] = max(x0[3], 0.0);
-		x0[4] = max(x0[4], 0.0);
-		csf_min = min(x0[3], x0[4]);
-		x0[3] = x0[3] - csf_min;
-		x0[4] = x0[4] - csf_min;
+		//x0[3] = 0.0;
+		//x0[4] = 0.0;
+		//x0[3] = max(x0[3], 0.0);
+		//x0[4] = max(x0[4], 0.0);
+		//csf_min = min(x0[3], x0[4]);
+		//x0[3] = x0[3] - csf_min;
+		//x0[4] = x0[4] - csf_min;
 		x0[1] = max(x0[1], b_min);
 		x0[0] = coh - x0[1] - x0[2] - x0[3] - x0[4];
 		v0 = (*ufnEV21).eval(x0);
@@ -129,7 +131,9 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 		vi_max = -1.0e20;  
 		vi_min = 1.0e20;
 
-		for (i = 0; i < N_control4; i++) {
+		//for (i = 0; i < N_control4; i++) {
+		// MOD HERE: do not cycle through access to home price index futures
+		for (i = 0; i < N_control2; i++) {
 			
 			x0_h = x0;
 			x0_h[i] = x0[i] + h_step;

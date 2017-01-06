@@ -6,6 +6,14 @@
 // city_id: 0,1,2,3,4,5,6,7,8
 // *.read_in files begin at year 5 (2007) and end at year 11 (2013)
 
+
+// MOD HERE *******************************
+const double loan_amt = 1.0;
+const double apr_frm = 0.06;
+const double mort_term = 30.0;
+
+// MOD HERE ********************************
+
 const int city_begin = 2;
 const int city_end = 2;
 
@@ -13,9 +21,11 @@ const int city_end = 2;
 const int t_begin = 11;     // originally: =5        // begin in year 5 from .csv
 const int t_end = 11;                    // = 11 to cycle through all time periods;
 
+// MOD HERE: Fix param_id = 0 for manual selection
 const int param_id = 0;  // set = 0 to define parameters here manually; set = 1, 2, 3, 4 for presets and load in main
 
-const int age_begin_store[] = { 60, 45, 30 }; // manual age settings here
+const int age_begin_store[] = { 30, 30, 30 }; // manual age settings here
+//const int age_begin_store[] = { 60, 45, 30 }; // manual age settings here
 const int n_age_store[] = { 1, 1, 1, 2, 2 };
 const int n_age = n_age_store[param_id]; 
 
@@ -26,7 +36,9 @@ const int w_n = 400; // Grid points in wealth; set = 200 for fast computation, =
 const int age_max = 65;                  // age at which household retires / annuitizes wealth  
 
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
-const double csfLev_pidxw[] = {1.0, 1.0, 0.0, 1.0, 0.0 };  // change in future notl to index weight
+
+const double csfLev_pidxw[] = {0.0, 0.0, 0.0, 0.0, 0.0 };  // change in future notl to index weight
+//const double csfLev_pidxw[] = {1.0, 1.0, 0.0, 1.0, 0.0 };  // change in future notl to index weight
 
 // csf margin requirement by city
 //const double csfmarg_store[] = { 0.036444571, 0.039967956, 0.032995124, 0.033871271,
@@ -61,7 +73,6 @@ const double w_max = 40.0; //16.05;         // maximum wealth (on grid) (100's t
 const double w_min = -2.0; // 0.0; // 0.05;          // minimum wealth (on grid) (100's thousands) 
 
 const int w_i_zero = (int)ceil(-w_min * double(w_n) / (w_max - w_min));
-
 
 //const double w_max = 40.0; //16.05;         // maximum wealth (on grid) (100's thousands)             
 //const double w_min = -2.0; // 0.05;          // minimum wealth (on grid) (100's thousands) 

@@ -13,6 +13,29 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	snodes1 = (snodes *)snodes_in;     // state dimensions
 	vf2 = (vfn *)vf2_in;               // next period value function
 
+	
+	// MOD HERE: given parameters, compute loan balance
+	int t_foo = 0; 
+	double loan_bal = loan_amt;
+	double mpmt2_frm = loan_amt*(apr_frm*pow((1.0 + apr_frm), mort_term)) /
+		(pow((1.0 + apr_frm), mort_term) - 1.0);
+
+	for (t_foo = 0; t_foo < (*vf2).t_num; t_foo++) {
+		mort_add_equity = max(loan_bal*(1.0 + apr_frm) - mpmt2_frm, 0.0);
+		loan_bal = max(loan_bal*(1.0 + apr_frm) - mort_add_equity, 0.0);
+	}
+
+	// MOD HERE: work toward adding mortgage payment here
+	// Requires planning horizon, loan amount, ...
+	if ((*vf2).t_num <= mort_term) {
+		mort_add_equity = 0.25; //  
+	}
+	else {
+		mort_add_equity = 0.0;  // mortgage has been paid off 
+	}
+	// TODO: check that t_num = 0, 1, 2, ...
+
+
 	csfLevSn = (*snodes1).csfLevSn; 
 	t_hor = (*snodes1).t_hor; // current horizon / value function under computation
 	i_s1 = (*vf2).i_s1;       // current state
@@ -58,6 +81,8 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 
 // given vector of control variables x, evaluate value function
 double ufnEV2::eval( vector<double> x ){
+
+	// MOD HERE: adding mortgage payment
 
 	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
 	double rb_eff = rb;                            // effective return on bonds	(default = rb)       

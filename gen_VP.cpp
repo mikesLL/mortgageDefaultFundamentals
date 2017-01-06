@@ -189,6 +189,7 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 
 	// TODO: calculate the HH's mortgage payment (FRM)
 
+	double mpmt2_frm = 0.0; // MOD HERE
 	cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 	for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 first; case: begin with renter 
 		for (i_s = 0; i_s < n_s; i_s++) {
@@ -204,11 +205,22 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 				t_i2 = t_i;
 				if (t_i2 == 0) {
 					b_min = b_min_unsec;
-				}
-				else {
+
+					mpmt2_frm = 0.0; // MOD HERE: if renter, then zero mortgage payment
+				} else {
 					b_min = -max_ltv*(*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor][i_ph] + b_min_unsec;
 					b_min2 = - max_lti * (*snodes1).yi_gridt_btax[t_hor][i_yi] / (rb + mort_spread - 1.0);
 					//b_min = max(b_min, b_min2);
+
+					// MOD HERE: if owner, calculate mortgage payment
+					if (t_hor <= mort_term) {
+						mpmt2_frm = loan_amt*(apr_frm*pow((1.0 + apr_frm), mort_term)) /
+							(pow((1.0 + apr_frm), mort_term) - 1.0);
+					} else {
+						mpmt2_frm = 0.0; // 
+					}
+					// NOTE: t_hor is the number of periods into the problem
+					// IF t_hor <= mort_term (30), HH is still has to pay down their mortgage
 				}
 
 				// load previous w_i policy as an initial guess
@@ -216,7 +228,10 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
 				v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
       
-				coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  			
+				coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  
+
+				// MOD HERE: subtract mortgage payment from coh
+				coh = coh - mpmt2_frm;
 				
 				mpmt = -1.0e6; 
 				beg_equity = -1.0e6;
