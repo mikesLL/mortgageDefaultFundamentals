@@ -10,6 +10,9 @@
 
 void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id_in, int year1t_id_in, int T_max) {
 
+	// MODS HERE
+	int i_rm = 0;
+
 	int i_s, i_ph, i_w, t_i, w_i, i_yi, i_rent;
 	int y_i_def = 0;
 	int year1_id = year1_id_in;                                   // read-in / curent year
@@ -112,6 +115,14 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 							<< (*vfnt).x1_grid[t_i][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_s][w_i] << ","
 							<< (*vfnt).x4_grid[t_i][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_s][w_i] << ","
 							<< (*vfnt).vw3_grid[t_i][i_s][w_i] << ",";
+
+						// MODS HERE
+						/*
+						v1_file << (*vfnt).w_grid[w_i] << ","
+							<< (*vfnt).x1_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_rm][i_s][w_i] << ","
+							<< (*vfnt).x4_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_rm][i_s][w_i] << ","
+							<< (*vfnt).vw3_grid[t_i][i_rm][i_s][w_i] << ",";
+						/**/
 					}
 				}
 			}
@@ -153,6 +164,15 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 								<< (*vfnt).x1_grid[t_i][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_s][w_i] << ","
 								<< (*vfnt).x4_grid[t_i][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_s][w_i] << ","
 								<< (*vfnt).vw3_grid[t_i][i_s][w_i] << ",";
+
+							// MODS HERE
+							/*
+							v1_file_flat << (*vfnt).w_grid[w_i] << ","
+								<< (*vfnt).x1_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_rm][i_s][w_i] << ","
+								<< (*vfnt).x4_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_rm][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_rm][i_s][w_i] << ","
+								<< (*vfnt).vw3_grid[t_i][i_rm][i_s][w_i] << ",";
+
+							/**/
 
 							v1_file_flat << endl;
 						}
