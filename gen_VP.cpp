@@ -186,6 +186,9 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	//to t_i = 0 with the correct downward wealth adjustment; 
 	//do not need to cycle through t_i2 = {0, 1,2}, only t_i2 = t_i
 	
+
+	// TODO: calculate the HH's mortgage payment (FRM)
+
 	cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 	for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 first; case: begin with renter 
 		for (i_s = 0; i_s < n_s; i_s++) {

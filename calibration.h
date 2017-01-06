@@ -9,7 +9,8 @@
 const int city_begin = 2;
 const int city_end = 2;
 
-const int t_begin = 5;                   // begin in year 5 from .csv
+// MOD HERE: begin in final time period, compute this only
+const int t_begin = 11;     // originally: =5        // begin in year 5 from .csv
 const int t_end = 11;                    // = 11 to cycle through all time periods;
 
 const int param_id = 0;  // set = 0 to define parameters here manually; set = 1, 2, 3, 4 for presets and load in main
@@ -38,7 +39,8 @@ const double csfmarg_store[] = { 0.036444571, 0.039967956, 0.032995124, 0.033871
 //const double csfLev = 1.0 * ( 1.0 / 0.055 );       // Case-Shiller Index Future margin-implied leverage; (notional value contract)/(median home price)*(1/margin)
 const int csfLevi = int(floor(csfLev));   // Floor for identification
 
-const int t_n = 5; // 4;                        // possible tenure states
+// MOD HERE: set = 0 for renting, = 1 for owning
+const int t_n = 2; // 5;                        // possible tenure states
 const int pref = 0;                       // set pref = 0 for Cobb-Douglas, = 1 for CES
 const int N_control = 6;
 const int N_cities = 8;                    // number of cities
@@ -76,36 +78,25 @@ const double phi_buy = 0.00;  //0.02;
 
 // Housing-service related parameters
 // median square footage by city
+//const double hu_med[N_cities] = { 1.6, 1.7, 1.5, 1.9, 1.8, 1.6, 1.5, 1.83 };   // san fran updated
+
 const double hu_med[N_cities] = { 1.6, 1.7, 1.5, 1.9, 1.8, 1.6, 1.5, 1.83 };   // san fran updated
 
-// Home Sizes (square footage, thousands);  33-66-quintiles from AHS (2005) Data;
-// Assume the small house can also be rented
+
+// MOD HERE: assume representative house
+const double hu_ten_store[N_cities][t_n] = {
+{1.60, 1.60 },
+{1.70, 1.70 },
+{1.50, 1.50 },
+{1.90, 1.90 },
+{1.80, 1.80 },
+{1.60, 1.60 },
+{1.50, 1.50 },
+{1.83, 1.83 }
+};
+
 
 /*
-const double hu_ten_store[N_cities][t_n] =
-{ { 1.217, 1.217, 1.5, 1.9, 2.5, 2.8, 3.1, 3.6 },
-{ 1.217, 1.217, 1.5, 1.9, 2.5, 2.8, 3.1, 3.6 },
-{ 1.374, 1.374, 1.62,  1.0*2.585 },
-{ 1.206, 1.206, 1.5,  1.0*2.455 },
-{ 1.492, 1.492, 1.8,  1.0*2.826 },
-{ 1.409, 1.409, 1.8,  1.0*2.781 },
-{ 1.116, 1.116, 1.59,  1.0*2.379 },
-{ 1.18, 1.18, 1.5,  1.0*2.459 },
-{ 1.303, 1.303, 1.8,  1.0*2.764 } };
-*/
-
-/*
-const double hu_ten_store[N_cities][t_n] =
-{ { 1.35, 1.35, 1.7, 2.18, 3.0 }, 
-{ 1.35, 1.35, 1.7, 2.18, 3.0 },    // sf updated
-{ 1.2, 1.2, 1.6, 2.0, 3.0 },       // lax updated
-{ 1.2, 1.2, 1.6, 2.0, 2.4 },
-{ 1.2, 1.2, 1.6, 2.0, 2.4 },
-{ 1.2, 1.2, 1.6, 2.2, 2.755 },    // denver updated
-{ 1.2, 1.2, 1.6, 2.0, 2.4 },
-{ 1.2, 1.2, 1.6, 2.0, 2.4 } };
-*/
-
 const double hu_ten_store[N_cities][t_n] = {
 {1.25,	1.25,	1.60,	2.00,	2.70},
 {1.35,	1.35,	1.70,	2.18,	3.00},
@@ -116,32 +107,8 @@ const double hu_ten_store[N_cities][t_n] = {
 {1.20,	1.20,	1.50,	2.00,	3.00},
 {1.40,	1.40,	1.83,	2.50,	3.60}
 };
-
-
-/*
-const double hu_ten_store[N_cities][t_n] =
-{ { 1.217, 1.217, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0 },
-{ 1.374, 1.374, 1.62, 1.9, 2.2, 2.5, 2.8, 3.1 },
-{ 1.206, 1.206, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0, },
-{ 1.492, 1.492, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3}, 
-{ 1.409, 1.409, 1.8,  2.2, 2.6, 3.0, 3.4, 3.8 },
-{ 1.116, 1.116, 1.59, 2.0, 2.4, 2.8, 3.2, 3.6 },
-{ 1.18, 1.18, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0},
-{ 1.303, 1.303, 1.8, 2.2, 2.6, 3.0, 3.4, 3.8} };
 */
 
-
-/*
-const double hu_ten_store[N_cities][t_n] =
-{ {1.217, 1.217, 1.5, 1.0*2.352  },
-{1.374, 1.374, 1.62,  1.0*2.585 },
-{ 1.206, 1.206, 1.5,  1.0*2.455 },
-{1.492, 1.492, 1.8,  1.0*2.826 },
-{1.409, 1.409, 1.8,  1.0*2.781 },
-{1.116, 1.116, 1.59,  1.0*2.379 },
-{1.18, 1.18, 1.5,  1.0*2.459 },
-{1.303, 1.303, 1.8,  1.0*2.764 } };
-*/
 
 const double hu_ten_def =  .5;  // square footage in default case
 

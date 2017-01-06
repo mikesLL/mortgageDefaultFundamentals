@@ -34,8 +34,13 @@ Income grows in real terms as the agent ages and city-wide income increases
 void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
 
 	int s1, s2, s_test;                             // state in current period, state in next period
-	int N_print =  40000;                          // number of observations to print to file
-	int N_sim = 2000000;                                            // number of simulations
+
+	// MOD HERE: limiting number of simulations for now 
+	int N_print =  2000;                          // number of observations to print to file
+	int N_sim = 100000;                                            // number of simulations
+
+	//int N_print =  40000;                          // number of observations to print to file
+	//int N_sim = 2000000;                                            // number of simulations
 	int i_ph, i_rent, i_yi, i_s;                                 // state and individual dimension indices
 
 	cout << "load ppath: ph0_in:  " << ph0_in << endl;
