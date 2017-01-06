@@ -12,6 +12,11 @@ const double loan_amt = 1.0;
 const double apr_frm = 0.06;
 const double mort_term = 30.0;
 
+const int rm_n = 2; // adding two mortgage rate / apr states
+
+const double rm_store[rm_n] = { 0.02, 0.03 };
+
+
 // MOD HERE ********************************
 
 const int city_begin = 2;
