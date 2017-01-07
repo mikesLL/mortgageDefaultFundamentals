@@ -46,7 +46,12 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	i_ph1 = (*snodes1).s2i_ph[i_s1];             // retrieve current home price index
 	ph1 = (*snodes1).p_gridt[t_hor][i_ph1];      // current home price
 
-	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2];
+
+	// MODS HERE
+	int i_rm1;
+	i_rm1 = (*vf2).rm_i1;
+	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_rm1];
+	//vw3_grid_ti2 = (*vf2).vw3_grid[t_i2];
 
 	if ( (*vf2).def_flag >= 1 ) {
 		vw3_grid_ti2 = (*vf2).vw3_def_grid;

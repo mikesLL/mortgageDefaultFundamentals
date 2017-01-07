@@ -86,7 +86,6 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	// MODS HERE: add cycle for i_rm
 	int i_rm = 0;
 	for (i_rm = 0; i_rm < rm_n; i_rm++) { // MODS HERE
-
 		for (i_s = 0; i_s < n_s; i_s++) {
 			i_yi = (*snodes1).s2i_yi[i_s];
 			i_rent = (*snodes1).s2i_rent[i_s];
@@ -120,21 +119,24 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					// TODO: add code to calculate mortgage payment given rate
 
 					// load previous w_i policy as a benchmark
-					(*rr1).get_pol(t_i, i_s, w_i - 1, x_lag_w);
-					t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
-					v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
+					//(*rr1).get_pol(t_i, i_s, w_i - 1, x_lag_w);
+					//t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
+					//v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
 
+					// load previous w_i policy as a benchmark
 					// MODS HERE
-					//(*rr1).get_pol(t_i, i_rm, i_s, w_i - 1, x_lag_w);
-					//t_i2_lag_w = (*rr1).xt_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
-					//v_lag_w = (*rr1).vw3_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
-					//v_lag_t = (*rr1).vw3_grid[t_i][i_rm][i_s][w_i];
+					(*rr1).get_pol(t_i, i_rm, i_s, w_i - 1, x_lag_w);
+					t_i2_lag_w = (*rr1).xt_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
+					v_lag_w = (*rr1).vw3_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
+
+					// load value given previous t_i as a benchmark
+					v_lag_t = (*rr1).vw3_grid[t_i][i_rm][i_s][w_i];
 
 					// so now have:
 					// x_lag_w, t_i2_lag_w, v_lag_w;
 
 					// load value given previous t_i as a benchmark
-					v_lag_t = (*rr1).vw3_grid[t_i][i_s][w_i];
+					// v_lag_t = (*rr1).vw3_grid[t_i][i_s][w_i];
 
 					// load t_i2-restricted guess as an initial starting point
 					x_guess = x_lag_wt[t_i2];
@@ -153,7 +155,7 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					(*rr2).t_i2 = t_i2; //  t_i2 is a choice variable, so adding it to fn pointer 
 
 					// MOD HERE: pass in current mortgage rate state to next-period value fn
-					// (*rr2).rm_i1 = i_rm;
+					(*rr2).rm_i1 = i_rm;
 
 					if (t_i2 == 0) {
 						(*rr2).def_flag = 1;
@@ -181,21 +183,21 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					x_lag_wt[t_i2] = x1;
 
 					if ((v1 > v_lag_t) || (t_i2 == 0)) {                      // current result is better than value given previous tenure
-						(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, t_i2, v1);  // set x, t_i2, v0 in
+						//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, t_i2, v1);  // set x, t_i2, v0 in
 						// MOD HERE
-						//(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, t_i2, v1);  // set x, t_i2, v0 in
+						(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, t_i2, v1);  // set x, t_i2, v0 in
 
 						if (res1.valid_flag == 0) {
-							(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, 0, v1);
+							//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, 0, v1);
 							// MOD HERE
-							// (*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, 0, v1); 
+							(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, 0, v1); 
 						}
 					}
 				}
 			}
-			(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
+			//(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
 			// MOD HERE
-			// (*rr1).interp_vw3(t_i, i_rm, i_s);  // clean and interpolate grid	
+			(*rr1).interp_vw3(t_i, i_rm, i_s);  // clean and interpolate grid	
 
 			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 			cout << "time elapsed: " << duration << '\n';
@@ -247,9 +249,9 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					}
 
 					// load previous w_i policy as an initial guess
-					(*rr1).get_pol(t_i, i_s, w_i - 1, x_lag_w);                       // get x pol sol from previous w_i and assign to x
-					t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
-					v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
+					//(*rr1).get_pol(t_i, i_s, w_i - 1, x_lag_w);                       // get x pol sol from previous w_i and assign to x
+					//t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
+					//v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
 
 					coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  
 
@@ -257,10 +259,11 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					coh = coh - mpmt2_frm;
 
 					// MODS HERE: add i_rm state
-					//(*rr1).get_pol(t_i, i_rm, i_s, w_i - 1, x_lag_w);                       // get x pol sol from previous w_i and assign to x
-					//t_i2_lag_w = (*rr1).xt_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
-					//v_lag_w = (*rr1).vw3_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
-					// (*rr2).rm_i1 = i_rm;
+					// load previous w_i policy as an initial guess
+					(*rr1).get_pol(t_i, i_rm, i_s, w_i - 1, x_lag_w);                       // get x pol sol from previous w_i and assign to x
+					t_i2_lag_w = (*rr1).xt_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
+					v_lag_w = (*rr1).vw3_grid[t_i][i_rm][i_s][max(w_i - 1, 0)];
+					(*rr2).rm_i1 = i_rm;
 
 					mpmt = -1.0e6;
 					beg_equity = -1.0e6;
@@ -274,25 +277,26 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					v1 = res1.v_opt;  // guess for current solution: vfn
 					x1 = res1.x_opt;  // guess for current policy
 
-					(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, t_i2, v1);
-					// MOD HERE: (*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, t_i2, v1);
+					//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, t_i2, v1);
+					// MOD HERE:
+					(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x1, t_i2, v1);
 
 					w_adj = (*rr1).w_grid[w_i] - phi_sell*(*snodes1).ten_w[t_i] * (*snodes1).p_gridt[t_hor][i_ph];    //calc costs if agent sells and converts to renter
-					res_t_0 = (*rr1).eval_v(0, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
+					//res_t_0 = (*rr1).eval_v(0, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
 					// MOD HERE
-					// res_t_0 = (*rr1).eval_v(0, i_rm, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
+					res_t_0 = (*rr1).eval_v(0, i_rm, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
 					if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
 
-						(*rr1).get_pol(0, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-						t_adj = (*rr1).xt_grid[0][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
-						(*rr1).set_pol_ten_v(t_i, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+						//(*rr1).get_pol(0, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
+						//t_adj = (*rr1).xt_grid[0][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
+						//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
 						
 						// MODS HERE
-						//(*rr1).get_pol(0, i_rm, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-						//t_adj = (*rr1).xt_grid[0][i_rm][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
-						//(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+						(*rr1).get_pol(0, i_rm, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
+						t_adj = (*rr1).xt_grid[0][i_rm][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
+						(*rr1).set_pol_ten_v(t_i, i_rm, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
 
 					}
 
@@ -319,10 +323,10 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 
 
 				}
-				(*rr1).interp_vw3(t_i, i_s);  // clean grid
+				//(*rr1).interp_vw3(t_i, i_s);  // clean grid
 
 				// MOD HERE
-				// (*rr1).interp_vw3(t_i, i_rm, i_s);  // clean grid
+				(*rr1).interp_vw3(t_i, i_rm, i_s);  // clean grid
 
 				duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 				cout << "time elapsed: " << duration << "  lcount = " << (*rr2).lcount << endl;
@@ -334,10 +338,9 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	for (t_i = 0; t_i < t_n; t_i++) {  
 		for (i_rm = 0; i_rm < rm_n; i_rm++) {
 			for (i_s = 0; i_s < n_s; i_s++) {
-				(*rr1).interp_vw3(t_i, i_s);  // clean grid
-
+				//(*rr1).interp_vw3(t_i, i_s);  // clean grid
 				// MOD HERE
-				//(*rr1).interp_vw3(t_i, i_rm, i_s);  // clean grid
+				(*rr1).interp_vw3(t_i, i_rm, i_s);  // clean grid
 			}
 		}
 	}
