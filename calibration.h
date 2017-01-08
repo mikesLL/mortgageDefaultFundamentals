@@ -13,6 +13,8 @@ const double apr_frm = 0.06;
 const double mort_term = 30.0;
 
 const int rm_n = 2; // adding two mortgage rate / apr states
+const int am_n = 2; // adding am: mortgage adjustment toggle
+// set = 0 for fixed, = 1 for adjustable 
 
 const double rm_store[rm_n] = { 0.02, 0.03 };
 
@@ -36,9 +38,10 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 400; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 40; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 35;
+//const int age_max = 65;                  // age at which household retires / annuitizes wealth  
 
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 
