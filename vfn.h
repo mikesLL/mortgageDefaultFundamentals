@@ -69,6 +69,7 @@ public:
 
 	void set_terminal( double phr_in );
 
+	//void interp_vw3(int i_t_in, int i_rm_in, int i_s_in);
 	void interp_vw3(int i_t_in, int i_rm_in, int i_s_in);
 	//void interp_vw3(int i_t_in, int i_s_in);
 

@@ -383,7 +383,7 @@ void vfn::set_terminal(double phr_in) {
 
 	for (i_t = 0; i_t < t_n; i_t++) {
 		// TODO: add here for i_rate = 0,1
-		for (i_rm = 0; i_t < rm_n; i_rm++) {  // MOD HERE: add here for i_rate = 0,1
+		for (i_rm = 0; i_rm < rm_n; i_rm++) {  // MOD HERE: add here for i_rate = 0,1
 			for (i_s = 0; i_s < n_s; i_s++) {
 				for (i_w = 0; i_w < w_n; i_w++) {
 

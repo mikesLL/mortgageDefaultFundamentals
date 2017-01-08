@@ -36,8 +36,8 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	int s1, s2, s_test;                             // state in current period, state in next period
 
 	// MOD HERE: limiting number of simulations for now 
-	int N_print =  2000;                          // number of observations to print to file
-	int N_sim = 100000;                                            // number of simulations
+	int N_print =  1000;                          // number of observations to print to file
+	int N_sim = 10000;                                            // number of simulations
 
 	//int N_print =  40000;                          // number of observations to print to file
 	//int N_sim = 2000000;                                            // number of simulations
