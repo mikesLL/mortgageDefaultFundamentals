@@ -22,8 +22,14 @@ void vfn::enter_data(void *snodes_in, double phr_in, int t_id_in, int t_num_in, 
 	// MOD HERE: Create new zero initializers
 	vector<vector<vector<vector<int>>>> zeros_int_TN_RN_NS_WN(t_n, vector<vector<vector<int>>>(rm_n, vector<vector<int>>( n_s, vector<int>(w_n, 0))));
 	vector<vector<vector<vector<double>>>> zeros_TN_RN_NS_WN(t_n, vector<vector<vector<double>>>(rm_n, vector<vector<double>>(n_s, vector<double>(w_n, 0))));
-	vector<vector<vector<vector<double>>>> neg_TN_RN_NS_WN(t_n, vector<vector<vector<double>>>(rm_n, vector<vector<double>>(n_s, vector<double>(w_n, 0))));
+	vector<vector<vector<vector<double>>>> neg_TN_RN_NS_WN(t_n, vector<vector<vector<double>>>(rm_n, vector<vector<double>>(n_s, vector<double>(w_n, num_small))));
 
+	// MOD HERE v2: Create state var for mortgage state including: rate, adjustable, term
+	vector<vector<vector<vector<int>>>> zeros_int_TN_MN_NS_WN(t_n, vector<vector<vector<int>>>(m_n, vector<vector<int>>(n_s, vector<int>(w_n, 0))));
+	vector<vector<vector<vector<double>>>> zeros_TN_MN_NS_WN(t_n, vector<vector<vector<double>>>(m_n, vector<vector<double>>(n_s, vector<double>(w_n, 0))));
+	vector<vector<vector<vector<double>>>> neg_TN_MN_NS_WN(t_n, vector<vector<vector<double>>>(m_n, vector<vector<double>>(n_s, vector<double>(w_n, num_small))));
+
+	//
 	vector<vector<vector<int>>> zeros_int_TN_NS_WN(t_n, vector<vector<int>>(n_s, vector<int>(w_n, 0)));
 	vector<vector<vector<double>>> zeros_TN_NS_WN(t_n, vector<vector<double>>(n_s, vector<double>(w_n, 0.0)));
 	vector<vector<vector<double>>> neg_TN_NS_WN(t_n, vector<vector<double>>(n_s, vector<double>(w_n, num_small)));
@@ -382,7 +388,6 @@ void vfn::set_terminal(double phr_in) {
 	int i_rm;
 
 	for (i_t = 0; i_t < t_n; i_t++) {
-		// TODO: add here for i_rate = 0,1
 		for (i_rm = 0; i_rm < rm_n; i_rm++) {  // MOD HERE: add here for i_rate = 0,1
 			for (i_s = 0; i_s < n_s; i_s++) {
 				for (i_w = 0; i_w < w_n; i_w++) {

@@ -16,6 +16,8 @@ const int rm_n = 2; // adding two mortgage rate / apr states
 
 const double rm_store[rm_n] = { 0.02, 0.03 };
 
+const int m_n = 8; // mortgage states
+
 
 // MOD HERE ********************************
 
