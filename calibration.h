@@ -14,6 +14,7 @@ const double mort_term = 30.0;
 
 const int rm_n = 2; // adding two mortgage rate / apr states
 const int am_n = 2; // adding am: mortgage adjustment toggle
+const int dm_n = 2; // adding dm: duration
 // set = 0 for fixed, = 1 for adjustable 
 
 const double rm_store[rm_n] = { 0.02, 0.03 };
