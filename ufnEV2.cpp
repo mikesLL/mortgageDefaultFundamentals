@@ -48,9 +48,9 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 
 
 	// MODS HERE
-	int i_rm1;
-	i_rm1 = (*vf2).rm_i1;
-	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_rm1];
+	int i_m1;
+	i_m1 = (*vf2).m_i1;
+	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_m1];
 	//vw3_grid_ti2 = (*vf2).vw3_grid[t_i2];
 
 	if ( (*vf2).def_flag >= 1 ) {
