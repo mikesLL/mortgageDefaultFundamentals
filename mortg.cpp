@@ -4,22 +4,29 @@
 mortg::mortg(){
 
 	// store zeros associated with each rate and then each time period
+	vector<double> zeros_RMN(rm_n, 0.0);
+	vector<int> zeros_int_MN(m_n, 0);
 	vector<vector<double>> zeros_RMN_T(rm_n, vector<double>(N_term, 0.0));
 	vector<vector<double>> zeros_MN_T(m_n, vector<double>(N_term, 0.0));
-
-	vector<double> zeros_RMN(rm_n, 0.0);
+	vector<vector<vector<int>>> zeros_int_RMN_RMN_RMN(rm_n, vector<vector<int>>(rm_n, vector<int>(rm_n, 0)));
 
 	pmt0 = zeros_RMN;  // initialize original mortgage pmt vector
 	bal = zeros_RMN_T; // initialize mortgage balance vector
 	pmt = zeros_MN_T;  // initialize mortgage pmt vector
 	
-	// state maps
-	vector<int> m2rcurr_map(m_n, 0);
-	vector<int> m2rpmt_map(m_n, 0);
-	vector<int> m2rlb_map(m_n, 0);
-	vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
+	m2rcurr_map = zeros_int_MN;
+	m2rpmt_map = zeros_int_MN;
+	m2rlb_map = zeros_int_MN;
+	r2m_map = zeros_int_RMN_RMN_RMN;
 
-	vector<int> m2mrefi_map(m_n, 0); // state map: m to m refi
+	//vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
+	// state maps
+	//vector<int> m2rcurr_map(m_n, 0);
+	//vector<int> m2rpmt_map(m_n, 0);
+	//vector<int> m2rlb_map(m_n, 0);
+	//vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
+
+	//vector<int> m2mrefi_map(m_n, 0); // state map: m to m refi
 
 	// initialize maps
 	// states: current rate, payment rate, loan balance rate
@@ -43,20 +50,27 @@ mortg::mortg(){
 		}
 	}
 
-	// initialize refinance path
+	// initialize refinance map
 	i_m = 0;
+	// int i_m_refi; // i_m associated with refinancing
+	// note that due to indexing r2m_map must be pre-computed 
 	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
 		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
 			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
-				m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; // refinance: set pmt rate = curr rate
+				// refinance: retrieve i_m_refi where i_lb, i_rcurr fixed but pmt rate = curr rate
+				m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; 
 				i_m++;
 			}
 		}
 	}
+
+	// Q: will the value fn at the lower rate have already been computed?
 	// Q: how to compute the difference in loan balances at time of refinance?
 	// bal[i_r_refi] = ...
 	// bal[i_r] = ...
 	// difference modeled as a change in liquid assets
+
+	// Value of refinancing: eval value fn at i_m_refi
 	
 	// compute initial mortgage payment
 	for (i_r2 = 0; i_r2 < rm_n; i_r2++) {

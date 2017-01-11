@@ -24,12 +24,14 @@ Would be kind of like the MCMC analog to VFI
 
 #include "headers.h"
 
-void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
+void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	
     double duration;
 	clock_t start;
 
 	snodes *snodes1 = (snodes *)snodes_in;
+	mortg *mortg1 = (mortg *)mortg_in;
+
 	vfn *rr2 = (vfn *) VFN_3d_2;          // address to initialized V2
 	vfn *rr1 = (vfn *) VFN_3d_1;          // address to initialized V1
 
@@ -83,10 +85,19 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	int res1_flag = 1;
 	int t_i2_lag_w = 0;
 
-	// MODS HERE: add cycle for i_rm
-	int i_m = 0;
+	// MODS HERE: add cycle for i_m
+	int i_m = 0; // mortgage state
+	int i_rcurr, i_rpmt, i_rlb;  // mortgage state: current rate, payment rate, loan balance
+	
 	for (i_m = 0; i_m < m_n; i_m++) { // MODS HERE
 		for (i_s = 0; i_s < n_s; i_s++) {
+
+			// given i_m, load in mortgage state details
+			i_rcurr = (*mortg1).m2rcurr_map[i_m];      // current market rate
+			i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
+			i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
+
+			// load in other states
 			i_yi = (*snodes1).s2i_yi[i_s];
 			i_rent = (*snodes1).s2i_rent[i_s];
 			i_ph = (*snodes1).s2i_ph[i_s];
@@ -135,6 +146,7 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					// load t_i2-restricted guess as an initial starting point
 					x_guess = x_lag_wt[t_i2];
 
+					
 					coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] -
 						(1.0 + phi_buy) * (*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor][i_ph];
 
@@ -206,10 +218,26 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	// TODO: calculate the HH's mortgage payment (FRM)
 
 	double mpmt2_frm = 0.0; // MOD HERE
+
+	// MODS HERE
+	int i_m_refi;  // mortgage state associated with refinancing
+	double mortg_pmt3;
+
+
 	cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 	for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 first; case: begin with renter 
 		for (i_m = 0; i_m < m_n; i_m++) { // MODS HERE
 			for (i_s = 0; i_s < n_s; i_s++) {
+
+				// given i_m, load in mortgage state details
+				i_rcurr = (*mortg1).m2rcurr_map[i_m];      // current market rate
+				i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
+				i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
+
+			    // TODO: verify this works			
+				mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in state
+
+				// 
 				i_yi = (*snodes1).s2i_yi[i_s];
 				i_rent = (*snodes1).s2i_rent[i_s];
 				i_ph = (*snodes1).s2i_ph[i_s];
@@ -248,6 +276,7 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					//v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
 
 					coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  
+
 
 					// MOD HERE: subtract mortgage payment from coh
 					coh = coh - mpmt2_frm;
