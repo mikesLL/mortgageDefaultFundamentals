@@ -11,14 +11,57 @@
 const double loan_amt = 1.0;
 const double apr_frm = 0.06;
 const double mort_term = 30.0;
+const int mort_term_int = 3; //30;
 
+// TODO notes here
+// for now, impose mortgages are 30-year, fixed
+// mortgage states: rate, loan balance
+// in this view, refinancing lowers the rate but keeps the same balance
+
+// state variable: mortgage rates
 const int rm_n = 2; // adding two mortgage rate / apr states
 const double rm_store[rm_n] = { 0.02, 0.03 };
 
-const int m_n = 8; // mortgage states
+// state var
+// loan_bal_rt contains the loan balance associated with each mortgage rate
+const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.5} };
+
+// current rate: current mortgage rate
+// pmt rates: payment on mortgage
+// mortgage balance
+const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+// ex: 
+// i_m = 0 (curr rate 1, orig rate 1), 
+// i_m = 1 (curr rate 2, orig rate 1), 
+// i_m = 2 (curr rate 1, orig rate 2),
+// i_m = 3 (curr rate 2, orig rate 2),
+// so as we loop through mortgage states, also loop through combos of current rates and origination rates
+
+// ********
+// i_m = 0 (curr rate 1, orig rate 1, loan bal 1) loan bal 1: loan balance if ammort at rate 1
+// i_m = 1 (curr rate 1, orig rate 1, loan bal 2) loan bal 2: loan balance if ammort at rate 2 (higher rate)
+
+// i_m = 2 (curr rate 1, orig rate 2, loan bal 1) increase the origination rate
+// i_m = 3 (curr rate 1, orig rate 2, loan bal 2) 
+
+// i_m = 4 (curr rate 2, orig rate 1, loan bal 1) increase the current rate
+// i_m = 5 (curr rate 2, orig rate 1, loan bal 2) 
+
+// i_m = 6 (curr rate 2, orig rate 2, loan bal 1) 
+// i_m = 7 (curr rate 2, orig rate 2, loan bal 2) 
+
+// Refinance example:
+// Suppose HH has: orig rate 2. Then loan bal 2.
+// If curr rate = 2, no benefit to refinancing. 
+// If curr rate = 1, value of refinancing is value of orig
+
+// Increase the loan balance but change the origination rate to accomodate refinancing at a lower rate
+// orig rate is important because it determines payment
+
+
+//const int m_n = 8; // mortgage states
 // mortgage parameters: rate, adjustability, duration (term)
-
-
+// TODO: write a function: input i_m, output i_m_refi 
 // MOD HERE ********************************
 
 const int city_begin = 2;
@@ -38,7 +81,7 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 400; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 20; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
 const int age_max = 35; //65;                  // age at which household retires / annuitizes wealth  
 

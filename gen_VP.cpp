@@ -278,8 +278,13 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					w_adj = (*rr1).w_grid[w_i] - phi_sell*(*snodes1).ten_w[t_i] * (*snodes1).p_gridt[t_hor][i_ph];    //calc costs if agent sells and converts to renter
 					//res_t_0 = (*rr1).eval_v(0, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
-					// MOD HERE
-					res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
+					// TODO: work here
+					// evaluate value fn if agent sells and converts to renter
+					// loos
+					res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj); 
+
+					// TODO: work here
+					// evaluate value fn if agent refinances
 
 					if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
 		
