@@ -53,7 +53,7 @@ public:
 
 	void enter_data( void *snodes_in, double phr_in,int t_id, int t_num_in, double csf_1yr_in, int pref_in, int T_max_in );	
 	void mortgage_comp();
-
+	void mortgage_ammort();
 	
 	void get_pol(int i_t_in, int i_rm_in, int i_s_in, int i_w_in, vector<double> &x_pol);
 

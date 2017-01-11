@@ -61,9 +61,27 @@ void vfn::enter_data(void *snodes_in, double phr_in, int t_id_in, int t_num_in, 
 
 }
 
-void vfn::mortgage_comp() {
+
+void vfn::mortgage_ammort() {
+	// Function computes mortgage ammortization
+	
 
 }
+void vfn::mortgage_comp() {
+	// Function computes mortgage payment
+	// mortgage payment is a function of:
+	// 1) loan balance and 
+	// 2) payment rate
+
+	// loop through mortgage states
+	// in each state, compute loan balance and payment
+	int i_m2 = 0;
+	for (i_m2 = 0; i_m2 < m_n; i_m2++) {}
+
+}
+
+
+
 
 // MOD HERE
 // adding i_rm state

@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <omp.h>
 #include "snodes.h"
+#include "mortg.h"
 
 
 using namespace std;
