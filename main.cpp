@@ -27,6 +27,10 @@ int main(){
 	string city_init, city_filename;                                   // city name
 	hdata city_data;                                     // housing data structure stores previous rents and lagged returns
 	
+	mortg mortg0;
+	cout << "Finished Loading Mortgage Class" << endl;
+	cin.get();
+
 	const string city_init_vec[] = {"sd", "sf", "lax", "bos", "chi", "den", "mia", "nym"  };
 	const string city_filename_vec[] = { "sd_read_in.csv", "sf_read_in.csv", "lax_read_in.csv",
 		                                 "bos_read_in.csv", "chi_read_in.csv", "den_read_in.csv",
