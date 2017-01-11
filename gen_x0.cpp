@@ -19,16 +19,16 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 	double coh = coh_in;
 	double csf_min = 0.0;
 
-	double h_tol = 0.0005; //.0005; //  50 dollar accuracy
-	double csf_tol = 0.005;
+	double h_tol = 0.01; //.0005; //  50 dollar accuracy
+	double csf_tol = 0.01; //0.005;
 
-	int opt_flag = 1, it_max = 100000;
+	int opt_flag = 1, it_max = 10000;
 	int N_control2 = N_control - 3;  // For part without csf
 	int N_control3 = N_control - 2; // -1;  // for part with csf
 	int N_control4 = N_control - 1; 
 
 	int N_controlh;
-	double h_step0 = 0.2;
+	double h_step0 = 0.05; // 0.2;
 	double h_step_mult = 0.25;
 	double h_step = h_step0;
 
@@ -78,8 +78,8 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 	N_controlh = N_control2; // for larger step sizes, only allow access to C,B,X
 
 	int k1 = 0, k2 = 0;
-	int nds = 10;
-	int nds2 = 10;
+	int nds = 2; // 10;
+	int nds2 = 2; // 10;
 	int nds2_low = 4;
 	
 
@@ -111,6 +111,7 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 
 	double h_step1 = 0.0;
 	
+	opt_flag = 1; // setting this = 0 for fast comp;
 	while (opt_flag) {
 		//x0[3] = 0.0;
 		//x0[4] = 0.0;

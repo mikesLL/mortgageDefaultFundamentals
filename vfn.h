@@ -52,15 +52,15 @@ public:
 	vector<vector<vector<double>>> vw3_dd_grid;                                 // second derivative
 
 	void enter_data( void *snodes_in, double phr_in,int t_id, int t_num_in, double csf_1yr_in, int pref_in, int T_max_in );	
+	void mortgage_comp();
+
 	
-	//void get_pol(int i_t_in, int i_s_in, int i_w_in, vector<double> &x_pol);
 	void get_pol(int i_t_in, int i_rm_in, int i_s_in, int i_w_in, vector<double> &x_pol);
 
 	void set_pol_ten_v(int i_t_in, int i_rm_in, int i_s_in, int i_w_in, vector<double> &x_pol, int t_i2_in, double v0_in);
-	//void set_pol_ten_v(int i_t_in, int i_s_in, int i_w_in, vector<double> &x_pol, int t_i2_in, double v0_in);
 	
 
-	//eval_res eval_v(int i_t_in, int i_s_in, double w_in);
+	
 	eval_res eval_v(int i_t_in, int i_rm_in, int i_s_in, double w_in);
 	eval_res eval_v_def( int i_s_in, double w_in);
 
@@ -69,11 +69,8 @@ public:
 
 	void set_terminal( double phr_in );
 
-	//void interp_vw3(int i_t_in, int i_rm_in, int i_s_in);
 	void interp_vw3(int i_t_in, int i_rm_in, int i_s_in);
-	//void interp_vw3(int i_t_in, int i_s_in);
 
-	//void clean_vw3_grid(int i_t_in, int i_s_in);
 	void clean_vw3_grid(int i_t_in, int i_rm_in, int i_s_in);
 
 	double get_h_step(int i_t_in, int i_rm_in, int i_s_in, int w_i_in );

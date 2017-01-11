@@ -111,12 +111,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 					for (i_yi = 0; i_yi < n_yi; i_yi++) {
 						
 						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi];  // given i_ph, i_rent, i_yi, get state
-						/*
-						v1_file << (*vfnt).w_grid[w_i] << ","
-							<< (*vfnt).x1_grid[t_i][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_s][w_i] << ","
-							<< (*vfnt).x4_grid[t_i][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_s][w_i] << ","
-							<< (*vfnt).vw3_grid[t_i][i_s][w_i] << ",";
-						*/
+						
 						// MODS HERE					
 						v1_file << (*vfnt).w_grid[w_i] << ","
 							<< (*vfnt).x1_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_m][i_s][w_i] << ","

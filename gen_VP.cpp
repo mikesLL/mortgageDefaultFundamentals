@@ -92,7 +92,7 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 			i_ph = (*snodes1).s2i_ph[i_s];
 
 			start = clock();
-			cout << "i_s = " << i_s << "  t_i = " << t_i << "  i_yi = " << i_yi
+			cout << "i_m = " << i_m << "  i_s = " << i_s << "  t_i = " << t_i << "  i_yi = " << i_yi
 				<< "  i_ph = " << i_ph << "  begin renter problem" << endl;
 
 			for (w_i = 0; w_i < w_n; w_i++) {
@@ -113,16 +113,10 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 						//mpmt = ( rb + mort_spread - 1.0 ) * (*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor][i_ph];
 						mpmt = -1.0e6;
 						b_min2 = -max_lti * (*snodes1).yi_gridt_btax[t_hor][i_yi] / (rb + mort_spread - 1.0);
-
 						b_min = max(b_min, b_min2);
 					}
-					// TODO: add code to calculate mortgage payment given rate
 
-					// load previous w_i policy as a benchmark
-					//(*rr1).get_pol(t_i, i_s, w_i - 1, x_lag_w);
-					//t_i2_lag_w = (*rr1).xt_grid[t_i][i_s][max(w_i - 1, 0)];
-					//v_lag_w = (*rr1).vw3_grid[t_i][i_s][max(w_i - 1, 0)];
-
+					// TODO: add code to calc mortgage payment
 					// load previous w_i policy as a benchmark
 					// MODS HERE
 					(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);
@@ -288,43 +282,15 @@ void gen_VP(void *snodes_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
 					if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
-
-						//(*rr1).get_pol(0, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-						//t_adj = (*rr1).xt_grid[0][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
-						//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
-						
+		
 						// MODS HERE
 						(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
 						t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
 						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
 
 					}
-
-					//cout << "gen_Vp: (*rr1).vw3_def_grid[i_s][w_i_zero] " << (*rr1).vw3_def_grid[i_s][w_i_zero] << endl;
-					//double vw3_def_test = (*rr2).vw3_def_grid[i_s][w_i_zero]; 
-
-					/*
-					if (  (*rr1).vw3_def_grid[i_s][w_i_zero] > max(v1, res_t_0.v_i_floor ) ) {
-
-						(*rr2).def_flag = 1;
-						coh = 0.0 + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] -
-							min((*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj,
-								1.0 / 3.0 * (*snodes1).yi_gridt[t_hor][i_yi]);
-
-						b_min = b_min_unsec; // TODO: verify mod here
-						beg_equity = -1.0e6;
-
-						res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
-
-						(*rr1).set_pol_ten_v(0, i_s, w_i, res1.x_opt, 0, (*rr1).vw3_def_grid[i_s][w_i_zero] );
-						(*rr2).def_flag = 0;
-					}
-					*/
-
-
 				}
-				//(*rr1).interp_vw3(t_i, i_s);  // clean grid
-
+				
 				// MOD HERE
 				(*rr1).interp_vw3(t_i, i_m, i_s);  // clean grid
 

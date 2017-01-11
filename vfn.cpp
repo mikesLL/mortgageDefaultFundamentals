@@ -19,10 +19,7 @@ void vfn::enter_data(void *snodes_in, double phr_in, int t_id_in, int t_num_in, 
 	cout << "t_num = " << t_num << endl;
 	cout << "t_id = " << t_id << endl;
 
-	// MOD HERE: Create new zero initializers
-	vector<vector<vector<vector<int>>>> zeros_int_TN_RN_NS_WN(t_n, vector<vector<vector<int>>>(rm_n, vector<vector<int>>( n_s, vector<int>(w_n, 0))));
-	vector<vector<vector<vector<double>>>> zeros_TN_RN_NS_WN(t_n, vector<vector<vector<double>>>(rm_n, vector<vector<double>>(n_s, vector<double>(w_n, 0))));
-	vector<vector<vector<vector<double>>>> neg_TN_RN_NS_WN(t_n, vector<vector<vector<double>>>(rm_n, vector<vector<double>>(n_s, vector<double>(w_n, num_small))));
+	// create vectors to store mortgage payment, and balance 
 
 	// MOD HERE v2: Create state var for mortgage state including: rate, adjustable, term
 	vector<vector<vector<vector<int>>>> zeros_int_TN_MN_NS_WN(t_n, vector<vector<vector<int>>>(m_n, vector<vector<int>>(n_s, vector<int>(w_n, 0))));
@@ -64,22 +61,9 @@ void vfn::enter_data(void *snodes_in, double phr_in, int t_id_in, int t_num_in, 
 
 }
 
+void vfn::mortgage_comp() {
 
-/*
-void vfn::get_pol(int i_t_in, int i_s_in, int i_w_in, vector<double> &x_pol) {
-
-	if (i_w_in >= 0) {
-		x_pol[0] = x1_grid[i_t_in][i_s_in][i_w_in];
-		x_pol[1] = x2_grid[i_t_in][i_s_in][i_w_in];
-		x_pol[2] = x3_grid[i_t_in][i_s_in][i_w_in];
-		x_pol[3] = x4_grid[i_t_in][i_s_in][i_w_in];
-		x_pol[4] = x5_grid[i_t_in][i_s_in][i_w_in];
-	}
-	else {
-		x_pol[0] = c_fs; x_pol[1] = 0.0; x_pol[2] = 0.0; x_pol[3] = 0.0; x_pol[4] = 0.0;
-	}
 }
-*/
 
 // MOD HERE
 // adding i_rm state
