@@ -12,28 +12,51 @@ mortg::mortg(){
 	pmt0 = zeros_RMN;  // initialize original mortgage pmt vector
 	bal = zeros_RMN_T; // initialize mortgage balance vector
 	pmt = zeros_MN_T;  // initialize mortgage pmt vector
+	
+	// state maps
+	vector<int> m2rcurr_map(m_n, 0);
+	vector<int> m2rpmt_map(m_n, 0);
+	vector<int> m2rlb_map(m_n, 0);
+	vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
+
+	vector<int> m2mrefi_map(m_n, 0); // state map: m to m refi
 
 	// initialize maps
 	// states: current rate, payment rate, loan balance rate
-	/*
-	i2s_map = zeros_NPH_NRENT_NYI;
-	s2i_ph = zeros_NS;
-	s2i_rent = zeros_NS;
-	s2i_yi = zeros_NS;
+	int i_m_refi;
+	i_m = 0;
 
-	i_s = 0;
+	int i_rcurr; // current rate
+	int i_rpmt;  // payment rate
+	int i_rlb;   // loan balance assuming payment at this rate
 
-	for (i_ph = 0; i_ph < n_ph; i_ph++) {
-		for (i_rent = 0; i_rent < n_rent; i_rent++) {
-			for (i_yi = 0; i_yi < n_yi; i_yi++) {
-				i2s_map[i_ph][i_rent][i_yi] = i_s;   // initialize i2s map
-				s2i_ph[i_s] = i_ph;                 // initialize s2_i maps
-				s2i_rent[i_s] = i_rent;
-				s2i_yi[i_s] = i_yi;
-				i_s++;
+	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
+		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
+			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
+				m2rcurr_map[i_m] = i_rcurr; // pass in i_m, retrieve i_rcurr state
+				m2rpmt_map[i_m] = i_rpmt; // pass in i_m, retrieve i_pmt state
+				m2rlb_map[i_m] = i_rlb; // pass in i_m, retrieve i_rlb state
+				r2m_map[i_rcurr][i_rpmt][i_rlb] = i_m;
+
+				i_m++;
 			}
 		}
-	}*/
+	}
+
+	// initialize refinance path
+	i_m = 0;
+	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
+		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
+			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
+				m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; // refinance: set pmt rate = curr rate
+				i_m++;
+			}
+		}
+	}
+	// Q: how to compute the difference in loan balances at time of refinance?
+	// bal[i_r_refi] = ...
+	// bal[i_r] = ...
+	// difference modeled as a change in liquid assets
 	
 	// compute initial mortgage payment
 	for (i_r2 = 0; i_r2 < rm_n; i_r2++) {
@@ -57,12 +80,23 @@ mortg::mortg(){
 			// 1) current rate
 			// 2) payment rate
 			// 3) loan balance (assuming paid off at original rate)
-			
+			i_rcurr = m2rcurr_map[i_m];
+			i_rpmt = m2rpmt_map[i_m];
+			i_rlb = m2rlb_map[i_m];		
 
+			// compute payment given loan balance, payment rate, and years left
+			// TODO: check index / boundary conditions
+			pmt[i_m][t_yr] = fpmt(bal[i_rlb][t_yr], rm_store[i_rpmt], N_term - t_yr);  
 		}
 	}
 }
 
+/*
+Now, given mortgage payment in each state can compute the value function
+Write a method to determine the value of refinancing
+*/
+
+// int mortg::
 
 // mortgage payment formula
 double mortg::fpmt(double loan_bal_in, double rm_in, int t_left_in) {
