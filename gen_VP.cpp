@@ -221,7 +221,8 @@ void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 
 	// MODS HERE
 	int i_m_refi;  // mortgage state associated with refinancing
-	double mortg_pmt3;
+	double mortg_pmt3;  // mortgage payment
+	double loan_diff;  // loan balance difference
 
 
 	cout << "gen_VP.cpp: begin homeowner problem" << endl; 
@@ -234,8 +235,17 @@ void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 				i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
 				i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
 
+				// Refinance condition
+				if (i_rcurr < i_rpmt) {
+					i_m_refi = (*mortg1).m2mrefi_map[i_m]; // pass in i_m, get i_m_refi;
+					loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor]; 
+					// loan balance if ammort at repayment rate - loan balance if ammort at current market rate
+					// IF > 0, need to put up loan difference; decrease in liquid assets
+					// IF < 0, cash-out refinance; increase in liquid assets
+				}
+
 			    // TODO: verify this works			
-				mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in state
+				mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in each state
 
 				// 
 				i_yi = (*snodes1).s2i_yi[i_s];
@@ -277,9 +287,8 @@ void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 
 					coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  
 
-
 					// MOD HERE: subtract mortgage payment from coh
-					coh = coh - mpmt2_frm;
+					coh = coh - mortg_pmt3;  //coh = coh - mpmt2_frm;
 
 					// MODS HERE: add i_rm state
 					// load previous w_i policy as an initial guess
@@ -308,19 +317,41 @@ void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 					//res_t_0 = (*rr1).eval_v(0, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
 					// TODO: work here
-					// evaluate value fn if agent sells and converts to renter
-					// loos
-					res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj); 
-
-					// TODO: work here
-					// evaluate value fn if agent refinances
+					res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj); // evaluate value fn if agent sells and converts to renter
 
 					if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
-		
 						// MODS HERE
 						(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
 						t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
 						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+					
+						// update v1 with value of default
+						v1 = res_t_0.v_i_floor;
+					}
+
+					// TODO: work here
+					// evaluate value fn if agent refinances
+					double w_refi;
+					eval_res res_refi;
+					int t_refi = 1;                                                                // tenure index in event of refi
+
+					w_refi = (*rr1).w_grid[w_i] ;                                                  // compute liquid wealth if HH refinances
+					res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                            // evaluate value fn if household refinances
+
+					// w (liquid assets) under refi must be greater than 0.0
+					// v1: current guess for value fn given optimization, default
+					// lower estimate for value of refinance must be greater than v1
+					if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0) ) {
+
+						// MODS HERE
+						// load in policy associated with refinance
+						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);                    // submit x as reference and load in x pol from t1 = 0
+
+						// set policy associated with refinance
+						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);      // first arguments are current state variables, x containts updated policy
+					
+					    // upadate value fn guess
+						v1 = res_refi.v_i_floor;
 
 					}
 				}
