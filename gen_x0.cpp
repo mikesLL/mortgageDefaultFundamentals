@@ -170,6 +170,7 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 		else {
 			x1 = x0;
 			v1 = -1.0e20;
+			//h_step1 = 0.5 * h_step;
 			
 			if (h_step < h_step0) {
 				nds2 = nds2_low; 
@@ -194,7 +195,7 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 				v0 = v1;
 				x0 = x1;
 			}
-
+			
 			h_step = h_step1;
 		}
 
