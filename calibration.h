@@ -19,8 +19,8 @@ const int mort_term_int = 3; //30;
 // in this view, refinancing lowers the rate but keeps the same balance
 
 // state variable: mortgage rates
-const int rm_n = 2; // adding two mortgage rate / apr states
-const double rm_store[rm_n] = { 0.02, 0.03 };
+const int rm_n = 5; // adding two mortgage rate / apr states
+const double rm_store[rm_n] = { 0.01, 0.02, 0.03, 0.04, 0.05 };
 
 // state var
 // loan_bal_rt contains the loan balance associated with each mortgage rate

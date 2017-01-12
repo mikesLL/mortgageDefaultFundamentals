@@ -29,7 +29,7 @@ int main(){
 	
 	mortg mortg1;
 	cout << "Finished Loading Mortgage Class" << endl;
-	cin.get();
+	//cin.get();
 
 	const string city_init_vec[] = {"sd", "sf", "lax", "bos", "chi", "den", "mia", "nym"  };
 	const string city_filename_vec[] = { "sd_read_in.csv", "sf_read_in.csv", "lax_read_in.csv",

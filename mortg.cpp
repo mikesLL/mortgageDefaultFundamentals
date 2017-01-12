@@ -17,7 +17,9 @@ mortg::mortg(){
 	m2rcurr_map = zeros_int_MN;
 	m2rpmt_map = zeros_int_MN;
 	m2rlb_map = zeros_int_MN;
+
 	r2m_map = zeros_int_RMN_RMN_RMN;
+	m2mrefi_map = zeros_int_MN;
 
 	//vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
 	// state maps
@@ -37,12 +39,15 @@ mortg::mortg(){
 	int i_rpmt;  // payment rate
 	int i_rlb;   // loan balance assuming payment at this rate
 
+	//r2m_map[1][1][1] = 0;
+	
 	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
 		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
 			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
 				m2rcurr_map[i_m] = i_rcurr; // pass in i_m, retrieve i_rcurr state
 				m2rpmt_map[i_m] = i_rpmt; // pass in i_m, retrieve i_pmt state
 				m2rlb_map[i_m] = i_rlb; // pass in i_m, retrieve i_rlb state
+
 				r2m_map[i_rcurr][i_rpmt][i_rlb] = i_m;
 
 				i_m++;
@@ -50,6 +55,8 @@ mortg::mortg(){
 		}
 	}
 
+
+	int foo = r2m_map[0][0][0];
 	// initialize refinance map
 	i_m = 0;
 	// int i_m_refi; // i_m associated with refinancing
