@@ -4,13 +4,12 @@
 
 #include "headers.h"
 
-gen_res gen_VPw(void *snodes_in, void *def_stats_in, void *vf1_in, void *vf2_in,
+gen_res gen_VPw(void *snodes_in,  void *vf1_in, void *vf2_in,
 	double coh, vector <double> x_w_lag,
 	double b_min, double beg_equity, double mpmt ) {
 
 	snodes *snodes1 = (snodes *)snodes_in;
-	def_stats *def_stats1 = (def_stats *)def_stats_in;
-
+	
 	vfn * vf1 = (vfn *)vf1_in;
 	vfn * vf2 = (vfn *)vf2_in;
 

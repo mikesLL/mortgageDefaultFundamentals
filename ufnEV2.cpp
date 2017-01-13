@@ -115,15 +115,9 @@ double ufnEV2::eval( vector<double> x ){
 // in each state
 void ufnEV2::store_wlh2(vector<double> x ) {
 
-	//snodes *snodes1 = (snodes *)snodes_in;
-	//def_stats *def_stats1 = (def_stats *)def_stats_in;
-
-	//int i_s1 = (*def_stats1).i_s1;
-	//int i_w1 = (*def_stats1).i_w1;
 	int i_s1 = (*snodes1).i_s1;
 	int i_w1 = (*snodes1).i_w1;
-	//int i_w1 = (*def_stats1).i_w1;
-	//int t_hor = (*def_stats1).t_hor;
+	
 
 	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
 	double rb_eff = rb;                            // effective return on bonds	(default = rb)       

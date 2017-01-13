@@ -67,17 +67,36 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	}
 	rent_adj = hu_ten[0] / hu_med[city_id];
 
-
 	// work here 
-	//int T_max_approx = 40;
-
 	vector<vector<double>> zeros_WN_2(w_n, vector<double>(2, 0.0));
 	vector<vector<vector<vector<double>>>> zeros_NS_NS_WN_2(n_s, vector<vector<vector<double>>>(n_s, zeros_WN_2));
 	vector<vector<vector<vector<vector<double>>>>> zeros_T_NS_NS_WN_2(T_max, zeros_NS_NS_WN_2);
 
 	w_t2_state = zeros_T_NS_NS_WN_2;
 
+	// work here 
+	int own_state0 = 1;  // assume household is homeowner by default
+	vector<vector<int>> ones_int_NS_WN(n_s, vector<int>(w_n, own_state0));
+	vector<vector<vector<int>>> ones_int_T_NS_WN(T_max, ones_int_NS_WN);
+	own_state = ones_int_T_NS_WN;
 
+}
+
+
+// This function is used to model wealth when household refinances or defaults
+// i_w1_new: new wealth index once costs of refinace/default are accounted for
+void snodes::w_state_swap( int i_w1_swap_in) {
+
+	int i_w1_swap = i_w1_swap_in;
+	int i_s2, i_x2;
+	
+	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
+		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+			w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
+		}
+	}
+
+	 
 }
 
 
