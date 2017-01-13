@@ -134,9 +134,16 @@ for (i_s = 0; i_s < n_s; i_s++) {
 		(*rr2).w_i1 = w_i;
 		(*rr2).t_i2 = t_i2; //  t_i2 is a choice variable, so adding it to fn pointer 
 
+		// prepare to delete as move from def_stats1 to snodes
 		(*def_stats1).i_s1 = i_s;
 		(*def_stats1).i_w1 = w_i; 
 		(*def_stats1).t_hor = t_hor;
+
+		(*snodes1).i_s1 = i_s;
+		(*snodes1).i_w1 = w_i;
+		(*snodes1).t_hor = t_hor;
+
+
 
 		// MOD HERE: pass in current mortgage rate state to next-period value fn
 		(*rr2).m_i1 = i_m;

@@ -55,7 +55,7 @@ public:
 	void enter_data(void *snodes_in, void *vf2_in); // enter data into utilty fn 
 	double eval(vector<double> x_in);               // evaluate utility fn
 
-	double store_wlh2(vector<double> x_in, void *def_stats_in);               // evaluate utility fn
+	void store_wlh2(vector<double> x_in);               // evaluate utility fn
 
 	inline eval_res eval_v( int i_s_in, double w_in);
 };

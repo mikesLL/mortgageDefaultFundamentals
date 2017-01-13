@@ -35,6 +35,13 @@ public:
 	snodes(int age0_in, int T_max_in, int city_id_in );
 	
 	void adj_tax();
+
+	// adding default variables here
+	int i_s1; // current state
+	int i_w1; // current wealth state
+
+	// wealth outcome matrix
+	vector<vector<vector<vector<vector<double>>>>> w_t2_state;
 };
 
 #endif

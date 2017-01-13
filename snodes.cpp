@@ -9,7 +9,6 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 	csfLevSn = csfLev_pidxw[param_id] * 1.0 / csfmarg_store[city_id];
 
-	
 	// initialize price, rent, income grids
 	// use max time horizon, n_ph, n_rent, n_yi gridpoints
 	p_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_ph, 0.0));
@@ -67,6 +66,17 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 		ten_w[i_t] = hu_ten[i_t] / hu_med[city_id];
 	}
 	rent_adj = hu_ten[0] / hu_med[city_id];
+
+
+	// work here 
+	//int T_max_approx = 40;
+
+	vector<vector<double>> zeros_WN_2(w_n, vector<double>(2, 0.0));
+	vector<vector<vector<vector<double>>>> zeros_NS_NS_WN_2(n_s, vector<vector<vector<double>>>(n_s, zeros_WN_2));
+	vector<vector<vector<vector<vector<double>>>>> zeros_T_NS_NS_WN_2(T_max, zeros_NS_NS_WN_2);
+
+	w_t2_state = zeros_T_NS_NS_WN_2;
+
 
 }
 
