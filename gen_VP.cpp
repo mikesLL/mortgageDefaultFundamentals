@@ -96,12 +96,7 @@ t_i2 = 0;
 //for (i_m = 0; i_m < m_n; i_m++) { // MODS HERE
 for (i_s = 0; i_s < n_s; i_s++) {
 
-	// given i_m, load in mortgage state details
-	//i_rcurr = (*mortg1).m2rcurr_map[i_m];      // current market rate
-	//i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
-	//i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
-
-	// load in other states
+	// load in states
 	i_yi = (*snodes1).s2i_yi[i_s];
 	i_rent = (*snodes1).s2i_rent[i_s];
 	i_ph = (*snodes1).s2i_ph[i_s];

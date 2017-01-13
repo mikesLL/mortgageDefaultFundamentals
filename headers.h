@@ -21,7 +21,7 @@
 #include <omp.h>
 #include "snodes.h"
 #include "mortg.h"
-
+#include "def_stats.h"
 
 using namespace std;
 
