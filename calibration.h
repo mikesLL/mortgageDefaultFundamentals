@@ -51,7 +51,7 @@ const double csfLev = csfLevStore[param_id];
 const int w_n = 10; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
 const int age_max = 35; //65;                  // age at which household retires / annuitizes wealth  
-
+					
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 
 const double csfLev_pidxw[] = {0.0, 0.0, 0.0, 0.0, 0.0 };  // change in future notl to index weight

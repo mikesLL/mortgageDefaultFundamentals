@@ -27,6 +27,7 @@ int main(){
 	string city_init, city_filename;                                   // city name
 	hdata city_data;                                     // housing data structure stores previous rents and lagged returns
 	
+	def_stats def_stats1;
 	mortg mortg1;
 	cout << "Finished Loading Mortgage Class" << endl;
 	//cin.get();
@@ -104,7 +105,7 @@ int main(){
 					vf_P.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
 
 					cout << " main.cpp: gen_VP" << endl;
-					gen_VP(&snodes1, &mortg1, &vf_P, &vf_F);
+					gen_VP(&def_stats1, &snodes1, &mortg1, &vf_P, &vf_F);
 
 					cout << "main.cpp: begin store_data" << endl;
 					store_data(&snodes1, &vf_P, city_init, t, t_hor, T_max);

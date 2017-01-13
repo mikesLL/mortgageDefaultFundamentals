@@ -4,11 +4,13 @@
 
 #include "headers.h"
 
-gen_res gen_VPw(void *snodes_in, void *vf1_in, void *vf2_in,
+gen_res gen_VPw(void *snodes_in, void *def_stats_in, void *vf1_in, void *vf2_in,
 	double coh, vector <double> x_w_lag,
 	double b_min, double beg_equity, double mpmt ) {
 
 	snodes *snodes1 = (snodes *)snodes_in;
+	def_stats *def_stats1 = (def_stats *)def_stats_in;
+
 	vfn * vf1 = (vfn *)vf1_in;
 	vfn * vf2 = (vfn *)vf2_in;
 
@@ -75,15 +77,9 @@ gen_res gen_VPw(void *snodes_in, void *vf1_in, void *vf2_in,
 	int i_yi = (*snodes1).s2i_yi[(*vf2).i_s1];
 	int t_hor = (*snodes1).t_hor;
 
-	//if (beg_equity > 0.0 ){
-	//	cout << "gen_vpw.cpp: here" << endl; 
-	//}
-
-
 	// current cash on hand; wealth and income only
 	double cohQ = (*vf1).w_grid[(*vf2).w_i1] + (*snodes1).yi_gridt[t_hor][i_yi];
-	//double foo = 
-
+	
 	if ( cohQ  < beg_equity ) {
 		opt_flag = 0;
 	}
@@ -97,6 +93,11 @@ gen_res gen_VPw(void *snodes_in, void *vf1_in, void *vf2_in,
 		res1.x_opt = gen_x0(coh, b_min, vf1, vf2, &ufnEV21, x_guess);              // get x policy from loop and optimization
 		res1.v_opt = ufnEV21.eval(res1.x_opt);
 		res1.valid_flag = 1;
+
+		// here: evaluate ufnEV21
+		// def_stats def_stats1;
+		
+		//ufnEV21.store_wlh2(res1.x_opt, &def_stats1 );
 	}
 	
 	if ( (res1.x_opt[0] + res1.x_opt[1] + res1.x_opt[2] + res1.x_opt[3] + res1.x_opt[4]) >  (coh + 0.01 ) ) {

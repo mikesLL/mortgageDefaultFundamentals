@@ -24,12 +24,13 @@ Would be kind of like the MCMC analog to VFI
 
 #include "headers.h"
 
-void gen_VP(void *snodes_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
+void gen_VP(void *snodes_in, void *def_stats_in, void *mortg_in, void *VFN_3d_1, void *VFN_3d_2 ){
 	
 double duration;
 clock_t start;
 
 snodes *snodes1 = (snodes *)snodes_in;
+def_stats *def_stats1 = (def_stats *)def_stats_in;
 mortg *mortg1 = (mortg *)mortg_in;
 
 vfn *rr2 = (vfn *) VFN_3d_2;          // address to initialized V2
@@ -133,18 +134,22 @@ for (i_s = 0; i_s < n_s; i_s++) {
 		(*rr2).w_i1 = w_i;
 		(*rr2).t_i2 = t_i2; //  t_i2 is a choice variable, so adding it to fn pointer 
 
+		(*def_stats1).i_s1 = i_s;
+		(*def_stats1).i_w1 = w_i; 
+		(*def_stats1).t_hor = t_hor;
+
 		// MOD HERE: pass in current mortgage rate state to next-period value fn
 		(*rr2).m_i1 = i_m;
 
 		if (t_i2 == 0) {
 			(*rr2).def_flag = 1;
-			res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
+			res1 = gen_VPw(snodes1, def_stats1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
 			(*rr1).vw3_def_grid[i_s][w_i] = res1.v_opt;
 			//cout << res1.v_opt << endl; 
 			(*rr2).def_flag = 0;
 		}
 
-		res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);                               // pass problem into gen_V1_w
+		res1 = gen_VPw(snodes1, def_stats1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);                               // pass problem into gen_V1_w
 
 		if (t_i2 == 1) {
 			v_ti1 = res1.v_opt;
@@ -229,22 +234,17 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 
 			for (w_i = 0; w_i < w_n; w_i++) {
 				
-				t_i2 = t_i;
+				t_i2 = t_i;                                                             // impose t_i2 = t_i    
 				
 				b_min = -max_ltv*(*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor][i_ph] + b_min_unsec;
 				b_min2 = -max_lti * (*snodes1).yi_gridt_btax[t_hor][i_yi] / (rb + mort_spread - 1.0);
 				
-				// subtract housing wealth from cash on hand  
+				// compute cash on hand (liquid assets + income - mortgage payment)
 				coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - mortg_pmt3;
-
-				//coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - (*snodes1).ten_w[t_i] * maint_mult * (*snodes1).p_gridt[t_hor][i_ph];       // subtract housing wealth from cash on hand  
-
-				// MOD HERE: subtract mortgage payment from coh
-				//coh = coh - mortg_pmt3;  //coh = coh - mpmt2_frm;
 
 				// MODS HERE: add i_rm state
 				// load previous w_i policy as an initial guess
-				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                       // get x pol sol from previous w_i and assign to x
+				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                         // get x pol sol from previous w_i and assign to x
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 				v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 				(*rr2).m_i1 = i_m;
@@ -255,14 +255,13 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 				(*rr2).i_s1 = i_s;
 				(*rr2).t_i1 = t_i;
 				(*rr2).w_i1 = w_i;
-				(*rr2).t_i2 = t_i2;                                                  // impose t_i2 = t_i    	      
+				(*rr2).t_i2 = t_i2;                                                            	      
 
-				res1 = gen_VPw(snodes1, rr1, rr2, coh, x_lag_w, b_min, beg_equity, mpmt);                  // solve optimization problem
+				// solve optimization problem
+				res1 = gen_VPw(snodes1, def_stats1, rr1, rr2, coh, x_lag_w, b_min, beg_equity, mpmt);      
 				v1 = res1.v_opt;  // guess for current solution: vfn
 				x1 = res1.x_opt;  // guess for current policy
 
-				//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, t_i2, v1);
-				// MOD HERE:
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);
 
 				w_adj = (*rr1).w_grid[w_i] - phi_sell*(*snodes1).ten_w[t_i] * (*snodes1).p_gridt[t_hor][i_ph];    //calc costs if agent sells and converts to renter

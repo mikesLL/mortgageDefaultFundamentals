@@ -3,9 +3,6 @@
 
 mortg::mortg(){
 
-	cout << "large object created" << endl; 
-	cin.get();
-
 	// store zeros associated with each rate and then each time period
 	vector<double> zeros_RMN(rm_n, 0.0);
 	vector<int> zeros_int_MN(m_n, 0);

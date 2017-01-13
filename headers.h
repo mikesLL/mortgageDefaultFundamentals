@@ -37,9 +37,9 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in,
 	double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id_in, int age_begin_in);
 
 
-void gen_VP(void *snodes_in, void *mortg_in, void *my_func_data1, void *my_func_data2 );
+void gen_VP(void *snodes_in, void *def_stats_in, void *mortg_in, void *my_func_data1, void *my_func_data2 );
 
-gen_res gen_VPw(void *snodes_in, void *vf1_in, void *vf2_in, double coh_in, vector <double> x0_in, double b_min_in, 
+gen_res gen_VPw(void *snodes_in, void *def_stats_in, void *vf1_in, void *vf2_in, double coh_in, vector <double> x0_in, double b_min_in, 
 	double beg_equity_in, double mpmt_in );
 
 vector<double> gen_x0(double coh, double b_min, void *vf1, void *vf2, void * evalEV21_in, vector<double> x0_in );

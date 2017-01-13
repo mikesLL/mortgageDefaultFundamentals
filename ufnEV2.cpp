@@ -15,24 +15,24 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 
 	
 	// MOD HERE: given parameters, compute loan balance
-	int t_foo = 0; 
-	double loan_bal = loan_amt;
-	double mpmt2_frm = loan_amt*(apr_frm*pow((1.0 + apr_frm), mort_term)) /
-		(pow((1.0 + apr_frm), mort_term) - 1.0);
+	//int t_foo = 0; 
+	//double loan_bal = loan_amt;
+	//double mpmt2_frm = loan_amt*(apr_frm*pow((1.0 + apr_frm), mort_term)) /
+	//	(pow((1.0 + apr_frm), mort_term) - 1.0);
 
-	for (t_foo = 0; t_foo < (*vf2).t_num; t_foo++) {
-		mort_add_equity = max(loan_bal*(1.0 + apr_frm) - mpmt2_frm, 0.0);
-		loan_bal = max(loan_bal*(1.0 + apr_frm) - mort_add_equity, 0.0);
-	}
+	//for (t_foo = 0; t_foo < (*vf2).t_num; t_foo++) {
+	//	mort_add_equity = max(loan_bal*(1.0 + apr_frm) - mpmt2_frm, 0.0);
+	//	loan_bal = max(loan_bal*(1.0 + apr_frm) - mort_add_equity, 0.0);
+	//}
 
 	// MOD HERE: work toward adding mortgage payment here
 	// Requires planning horizon, loan amount, ...
-	if ((*vf2).t_num <= mort_term) {
-		mort_add_equity = 0.25; //  
-	}
-	else {
-		mort_add_equity = 0.0;  // mortgage has been paid off 
-	}
+	//if ((*vf2).t_num <= mort_term) {
+	//	mort_add_equity = 0.25; //  
+	//}
+	//else {
+	//	mort_add_equity = 0.0;  // mortgage has been paid off 
+	//}
 	// TODO: check that t_num = 0, 1, 2, ...
 
 
@@ -82,7 +82,6 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	N_s2p = i_s2p; // store number of positive probability states
 
 }
-
 
 // given vector of control variables x, evaluate value function
 double ufnEV2::eval( vector<double> x ){
@@ -135,6 +134,50 @@ double ufnEV2::eval( vector<double> x ){
 	
 	return uc + beta*Evw_2;
 }
+
+// given vector of control variables x, evaluate and store low and high wealth values
+// in each state
+double ufnEV2::store_wlh2(vector<double> x, void *def_stats_in ) {
+
+	//snodes *snodes1 = (snodes *)snodes_in;
+	def_stats *def_stats1 = (def_stats *)def_stats_in;
+	int i_s1 = (*def_stats1).i_s1;
+	int i_w1 = (*def_stats1).i_w1;
+	//int t_hor = (*def_stats1).t_hor;
+
+
+	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
+	double rb_eff = rb;                            // effective return on bonds	(default = rb)       
+	//double Evw_2 = 0.0;                            // Value Function Expectation
+	double w2, w2_move, vw2;
+
+	//double uc = ufn(x[0], hu, (*vf2).pref);  // composite utility
+	double rb_eff_agg;                       // aggregated gross return on bonds
+
+	double b_unsec = 0.0;
+	double b_sec = 0.0;
+	double rb_unsec = rb + credit_prem;
+
+	// calc effective effective interest rate
+	b_sec = max(x[1], -max_ltv*(*snodes1).ten_w[t_i2] * ph1);
+	b_unsec = x[1] - b_sec;
+	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec;
+	
+	
+	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
+		//i_s2 = i_s2p_vec[i_s2p];
+		//i_ph2 = (*snodes1).s2i_ph[i_s2];
+
+		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+			w2 = rb_eff_agg + exp(retxv[i_x2])*x[2];
+
+			(*def_stats1).w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w2;
+		}
+	}
+
+	return 0;
+}
+
 
 
 //cycle across futures returns
