@@ -39,114 +39,36 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	int N_print =  1000;                          // number of observations to print to file
 	int N_sim = 10000;                                            // number of simulations
 
-	//int N_print =  40000;                          // number of observations to print to file
+	//int N_print =  40000;                                           // number of observations to print to file
 	//int N_sim = 2000000;                                            // number of simulations
-	int i_ph, i_rent, i_yi, i_s;                                 // state and individual dimension indices
+	int i_ph, i_rent, i_yi, i_s;                                      // state and individual dimension indices
 
 	cout << "load ppath: ph0_in:  " << ph0_in << endl;
+	
+	city_id = 1;
 
-	// Parameters for each city
-	// year: 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014
-	double inf_mult[] = {104.5, 106.9, 109.7, 113.4, 117.1, 120.4, 125.0, 124.6, 126.6, 130.6, 133.3, 135.3, 137.6}; 
+	double inf_mult = 104.5; // inflation multiplier
 
 	//determnistic (real) rent growth
-	double g_rent_store[] = {
-		0.0198,
-		0.0218,
-		0.0159,
-		0.0131,
-		0.0110,
-		0.00810,  // mean, 1990-2007	
-		0.0088,
-		0.0210
-	};
+	double g_rent = 0.02;
 
-	double g_rent = g_rent_store[city_id];
-
-	ph0_in = ph0_in / inf_mult[t_id] * 100.0;
-	rent_in = rent_in / inf_mult[t_id] * 100.0;
-	csf_1yr_in = csf_1yr_in / inf_mult[t_id] * 100.0; 
-
-	double alpha_store[] = {
-		0.0215970671803700,
-		0.0297096518722474,
-		0.0213310720257108,
-		0.00846011587835165,
-		0.00462693794884501,
-		0.0174584663888410,
-		0.0198730209396569,
-		0.00725027008511914
-	};
-
-double rhof_store[] = {
-	0.461360114055194,
-	0.167361711292896,
-	0.550860193662750,
-	0.598217901123913,
-	0.486052102783257,
-	0.368991072353204,
-	0.554614616406401,
-	0.707282417316664
-
-};
-
-double theta_store[] = {
-	0.340169057772753,
-	0.586434268944049,
-	0.368796892657476,
-	0.342493732487135,
-	0.232985417342843,
-	0.617453263036901,
-	0.272148011248151,
-	0.222902543575679
-};
-
-	
-double gamma0_store[] = {
-	-2.27005835097171,
-	- 2.09086113415143,
-	- 2.20877736344099,
-	- 2.34730004018468,
-	- 2.59924395203012,
-	- 2.55079923655289,
-	- 2.41717362427760,
-	- 2.40474067985298
-};
-
-	double gamma1_store[] = {
-		0.596031350542289,
-		0.568305866165289,
-		0.530362051930168,
-		0.623480582988455,
-		0.778516746907595,
-		0.621317920063014,
-		0.605695055217447,
-		0.662868232096242
-	};
-
-	double sigma_ret_store[] = {
-		0.0898953130877952,
-		0.0964435356411414,
-		0.0932576970459832,
-		0.0416981137655714,
-		0.0425216830414940,
-		0.0319257520937813,
-		0.0802481487653272,
-		0.0370998335603092
-	};
+	ph0_in = ph0_in / inf_mult * 100.0;
+	rent_in = rent_in / inf_mult * 100.0;
+	csf_1yr_in = csf_1yr_in / inf_mult * 100.0; 
 
 	double y_city_mult[] = { 1.23, 1.54, 1.02, 1.34, 1.02, 1.00,  0.95, 1.39 };
 
-	double alpha_hat = alpha_store[city_id];
-	double rhof_hat = rhof_store[city_id];
-	double theta_hat = theta_store[city_id];
-	double sigma_ret = sigma_ret_store[city_id];
-	double gamma0_hat = gamma0_store[city_id];
-	double gamma1_hat = gamma1_store[city_id];
+	double alpha_hat = 0.02;
+	double rhof_hat = 0.46;
+	double theta_hat = 0.34;
+	double sigma_ret = 0.08;
+	double gamma0_hat = -2.27;
+	double gamma1_hat = 0.59;
 		 
 	double p_min = 0.01;                                                         // lower bound on home prices										   
 	
 	// stdev centers (tauchen-style discretization) 
+    double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
 	double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
 	double rent_nd_std[] = { 0.0 };                                           // can also set { -1.0, 0.0, 1.0 };
 	double yi_nd_std[] = { -1.0, 0.0, 1.0 }; 
@@ -184,15 +106,28 @@ double gamma0_store[] = {
 	
 	double ret_tn, ret_lag, ecm;
 
+	// MODS HERE: adding vectors for i_rcurr, i_rpmt, i_lb
+	double eps_r;                  // interest rate innovation
+	double sigma_r = 0.02;         // interest rate standard deviation
+
+	vector<vector<double>> rm_str(T_sim + 1, vector<double>(N_sim, 0.0));               // store short/mortgage rates
+
 	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store city-wide home prices
 	vector<vector<double>> ph_str_city(T_sim + 1, vector<double>(N_sim, 0.0));              // store city-wide home prices
 
 	vector<vector<double>> rent_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store city-wide rent
 	vector<vector<double>> yi_str(T_sim + 1, vector<double>(N_sim, 0.0));               // individual income
 
+	vector<vector<double>> rm_str_nds(T_sim + 1, vector<double>(n_rm, 0.0) );          // interest rate nodes
 	vector<vector<double>> ph_str_nds(T_sim + 1, vector<double> (n_ph, 0.0) );          // home price nds
 	vector<vector<double>> rent_str_nds(T_sim + 1, vector<double> (n_rent, 0.0) );      // rent nds
 	vector<vector<double>> yi_str_nds(T_sim + 1, vector<double>(n_yi, 0.0) );         // individual-income nds
+
+	double rm_str0 = 0.01;  // initial short rate
+	double rho_rm = 0.4;    // short-rate: autocorrelation
+	double theta_rm = 1.0;  // short-rate: mean-reversion
+	double rm_mu = 0.04; // long-run short rate mean
+
 
 	double v_t0 = 0.0;                                   // initial permanent income shock
 	double v_t = 0.0;                                    // permanent income state
@@ -218,7 +153,7 @@ double gamma0_store[] = {
 	double var_h = pow(sigma_ret, 2.0); // estimated from AHS
 	double cov_y_city_h = 0.553*var_y_city*pow(sigma_ret, 2.0);
 	double y_city_sigma = 0.0; //0.019;
-	double z1, z2; 
+	double z1, z2, z3;
 	double corr_y_city_h = 0.0; // 0.553;
 	double corr_delta = pow(pow(1.0 - corr_y_city_h, 2.0), 0.5); 
 
@@ -259,6 +194,8 @@ double gamma0_store[] = {
 		ph_str[t][n] = log(ph0);
 		ph_str_city[t][n] = log(ph0);
 		rent_str[t][n] = rent0;
+
+		rm_str[t][n] = rm_str0;
 	
 		// compute age-related component of log-income (deterministic)
 		
@@ -278,15 +215,12 @@ double gamma0_store[] = {
 		// compute correlated shocks
 		z1 = dist(gen);
 		z2 = dist(gen);
+		z3 = dist(gen); // interest rate innovation
 		
 		eps_h = sigma_ret*z1;
 		eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
 
-		//eps_h = pow(var_h*z1 + cov_y_city_h*z2, 0.5);
-		//eps_y = pow(cov_y_city_h*z1 + var_y_city*z2, 0.5);
-		//eps_h = pow(var_h*z1 + cov_y_city_h*z2, 0.5);
-		//eps_y = pow(cov_y_city_h*z1 + var_y_city*z2, 0.5);
-
+		
 		g_yc_t = mu_yc + sigma_yc*dist(gen);    // city-wide income / rent
 		u_t = sigma_u*dist(gen);                // individual: permanent shock
 		e_t = sigma_e*dist(gen);                // individual: transient shock
@@ -315,6 +249,7 @@ double gamma0_store[] = {
 		
 		// simulate later time periods
 		for (t = 2; t < (T_sim + 1); t++){
+			
 			age_td = double(age_begin_in) + double(t);  // compute age
 
 			// compute age-related component of log-income (deterministic)
@@ -323,13 +258,19 @@ double gamma0_store[] = {
 			// draw shocks
 			z1 = dist(gen);
 			z2 = dist(gen);
+			z3 = dist(gen);
+			eps_r = sigma_r*z3;                   // interest rate innovation 
 			eps_h = sigma_ret*z1;
 			eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
-			//eps_h = pow(var_h*z1 + cov_y_city_h*z2, 0.5);
-			//eps_y = pow(cov_y_city_h*z1 + var_y_city*z2, 0.5);
+			
 			g_yc_t = mu_yc + sigma_yc*dist(gen);  // city-wide income / rent
 			u_t = sigma_u*dist(gen);              // individual: permanent shock
 			e_t = sigma_e*dist(gen);              // individual: transient shock
+
+			// update interest rate
+			rm_str[t][n] = rho_rm*rm_str[t - 1][n] + theta_rm*(rm_str[t - 1][n] - rm_mu) + eps_r; 
+			// TODO: verify vasicek formula here
+
 
 			// update income path 
 			eta_t = rho_y_city*eta_t0 + eps_y;        // set city-wide income component
@@ -355,6 +296,29 @@ double gamma0_store[] = {
 
 	cout << "load_simpath.cpp: Finished Running Simulations" << endl;
 	cout << "load_simpath.cpp: Compute Home Price Nodes " << endl;
+
+
+	// HERE: going to add code to compute interest-rate nodes
+	// use: 
+	// vector<vector<double>> rm_str_nds(T_sim + 1, vector<double>(n_rm, 0.0) );         // interest rate nodes
+	// vector<vector<double>> rm_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store short/mortgage rates
+	for (t = 0; t < T_sim; t++) {
+		res_sum = accumulate(rm_str[t].begin(), rm_str[t].end(), 0.0);
+		res_mean = res_sum / (double)rm_str[t].size();
+		res_sq_sum = inner_product(rm_str[t].begin(), rm_str[t].end(), rm_str[t].begin(), 0.0);
+		res_std = sqrt(res_sq_sum / (double)rm_str[t].size() - res_mean * res_mean);
+
+		if (t == 0) {
+			res_std = 0.01;  // initial period: manually set stdev 
+		}
+
+		for (n = 0; n < n_rm; n++) {
+			rm_str_nds[t][n] = res_mean + rm_nd_std[n] * res_std;  // compute home price nodes (log scale)
+			(*snodes1).rm_gridt[t][n] = rm_str_nds[t][n]; 
+			cout << (*snodes1).rm_gridt[t][n] << "...";      // print out interest rate grid entry
+		}
+		cout << endl;
+	}
 
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(ph_str[t].begin(), ph_str[t].end(), 0.0);
@@ -573,5 +537,7 @@ double gamma0_store[] = {
 
 	duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
 	cout<<"Finished load_rand. Time elapsed: "<< duration <<'\n';
+
+
 }
 
