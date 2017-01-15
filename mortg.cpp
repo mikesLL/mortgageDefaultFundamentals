@@ -4,34 +4,29 @@
 mortg::mortg(){
 
 	// store zeros associated with each rate and then each time period
+	// NOTE: use n_rm
 	vector<double> zeros_RMN(rm_n, 0.0);
 	vector<int> zeros_int_MN(m_n, 0);
 	vector<vector<double>> zeros_RMN_T(rm_n, vector<double>(N_term, 0.0));
 	vector<vector<double>> zeros_MN_T(m_n, vector<double>(N_term, 0.0));
+
+	vector<vector<int>> zeros_int_NRM_NRM (n_rm, vector<int>(n_rm, 0));
 	vector<vector<vector<int>>> zeros_int_RMN_RMN_RMN(rm_n, vector<vector<int>>(rm_n, vector<int>(rm_n, 0)));
 
 	pmt0 = zeros_RMN;  // initialize original mortgage pmt vector
 	bal = zeros_RMN_T; // initialize mortgage balance vector
 	pmt = zeros_MN_T;  // initialize mortgage pmt vector
 	
-	m2rcurr_map = zeros_int_MN;
+	//m2rcurr_map = zeros_int_MN;
 	m2rpmt_map = zeros_int_MN;
 	m2rlb_map = zeros_int_MN;
 
-	r2m_map = zeros_int_RMN_RMN_RMN;
-	m2mrefi_map = zeros_int_MN;
-
-	//vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
-	// state maps
-	//vector<int> m2rcurr_map(m_n, 0);
-	//vector<int> m2rpmt_map(m_n, 0);
-	//vector<int> m2rlb_map(m_n, 0);
-	//vector<vector<vector<int>>> r2m_map(rm_n, vector<vector<int>> (rm_n, vector<int> (rm_n, 0)));
-
-	//vector<int> m2mrefi_map(m_n, 0); // state map: m to m refi
+	r2m_map = zeros_int_NRM_NRM;
+	//r2m_map = zeros_int_RMN_RMN_RMN;
+	//m2mrefi_map = zeros_int_MN;
 
 	// initialize maps
-	// states: current rate, payment rate, loan balance rate
+	// mortgage states: payment rate (used for future payments), loan balance rate
 	int i_m_refi;
 	i_m = 0;
 
@@ -41,35 +36,43 @@ mortg::mortg(){
 
 	//r2m_map[1][1][1] = 0;
 	
-	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
-		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
-			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
-				m2rcurr_map[i_m] = i_rcurr; // pass in i_m, retrieve i_rcurr state
-				m2rpmt_map[i_m] = i_rpmt; // pass in i_m, retrieve i_pmt state
-				m2rlb_map[i_m] = i_rlb; // pass in i_m, retrieve i_rlb state
-
-				r2m_map[i_rcurr][i_rpmt][i_rlb] = i_m;
-
-				i_m++;
+	//for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
+	for (i_rpmt = 0; i_rpmt < n_rm; i_rpmt++) {
+		for (i_rlb = 0; i_rlb < n_rm; i_rlb++) {
+			//m2rcurr_map[i_m] = i_rcurr; // pass in i_m, retrieve i_rcurr state
+			m2rpmt_map[i_m] = i_rpmt; // pass in i_m, retrieve i_pmt state
+			m2rlb_map[i_m] = i_rlb; // pass in i_m, retrieve i_rlb state
+			r2m_map[i_rpmt][i_rlb] = i_m;
+			//r2m_map[i_rcurr][i_rpmt][i_rlb] = i_m;
+			i_m++;
 			}
 		}
-	}
+	//}
 
 
-	int foo = r2m_map[0][0][0];
+	//int foo = r2m_map[0][0][0];
+	// WANT: pass in i_m (mortgage state)
+	// and pass in i_rcurr
+	// get out : i_m_refi
+
+	//foo_refi_map = zeros ... r2m_map[i_rcurr][i_rlb];
+	//foo_refi_map[i_m][i_rcurr] = i_m_refi = r2m_map[i_rcurr][m2rlb_map[i_m]]
+
 	// initialize refinance map
-	i_m = 0;
+	//i_m = 0;
 	// int i_m_refi; // i_m associated with refinancing
 	// note that due to indexing r2m_map must be pre-computed 
-	for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
-		for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
-			for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
+	//for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
+		//for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
+	//		for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
 				// refinance: retrieve i_m_refi where i_lb, i_rcurr fixed but pmt rate = curr rate
-				m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; 
-				i_m++;
-			}
-		}
-	}
+	//			//m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; 
+		//		m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rlb]; 
+	//			i_m++;
+//			}
+		//}
+	//}
+
 
 	// Q: will the value fn at the lower rate have already been computed?
 	// Q: how to compute the difference in loan balances at time of refinance?

@@ -42,6 +42,10 @@ eval_res res_t_0;
 	
 double b_min;
 	
+double w_refi;
+eval_res res_refi;
+int t_refi = 1;
+
 vector<double> theta1;
 	
 int y_i; 
@@ -93,7 +97,7 @@ int i_rcurr, i_rpmt, i_rlb;  // mortgage state: current rate, payment rate, loan
 // permanent renter case: set t_i2 = 0!
 t_i2 = 0;
 	
-//for (i_m = 0; i_m < m_n; i_m++) { // MODS HERE
+// Note: renter problem: Do not need to cycle through different mortgage states
 for (i_s = 0; i_s < n_s; i_s++) {
 
 	// load in states
@@ -204,22 +208,14 @@ double loan_diff;  // loan balance difference
 
 cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 first; case: begin with renter 
-	for (i_m = 0; i_m < m_n; i_m++) { // MODS HERE
-		for (i_s = 0; i_s < n_s; i_s++) {
+	for (i_s = 0; i_s < n_s; i_s++) {
+		for (i_m = 0; i_m < m_n; i_m++) { // Loop through mortgage states
 
 			// given i_m, load in mortgage state details
-			i_rcurr = (*mortg1).m2rcurr_map[i_m];      // current market rate
+			i_rcurr = (*snodes1).s2i_rm[i_s];           // Load in short rate  TODO: add in a premium to convert short-rate to mortgage
+			//i_rcurr = (*mortg1).m2rcurr_map[i_m];     // current market rate
 			i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
 			i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
-
-			// Refinance condition
-			if (i_rcurr < i_rpmt) {
-				i_m_refi = (*mortg1).m2mrefi_map[i_m]; // pass in i_m, get i_m_refi;
-				loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor]; 
-				// loan balance if ammort at repayment rate - loan balance if ammort at current market rate
-				// IF > 0, need to put up loan difference; decrease in liquid assets
-				// IF < 0, cash-out refinance; increase in liquid assets
-			}
 
 			// TODO: verify this works			
 			mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in each state
@@ -264,31 +260,39 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);    // store opt result
 
-	
+					                                                             
 				// COMPUTE CASE: HH REFINANCES
-				double w_refi;
-				eval_res res_refi;
-				int t_refi = 1;                                                                // tenure index in event of refi
+				if (i_rcurr < i_rpmt) {
+					t_refi = 1;  // tenure index in event of refi
+					//i_m_refi = (*mortg1).m2mrefi_map[i_m]; // pass in i_m, get i_m_refi;
 
-				w_refi = (*rr1).w_grid[w_i] ;                                                  // compute liquid wealth if HH refinances
-				res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                            // evaluate value fn if household refinances
+					// pass in payment rate = curr rate, but keep loan balance the same
+					i_m_refi = (*mortg1).r2m_map[i_rcurr][(*mortg1).m2rlb_map[i_m]];  // pass in i_m, get i_m_refi;
 
-				// w (liquid assets) under refi must be greater than 0.0
-				// v1: current guess for value fn given optimization, default
-				// lower estimate for value of refinance must be greater than v1
-				if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0) ) {
-				
-					// load in policy associated with refinance
-					(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);                    // submit x as reference and load in x pol from t1 = 0
 
-					// set policy associated with refinance
-					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);      // first arguments are current state variables, x containts updated policy
-					v1 = res_refi.v_i_floor;                                                      // upadate value fn guess
+					loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor];
+					// loan balance if ammort at repayment rate - loan balance if ammort at current market rate
+					// IF > 0, need to put up loan difference; decrease in liquid assets
+					// IF < 0, cash-out refinance; increase in liquid assets
 
-					(*snodes1).w_state_swap(res_refi.w_i_floor);    // update wealth transition state
+					w_refi = (*rr1).w_grid[w_i];                                                  // compute liquid wealth if HH refinances
+					res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                            // evaluate value fn if household refinances
 
+					// w (liquid assets) under refi must be greater than 0.0
+					// v1: current guess for value fn given optimization, default
+					// lower estimate for value of refinance must be greater than v1
+					if ((w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0)) {
+
+						// load in policy associated with refinance
+						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);                    // submit x as reference and load in x pol from t1 = 0
+
+						// set policy associated with refinance
+						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);      // first arguments are current state variables, x containts updated policy
+						v1 = res_refi.v_i_floor;                                                      // upadate value fn guess
+
+						(*snodes1).w_state_swap(res_refi.w_i_floor);    // update wealth transition state
+					}
 				}
-
 				// COMPUTE CASE: HH DEFAULTS
 				w_adj = (*rr1).w_grid[w_i];                                // calc wealth if HH defaults
 				res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH defaults

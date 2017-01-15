@@ -23,9 +23,10 @@ public:
 	vector<int> m2rcurr_map;
 	vector<int> m2rpmt_map;
 	vector<int> m2rlb_map;
-	vector<vector<vector<int>>> r2m_map;
+	//vector<vector<vector<int>>> r2m_map;
+	vector<vector<int>> r2m_map;
 
-	vector<int> m2mrefi_map; // state map: m to m refi
+	//vector<int> m2mrefi_map; // state map: m to m refi
 
 	mortg(); // constructor
 	double fpmt(double loan_bal_in, double rm_in, int t_left_in); // mortgage payment formula
