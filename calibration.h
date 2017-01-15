@@ -79,7 +79,8 @@ const int n_ph = 9;      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
 const int n_yi = 3; // 3;  // labor income states
 
-const int n_s = n_ph * n_rent * n_yi;  // number of states
+//const int n_s = n_ph * n_rent * n_yi;  // number of states
+const int n_s = n_ph * n_rent * n_yi * n_rm;  // number of states
 
 // Labor income related parameters
 const double maint_mult = 0.98;

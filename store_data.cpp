@@ -13,6 +13,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 	// MODS HERE
 	int i_m = 0;
 
+	int i_rm; 
 	int i_s, i_ph, i_w, t_i, w_i, i_yi, i_rent;
 	int y_i_def = 0;
 	int year1_id = year1_id_in;                                   // read-in / curent year
@@ -64,20 +65,22 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 
 	// print t_i, ph_i, ph and state headers
 	// commas represent spaces for control variables
+	int i_rm_mid = (*snodes1).i_rm_mid;
 	for ( t_i = 0; t_i < t_n; t_i++) {                                               
 		for (i_ph = 0; i_ph < n_ph; i_ph++) {
 			for (i_rent = 0; i_rent < n_rent; i_rent++) {
 				for (i_yi = 0; i_yi < n_yi; i_yi++) {
-					v1_file << "t_i = " << t_i << "," << "i_ph = " << i_ph << "," << "ph = " << (*snodes1).p_gridt[year1t_id][i_ph]
-						<< "," << "i_rent = " << i_rent << "," << "i_yi = " << i_yi << ","
-						<< "y = " << (*snodes1).yi_gridt[year1t_id][i_yi] << ",";
+					//for (i_rm = 0; i_rm < n_rm; i_rm++) {
+						v1_file << "t_i = " << t_i << "," << "i_ph = " << i_ph << "," << "ph = " << (*snodes1).p_gridt[year1t_id][i_ph]
+							<< "," << "i_rent = " << i_rent << "," << "i_yi = " << i_yi << ","
+							<< "y = " << (*snodes1).yi_gridt[year1t_id][i_yi] << ",";
 
-					i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi]; 
-					if (i_s == i_s_mid) {
-						v1_file << "  i_s_mid" ;
-					}
-					v1_file << " , , ";
-
+						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm_mid];
+						if (i_s == i_s_mid) {
+							v1_file << "  i_s_mid";
+						}
+						v1_file << " , , ";
+					//}
 				}
 			}
 		}
@@ -110,7 +113,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 				for (i_rent = 0; i_rent < n_rent; i_rent++) {
 					for (i_yi = 0; i_yi < n_yi; i_yi++) {
 						
-						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi];  // given i_ph, i_rent, i_yi, get state
+						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm_mid];  // given i_ph, i_rent, i_yi, get state
 						
 						// MODS HERE					
 						v1_file << (*vfnt).w_grid[w_i] << ","

@@ -41,7 +41,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 
 	//int N_print =  40000;                                           // number of observations to print to file
 	//int N_sim = 2000000;                                            // number of simulations
-	int i_ph, i_rent, i_yi, i_s;                                      // state and individual dimension indices
+	int i_ph, i_rent, i_yi, i_rm, i_s;                                      // state and individual dimension indices
 
 	cout << "load ppath: ph0_in:  " << ph0_in << endl;
 	
@@ -389,10 +389,12 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	double ph_step;
 	double rent_step;
 	double yi_step;
+	double rm_step;
 
 	double ph_step1;
 	double rent_step1;
 	double yi_step1;
+	double rm_step1;
 
 	cout << "load_simpath.cpp: Cycle Through Observations" << endl;
 	for (t = 0; t < T_sim; t++) {
@@ -401,10 +403,12 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 		ph_step = ph_str_nds[t][1] - ph_str_nds[t][0];          // step-sizes
 		rent_step = 0.001; //rent_str_nds[t][1] - rent_str_nds[t][0];
 		yi_step = yi_str_nds[t][1] - yi_str_nds[t][0];
+		rm_step = rm_str_nds[t][1] - rm_str_nds[t][0]; 
 
 		ph_step1 = ph_str_nds[t + 1][1] - ph_str_nds[t + 1][0];
 		rent_step1 = 0.001; //rent_str_nds[t+1][1] - rent_str_nds[t+1][0];
 		yi_step1 = yi_str_nds[t + 1][1] - yi_str_nds[t + 1][0];
+		rm_step1 = rm_str_nds[t + 1][1] - rm_str_nds[t + 1][0]; 
 
 
 		for (n = 0; n < N_sim; n++) {
@@ -413,23 +417,27 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 			i_ph = (int) round( (ph_str[t][n] - ph_str_nds[t][0]) / ph_step);
 			i_rent = (int) round( (rent_str[t][n] - rent_str_nds[t][0]) / rent_step);
 			i_yi = (int) round( (yi_str[t][n] - yi_str_nds[t][0]) / yi_step);
+			i_rm = (int) round( (rm_str[t][n] - rm_str_nds[t][0]) / rm_step);
 			
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
 			i_rent = min(max(i_rent, 0), n_rent - 1);
 			i_yi = min(max(i_yi, 0), n_yi - 1);
+			i_rm = min(max(i_rm, 0), n_rm - 1);
 
-			s1 = (*snodes1).i2s_map[i_ph][i_rent][i_yi];                // map node to state
+			s1 = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm];                // map node to state
 
 			// next period: map observation to closest node
 			i_ph = (int)round((ph_str[t + 1][n] - ph_str_nds[t + 1][0]) / ph_step1);
 			i_rent = (int)round((rent_str[t + 1][n] - rent_str_nds[t + 1][0]) / rent_step1);
-			i_yi = (int)round((yi_str[t + 1][n] - yi_str_nds[t + 1][0]) / yi_step1);
+			i_yi = (int)round( (yi_str[t + 1][n] - yi_str_nds[t + 1][0]) / yi_step1);
+			i_rm = (int)round( (rm_str[t+1][n] - rm_str_nds[t+1][0]) / rm_step1);
 
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
 			i_rent = min(max(i_rent, 0), n_rent - 1);
 			i_yi = min(max(i_yi, 0), n_yi - 1);
+			i_rm = min(max(i_rm, 0), n_rm - 1);
 			
-			s2 = (*snodes1).i2s_map[i_ph][i_rent][i_yi];                 // map node to state
+			s2 = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm];                 // map node to state
 			
 			gamma_store[s1][s2] += 1;                                // store  in transition matrix
 		}

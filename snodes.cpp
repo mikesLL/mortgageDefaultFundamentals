@@ -24,15 +24,21 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 	// initialize i2s and s2i mappings
 	vector<vector<vector<int>>> zeros_NPH_NRENT_NYI(n_ph, vector<vector<int>>(n_rent, vector<int>(n_yi, 0)));
+
+	vector<vector<vector<vector<int>>>> zeros_NPH_NRENT_NYI_NRM(n_ph, vector<vector<vector<int>>>(n_rent, vector<vector<int>>(n_yi, vector<int>(n_rm, 0))));
+	
 	vector<int> zeros_NS(n_s, 0);
 
-	i2s_map = zeros_NPH_NRENT_NYI;
+	i2s_map = zeros_NPH_NRENT_NYI_NRM;
+	//i2s_map = zeros_NPH_NRENT_NYI;
 	s2i_ph = zeros_NS;
 	s2i_rent = zeros_NS;
 	s2i_yi = zeros_NS;
+	s2i_rm = zeros_NS;
 
 	i_s = 0;
 
+	/*
 	for (i_ph = 0; i_ph < n_ph; i_ph++) {
 		for (i_rent = 0; i_rent < n_rent; i_rent++) {
 			for (i_yi = 0; i_yi < n_yi; i_yi++) {
@@ -43,17 +49,33 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 				i_s++;
 			}
 		}
+	}*/
+
+	for (i_ph = 0; i_ph < n_ph; i_ph++) {
+		for (i_rent = 0; i_rent < n_rent; i_rent++) {
+			for (i_yi = 0; i_yi < n_yi; i_yi++) {
+				for (i_rm = 0; i_rm < n_rm; i_rm++) {
+					i2s_map[i_ph][i_rent][i_yi][i_rm] = i_s;      // initialize i2s map
+					s2i_ph[i_s] = i_ph;                           // initialize s2_i maps
+					s2i_rent[i_s] = i_rent;     
+					s2i_yi[i_s] = i_yi;
+					s2i_rm[i_s] = i_rm; 
+					i_s++;
+				}
+			}
+		}
 	}
 
 	// compute i_s_mid;
-	int i_ph_mid = (int) floor( .5*n_ph );
-	int i_rent_mid = (int) floor( .5*n_rent );
-	int i_yi_mid = (int) floor( .5*n_yi );
-
-	i_s_mid = i2s_map[i_ph_mid][i_rent_mid][i_yi_mid];
+	i_ph_mid = (int) floor( 0.5*n_ph );
+	i_rent_mid = (int) floor( 0.5*n_rent );
+	i_yi_mid = (int) floor( 0.5*n_yi );
+	i_rm_mid = (int)floor(0.5*n_rm);
+	
+	i_s_mid = i2s_map[i_ph_mid][i_rent_mid][i_yi_mid][i_rm_mid];
 
     for( i_ph = 0; i_ph < n_ph; i_ph++ ){
-		s_ph_midry[i_ph] = i2s_map[i_ph][i_rent_mid][i_yi_mid];
+		s_ph_midry[i_ph] = i2s_map[i_ph][i_rent_mid][i_yi_mid][i_rm_mid];
     }
 
 	int i_t;
