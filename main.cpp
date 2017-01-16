@@ -102,13 +102,15 @@ int main(){
 					snodes1.t_hor = t_hor;
 
 					// HERE: test wealth distribution and transition matrices
-					// 1) initialize distribution
+					
+					
+					//snodes1.init_dist();          // 1) initialize sdist, wdist distribution 
+					//snodes1.wtrans();             // 1.1) compute next period results
 					// 2) print out results
 
-					// Main inputs
-					vector<double> sdist(n_s, 0.0);                    // Initial state prob distribution
-					vector<double> wdist(w_n, 0.0);                    // Initial Wealth distribution
-					
+					cout << "main.cpp: finished with wtrans" << endl;
+					cin.get();
+					// In future, just need a sdist and a a
 
 
 					cout << "main.cpp: vf_P: enter data" << endl;

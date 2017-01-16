@@ -57,9 +57,8 @@ public:
 
 	void w_state_swap(int i_w1_new_in);
 
-	void wtrans();  // compute wealth transition and hazard rate
-
-	void init_dist();
+	//void wtrans();  // compute wealth transition and hazard rat
+	//void init_dist();
 
 	vector<double> sdist, wdist;
 
