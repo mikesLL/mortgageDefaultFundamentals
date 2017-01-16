@@ -57,6 +57,8 @@ eval_perf/*.mat
 eval_perf/*.png
 eval_perf/*.asv
 
+def_stats/*.csv
+
 figures/*
 
 *.sdf

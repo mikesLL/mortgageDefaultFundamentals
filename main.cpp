@@ -71,6 +71,9 @@ int main(){
 				snodes snodes1(age0, T_max, city_id);
 
 				def_stats def_stats1(&snodes1);
+				def_stats1.wtrans_iterate(T_max);
+				def_stats1.print_def_stats(T_max);
+
 				cout << "main.cpp : finished running def_stats" << endl;
 
 				cout << "snoedes1.rent_adj = " << snodes1.rent_adj << endl; 
@@ -103,19 +106,7 @@ int main(){
 
 				for (t_hor = (T_max - 1); t_hor >= 0; t_hor--) {
 					snodes1.t_hor = t_hor;
-
-					// HERE: test wealth distribution and transition matrices
 					
-					
-					//snodes1.init_dist();          // 1) initialize sdist, wdist distribution 
-					//snodes1.wtrans();             // 1.1) compute next period results
-					// 2) print out results
-
-					cout << "main.cpp: finished with wtrans" << endl;
-					cin.get();
-					// In future, just need a sdist and a a
-
-
 					cout << "main.cpp: vf_P: enter data" << endl;
 					vf_P.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
 
@@ -125,10 +116,10 @@ int main(){
 					cout << "main.cpp: begin store_data" << endl;
 					store_data(&snodes1, &vf_P, city_init, t, t_hor, T_max);
 
-					// HERE: add code to print out transition matrices
-
 					vf_F = vf_P;
 				}
+				def_stats1.wtrans_iterate(T_max);
+				def_stats1.print_def_stats(T_max); // print out transition matrices
 
 				t_hor = 0;
 
