@@ -26,9 +26,9 @@ Copyright A. Michael Sharifi, 2016
 int main(){
 	string city_init, city_filename;                                   // city name
 	hdata city_data;                                     // housing data structure stores previous rents and lagged returns
-
 	mortg mortg1;
 	cout << "Finished Loading Mortgage Class" << endl;
+
 	//cin.get();
 
 	const string city_init_vec[] = {"sd", "sf", "lax", "bos", "chi", "den", "mia", "nym"  };
@@ -69,6 +69,9 @@ int main(){
 
 				// discretized states including home prices, rents, incomes
 				snodes snodes1(age0, T_max, city_id);
+
+				def_stats def_stats1(&snodes1);
+				cout << "main.cpp : finished running def_stats" << endl;
 
 				cout << "snoedes1.rent_adj = " << snodes1.rent_adj << endl; 
 
