@@ -22,63 +22,25 @@ mortg::mortg(){
 	m2rlb_map = zeros_int_MN;
 
 	r2m_map = zeros_int_NRM_NRM;
-	//r2m_map = zeros_int_RMN_RMN_RMN;
-	//m2mrefi_map = zeros_int_MN;
-
-	// initialize maps
-	// mortgage states: payment rate (used for future payments), loan balance rate
-	int i_m_refi;
 	i_m = 0;
 
-	int i_rcurr; // current rate
-	int i_rpmt;  // payment rate
-	int i_rlb;   // loan balance assuming payment at this rate
+	int i_rcurr, i_rpmt, i_rlb; // current, payment, loan balance rates
 
-	//r2m_map[1][1][1] = 0;
-	
-	//for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
+	// initialize maps
 	for (i_rpmt = 0; i_rpmt < n_rm; i_rpmt++) {
 		for (i_rlb = 0; i_rlb < n_rm; i_rlb++) {
-			//m2rcurr_map[i_m] = i_rcurr; // pass in i_m, retrieve i_rcurr state
 			m2rpmt_map[i_m] = i_rpmt; // pass in i_m, retrieve i_pmt state
 			m2rlb_map[i_m] = i_rlb; // pass in i_m, retrieve i_rlb state
 			r2m_map[i_rpmt][i_rlb] = i_m;
-			//r2m_map[i_rcurr][i_rpmt][i_rlb] = i_m;
 			i_m++;
-			}
 		}
-	//}
+	}
+	
 
 
-	//int foo = r2m_map[0][0][0];
-	// WANT: pass in i_m (mortgage state)
-	// and pass in i_rcurr
-	// get out : i_m_refi
-
-	//foo_refi_map = zeros ... r2m_map[i_rcurr][i_rlb];
-	//foo_refi_map[i_m][i_rcurr] = i_m_refi = r2m_map[i_rcurr][m2rlb_map[i_m]]
-
-	// initialize refinance map
-	//i_m = 0;
-	// int i_m_refi; // i_m associated with refinancing
-	// note that due to indexing r2m_map must be pre-computed 
-	//for (i_rcurr = 0; i_rcurr < rm_n; i_rcurr++) {
-		//for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
-	//		for (i_rlb = 0; i_rlb < rm_n; i_rlb++) {
-				// refinance: retrieve i_m_refi where i_lb, i_rcurr fixed but pmt rate = curr rate
-	//			//m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rcurr][i_rlb]; 
-		//		m2mrefi_map[i_m] = r2m_map[i_rcurr][i_rlb]; 
-	//			i_m++;
-//			}
-		//}
-	//}
+	
 
 
-	// Q: will the value fn at the lower rate have already been computed?
-	// Q: how to compute the difference in loan balances at time of refinance?
-	// bal[i_r_refi] = ...
-	// bal[i_r] = ...
-	// difference modeled as a change in liquid assets
 
 	// Value of refinancing: eval value fn at i_m_refi
 	
@@ -104,7 +66,7 @@ mortg::mortg(){
 			// 1) current rate
 			// 2) payment rate
 			// 3) loan balance (assuming paid off at original rate)
-			i_rcurr = m2rcurr_map[i_m];
+			//i_rcurr = m2rcurr_map[i_m];  // error is here!
 			i_rpmt = m2rpmt_map[i_m];
 			i_rlb = m2rlb_map[i_m];		
 

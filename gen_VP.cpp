@@ -100,6 +100,7 @@ t_i2 = 0;
 // Note: renter problem: Do not need to cycle through different mortgage states
 for (i_s = 0; i_s < n_s; i_s++) {
 
+	int foo_i_s = 0;
 	// load in states
 	i_yi = (*snodes1).s2i_yi[i_s];
 	i_rent = (*snodes1).s2i_rent[i_s];
@@ -184,8 +185,9 @@ for (i_s = 0; i_s < n_s; i_s++) {
 	}
 	//(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
 	// MOD HERE
-	(*rr1).interp_vw3(t_i, i_m, i_s);  // clean and interpolate grid	
-
+	for (i_m = 0; i_m < m_n; i_m++) {
+		(*rr1).interp_vw3(t_i, i_m, i_s);  // clean and interpolate grid	
+	}
 	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 	cout << "time elapsed: " << duration << '\n';
 }
@@ -209,6 +211,15 @@ double loan_diff;  // loan balance difference
 cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 first; case: begin with renter 
 	for (i_s = 0; i_s < n_s; i_s++) {
+
+		i_yi = (*snodes1).s2i_yi[i_s];
+		i_rent = (*snodes1).s2i_rent[i_s];
+		i_ph = (*snodes1).s2i_ph[i_s];
+
+		start = clock();
+		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
+			<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
+
 		for (i_m = 0; i_m < m_n; i_m++) { // Loop through mortgage states
 
 			// given i_m, load in mortgage state details
@@ -219,15 +230,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 
 			// TODO: verify this works			
 			mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in each state
-
-			// 
-			i_yi = (*snodes1).s2i_yi[i_s];
-			i_rent = (*snodes1).s2i_rent[i_s];
-			i_ph = (*snodes1).s2i_ph[i_s];
-
-			start = clock();
-			cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
-				<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
 
 			for (w_i = 0; w_i < w_n; w_i++) {
 
@@ -311,9 +313,10 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 				
 			(*rr1).interp_vw3(t_i, i_m, i_s);  // clean grid
 
-			duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-			cout << "time elapsed: " << duration << "  lcount = " << (*rr2).lcount << endl;
 		}
+
+		duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+		cout << "time elapsed: " << duration << "  lcount = " << (*rr2).lcount << endl;
 	}
 }
 

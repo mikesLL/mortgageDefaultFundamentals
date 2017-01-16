@@ -100,6 +100,17 @@ int main(){
 
 				for (t_hor = (T_max - 1); t_hor >= 0; t_hor--) {
 					snodes1.t_hor = t_hor;
+
+					// HERE: test wealth distribution and transition matrices
+					// 1) initialize distribution
+					// 2) print out results
+
+					// Main inputs
+					vector<double> sdist(n_s, 0.0);                    // Initial state prob distribution
+					vector<double> wdist(w_n, 0.0);                    // Initial Wealth distribution
+					
+
+
 					cout << "main.cpp: vf_P: enter data" << endl;
 					vf_P.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
 
@@ -108,6 +119,8 @@ int main(){
 
 					cout << "main.cpp: begin store_data" << endl;
 					store_data(&snodes1, &vf_P, city_init, t, t_hor, T_max);
+
+					// HERE: add code to print out transition matrices
 
 					vf_F = vf_P;
 				}

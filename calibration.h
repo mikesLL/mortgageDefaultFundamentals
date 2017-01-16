@@ -30,7 +30,8 @@ const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.
 // current rate: current mortgage rate
 // pmt rates: payment on mortgage
 // mortgage balance
-const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+//const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+const int m_n = rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
 
 const int city_begin = 2;
 const int city_end = 2;
@@ -51,7 +52,7 @@ const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // man
 const double csfLev = csfLevStore[param_id];
 const int w_n = 10; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 35; //65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 36; //35; //65;                  // age at which household retires / annuitizes wealth  
 					
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 

@@ -133,71 +133,73 @@ void snodes::w_state_swap( int i_w1_swap_in) {
 	 
 }
 
-// want: given a vector of wealth distributions, calculate wealth distribution in
-// the next period
-void snodes::foo_wprob() {
+// Initialize state distribution, wealth distribution
+void snodes::init_dist() {
+	vector<double> zeros_NS(n_s, 0.0);
+	vector<double> zeros_WN(w_n, 0.0); 
+	sdist = zeros_NS;                                     // Initial state prob distribution
+	wdist = zeros_WN;                                     // Initial Wealth distribution
 
-	int i_s1_foo, i_s2_foo, i_w1_foo;
-	int i_w1l = int(floor(w_n / 2.0));
-	int i_w1h = int(ceil(w_n / 2.0));
+	// Initial conditions
+	sdist[floor(n_s / 2.0)] = 1.0;                                  // First Year: impose in median state
+	double w_med = 0.4;                                             // impose median wealth = 40k
+	int i_w_med = int(floor((w_med - w_min) / (w_max - w_min)));    // convert to wealth index
+	wdist[i_w_med] = 1.0;                                           // impose mass of wealth is in median of w_n
+}
 
-	int i_w2l, i_w2h;
-	
-	double w2_l, w2_h;
+// wtrans: given a vector representing the wealth distribution, calculate wealth distribution in next period
+// Inputs
+// 1) initial state distribution (if no input, impose in median state)
+// 2) initial wealth distribution (if no input, all HH's at median wealth) 
+// 3) state transition matrix
+// Output
+// 1) next period wealth distribution (used to calculate probability of default)
+// 2) hazard rate (conditional upon owning a home this year, state dist, and wealth dist,
+// probability of defaulting in next period)
+// NOTES: 
+// wdist2: prob(in state) * prob trans to next state * wealth in curr state * wealth in next state
+// hazard rate = probability of being in current state * wealth dist in current state * pdef | state, wealth
+void snodes::wtrans() {
+	//vector<double> sdist;
+	// Main inputs
+	//vector<double> sdist(n_s, 0.0);                    // Initial state prob distribution
+	//vector<double> wdist(w_n, 0.0);                    // Initial Wealth distribution
+	vector<vector<double>> gammap = gammat[t_hor];     // State transition matrix
 
-	// load in wealth dist
-	vector<double> wdist(w_n, 0.0);
-	wdist[i_w1l] = 0.5;
-	wdist[i_w1h] = 0.5;
-
-	// set next period wealth dist
-	vector<double> wdist2(w_n, 0.0);
-	
-	// load in state transition matrix
-	vector<vector<double>> foo_gamma = gammat[t_hor]; // gammat: (T x n_s * n_s )
-
-	// vector which tells us the probability of each state
-	vector<double> prob_state_dist(n_s, 0.0);   // need an initial state distribution
-	prob_state_dist[floor(n_s / 2.0)] = 1.0;    // first year: impose we are in median state
+	// Main outputs
+	vector<double> wdist2(w_n, 0.0);            // Next period wealth distribution
 	vector<double> def_state_dist(n_s, 0.0);    // proportion of HH's who default in each state
-	double hazard_rate = 0.0;
+	double hazard_rate = 0.0;                   // hazard rate
 
-	// load in wealth in next period given state
-	for (i_s1_foo = 0; i_s1_foo < n_s; i_s1_foo++) {
-		for (i_s2_foo = 0; i_s2_foo < n_s; i_s2_foo++) {
-			for (i_w1_foo = 0; i_w1_foo < w_n; i_w1_foo++) {
-				w2_l = w_t2_state[t_hor][i_s1_foo][i_s2_foo][i_w1_foo][0];  // low and high wealth realizations
-				w2_h = w_t2_state[t_hor][i_s1_foo][i_s2_foo][i_w1_foo][1];
-
-				// TODO: double check round fn
-				// round to closest wealth index
-				i_w2l = round( (w2_l - w_min) / (w_max - w_min) );
-				i_w2l = min( max(i_w2l, 0) , w_n - 1);
+	// Indices
+	int i_s1p, i_s2p, i_w1p; // current state, next state, current wealth
+	int i_w2l, i_w2h;        // wealth in low state, high state (next period)
+	double w2_l, w2_h;       // wealth in low state, high state (next period)
+	
+	// COMPUTE: wdist2: wealth distribution in the next period
+	for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
+		for (i_s2p = 0; i_s2p < n_s; i_s2p++) {
+			for (i_w1p = 0; i_w1p < w_n; i_w1p++) {                
+				w2_l = w_t2_state[t_hor][i_s1p][i_s2p][i_w1p][0];    // load in wealth in next period given state
+				w2_h = w_t2_state[t_hor][i_s1p][i_s2p][i_w1p][1];    // (low and high wealth realizations)
+	
+				i_w2l = round( (w2_l - w_min) / (w_max - w_min) );   // round wealth realization to closest wealth index
+				i_w2l = min( max(i_w2l, 0) , w_n - 1);               // TODO: double check round fn
 
 				i_w2h = round( (w2_h - w_min) / (w_max - w_min) );
 				i_w2h = min( max(i_w2h, 0), w_n - 1);
 
-				// add outcome probability mass
-				// 0.5: equity return
-				wdist2[i_w2l] = wdist2[i_w2l] + 0.5*foo_gamma[i_s1_foo][i_s2_foo]*wdist[i_w1_foo];
-				wdist2[i_w2h] = wdist2[i_w2h] + 0.5*foo_gamma[i_s1_foo][i_s2_foo]*wdist[i_w1_foo];
+				wdist2[i_w2l] = wdist2[i_w2l] + 0.5*sdist[i_s1p]*gammap[i_s1p][i_s2p]*wdist[i_w1p];  // add outcome probability mass
+				wdist2[i_w2h] = wdist2[i_w2h] + 0.5*sdist[i_s1p]*gammap[i_s1p][i_s2p]*wdist[i_w1p];  // 0.5: equity return
+				
 			}
-			
 		}
 	}
 
-	// compute hazard rate for default
-	// for each state and wealth index check whether HH defualts
-	// weight by probability of being in state and percent of population at that wealth index
-	// probability of being in state: prob_state_dist[i_s1_foo]
-	// percent of population at that wealth index: wdist[i_w1_foo] 
-	hazard_rate = 0.0;
-	for (i_s1_foo = 0; i_s1_foo < n_s; i_s1_foo++) {
-		for (i_w1_foo = 0; i_w1_foo < w_n; i_w1_foo++) {
-
-			// hazard rate
-			hazard_rate = hazard_rate + prob_state_dist[i_s1_foo]*wdist[i_w1_foo] * (1.0 - double(own_state[t_hor][i_s1_foo][i_w1_foo]));
-
+	// COMPUTE: default hazard rate
+	for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                       // cycle through current state
+		for (i_w1p = 0; i_w1p < w_n; i_w1p++) {                   // cycle through wealth
+			hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * (1.0 - double(own_state[t_hor][i_s1p][i_w1p]));
 		}
 	}
 }
