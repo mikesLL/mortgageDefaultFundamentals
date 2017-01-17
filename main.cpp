@@ -102,7 +102,7 @@ int main(){
 				vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
 
 				cout << "main.cpp: set terminal" << endl;
-				vf_F.set_terminal(phr_in);
+				vf_F.set_terminal(&mortg1, phr_in );
 
 				cout << "main.cpp: store_data" << endl;
 				store_data(&snodes1, &vf_F, city_init, t, t_hor, T_max);

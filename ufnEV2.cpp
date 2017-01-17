@@ -12,6 +12,7 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	int i_ph1;
 	snodes1 = (snodes *)snodes_in;     // state dimensions
 	vf2 = (vfn *)vf2_in;               // next period value function
+	loan_bal1 = (*snodes1).loan_bal1;
 
 	csfLevSn = (*snodes1).csfLevSn; 
 	t_hor = (*snodes1).t_hor; // current horizon / value function under computation
@@ -77,7 +78,7 @@ double ufnEV2::eval( vector<double> x ){
 	double rb_unsec = rb + credit_prem;
 	
 	// calc effective effective interest rate
-	b_sec = max(x[1], - max_ltv*(*snodes1).ten_w[t_i2] * ph1);
+	b_sec = max( x[1], - max_ltv*( (*snodes1).ten_w[t_i2] * ph1 - loan_bal1  )  );
 	b_unsec = x[1] - b_sec;
 	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec; 
 	
@@ -113,7 +114,7 @@ double ufnEV2::eval( vector<double> x ){
 
 // given vector of control variables x, evaluate and store low and high wealth values
 // in each state
-void ufnEV2::store_wlh2(vector<double> x ) {
+void ufnEV2::store_wlh2( vector<double> x ) {
 
 	int i_s1 = (*snodes1).i_s1;
 	int i_w1 = (*snodes1).i_w1;
@@ -132,20 +133,14 @@ void ufnEV2::store_wlh2(vector<double> x ) {
 	double rb_unsec = rb + credit_prem;
 
 	// calc effective effective interest rate
-	b_sec = max(x[1], -max_ltv*(*snodes1).ten_w[t_i2] * ph1);
+	b_sec = max(x[1], -max_ltv*((*snodes1).ten_w[t_i2] * ph1 - loan_bal1));
 	b_unsec = x[1] - b_sec;
 	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec;
-	
 	
 	// compute liquid wealth in each state
 	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
 		(*snodes1).w_t2_state_low[t_hor][i_s1][i_s2][i_w1] = rb_eff_agg + exp(retxv[0])*x[2];
 		(*snodes1).w_t2_state_high[t_hor][i_s1][i_s2][i_w1] = rb_eff_agg + exp(retxv[1])*x[2];
-
-		//for (i_x2 = 0; i_x2 < retxn; i_x2++) {
-		//	w2 = rb_eff_agg + exp(retxv[i_x2])*x[2];
-		//	(*snodes1).w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w2;
-		//}
 	}
 }
 

@@ -314,7 +314,11 @@ eval_res vfn::eval_v_move(int i_t_in, int i_s_in, double w_in, int t_left) {
 
 
 // set value function in terminal case
-void vfn::set_terminal(double phr_in) {
+void vfn::set_terminal(void *mortg_in, double phr_in) {
+
+	mortg *mortg1 = (mortg *)mortg_in; 
+	int t_hor_term = T_max - 1;
+
 	double coh_perm, coh_perm2;
 	double c_perm;
 
@@ -326,18 +330,26 @@ void vfn::set_terminal(double phr_in) {
 
 	int i_ph3;
 	int i_t, i_s, i_w, i_yi, i_rent;
-	int i_rm;
+	int i_m; // mortgage state
+	int i_rlb; // load in loan balance state
+	double loan_bal_term; 
 
 	for (i_t = 0; i_t < t_n; i_t++) {
-		for (i_rm = 0; i_rm < rm_n; i_rm++) {  // MOD HERE: add here for i_rate = 0,1
-			for (i_s = 0; i_s < n_s; i_s++) {
+		for (i_s = 0; i_s < n_s; i_s++) {
+			for (i_m = 0; i_m < m_n; i_m++) {
 				for (i_w = 0; i_w < w_n; i_w++) {
 
-					w_adj = c_fs + max(w_grid[i_w], 0.0);   // terminal wealth
+					loan_bal_term = 0.0; 
+					if (i_t >= 1) {
+						i_rlb = (*mortg1).m2rlb_map[i_m];                               // loan balance index
+						loan_bal_term = (*mortg1).bal[i_rlb][t_hor_term];               // retrieve current loan balance
+					}
 
-					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);
+					w_adj = c_fs + (rb-1.0)*max(w_grid[i_w] - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
-					vw3_grid[i_t][i_rm][i_s][i_w] = b_motive*V_perm;        // bequest value
+					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
+
+					vw3_grid[i_t][i_m][i_s][i_w] = b_motive*V_perm;        // bequest value
 					// TODO: vw3_grid[i_t][i_r][i_s][i_w]; 
 
 					if (i_t == 0) {
@@ -348,12 +360,13 @@ void vfn::set_terminal(double phr_in) {
 				}
 
 				//interp_vw3(i_t, i_s);
-				interp_vw3(i_t, i_rm, i_s);
+				interp_vw3(i_t, i_m, i_s);
 			}
 		}
 	}
 }
 
+//for (i_rm = 0; i_rm < rm_n; i_rm++) {  // MOD HERE: add here for i_rate = 0,1
 
 // MOD HERE: add in i_rm state
 // set value function in terminal case

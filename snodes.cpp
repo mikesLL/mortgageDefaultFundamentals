@@ -138,19 +138,16 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 void snodes::w_state_swap( int i_w1_swap_in) {
 
 	int i_w1_swap = i_w1_swap_in;
-	int i_s2, i_x2;
+	int i_s2;
 	
 	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
 		w_t2_state_low[t_hor][i_s1][i_s2][i_w1] = w_t2_state_low[t_hor][i_s1][i_s2][i_w1_swap];
 		w_t2_state_high[t_hor][i_s1][i_s2][i_w1] = w_t2_state_high[t_hor][i_s1][i_s2][i_w1_swap];
-		//for (i_x2 = 0; i_x2 < retxn; i_x2++) {
-		//	w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
-		//}
 	}
-
-	 
 }
-
+//for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+//	w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
+//}
 
 void snodes::adj_tax() {
 

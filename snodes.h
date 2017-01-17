@@ -14,6 +14,7 @@ public:
 
 	// compute i_s_mid;
 	int i_ph_mid, i_rent_mid, i_yi_mid, i_rm_mid;
+	double loan_bal1; 
 
 	int city_id;
 	double hu_ten[t_n]; //= hu_ten_store[N_cities][t_n];

@@ -36,7 +36,8 @@ public:
 	double csf_1yr;
 	int T_max;
 
-	snodes *snodes1;    // pointer to 
+	snodes *snodes1;    // pointer to snodes
+	//mortg *mortg1;      // pointer to mortgage
 
 	vector<double> v_move;
 
@@ -67,7 +68,7 @@ public:
 	eval_res eval_v_norm(double w_in);
 	eval_res eval_v_move(int i_t_in, int i_s_in, double w_in, int t_left);
 
-	void set_terminal( double phr_in );
+	void set_terminal( void *mortg_in, double phr_in );
 
 	void interp_vw3(int i_t_in, int i_rm_in, int i_s_in);
 
