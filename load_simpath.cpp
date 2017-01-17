@@ -58,12 +58,31 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 
 	double y_city_mult[] = { 1.23, 1.54, 1.02, 1.34, 1.02, 1.00,  0.95, 1.39 };
 
+	double rm_str0 = 0.01;  // initial short rate
+	double rho_rm = 0.4;    // short-rate: autocorrelation
+	double theta_rm = 1.0;  // short-rate: mean-reversion
+	double rm_mu = 0.04; // long-run short rate mean
+
 	double alpha_hat = 0.02;
 	double rhof_hat = 0.46;
 	double theta_hat = 0.34;
 	double sigma_ret = 0.08;
 	double gamma0_hat = -2.27;
 	double gamma1_hat = 0.59;
+
+	double hp_alpha_hat = 0.0041;
+	double hp_rhof_hat = 0.768;
+	double hp_theta_hat = -0.18;
+	double hp_sigma_ret = 0.0699;
+	double hp_gamma0_hat = 4.69;
+	double hp_gamma1_hat = 0.50;
+
+	double sr_mu_est = 0.00;
+	double sr_rho_est = 0.0;
+	double sr_mort_term =  10.0;
+	double sr_mort_prem = 0.0322;
+	double sr_gamma0_hat = 4.69;
+	double sr_sigma_est = 0.0175;
 		 
 	double p_min = 0.01;                                                         // lower bound on home prices										   
 	
@@ -122,12 +141,6 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	vector<vector<double>> ph_str_nds(T_sim + 1, vector<double> (n_ph, 0.0) );          // home price nds
 	vector<vector<double>> rent_str_nds(T_sim + 1, vector<double> (n_rent, 0.0) );      // rent nds
 	vector<vector<double>> yi_str_nds(T_sim + 1, vector<double>(n_yi, 0.0) );         // individual-income nds
-
-	double rm_str0 = 0.01;  // initial short rate
-	double rho_rm = 0.4;    // short-rate: autocorrelation
-	double theta_rm = 1.0;  // short-rate: mean-reversion
-	double rm_mu = 0.04; // long-run short rate mean
-
 
 	double v_t0 = 0.0;                                   // initial permanent income shock
 	double v_t = 0.0;                                    // permanent income state
@@ -217,10 +230,10 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 		z2 = dist(gen);
 		z3 = dist(gen); // interest rate innovation
 		
+		eps_r = sr_sigma_est*z3;
 		eps_h = sigma_ret*z1;
 		eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
 
-		
 		g_yc_t = mu_yc + sigma_yc*dist(gen);    // city-wide income / rent
 		u_t = sigma_u*dist(gen);                // individual: permanent shock
 		e_t = sigma_e*dist(gen);                // individual: transient shock
@@ -229,7 +242,10 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 		eta_t0 = eta_t;                           // update city-wide income component 
 		v_t = v_t0 + u_t;                        // upadate income permanent component
 		v_t0 = v_t;                              // update transient component
-		
+												 
+		// compute interest rate
+		rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
+
 		// compute age-related component of log-income (deterministic)
 		log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 + 0.0033*pow(age_td, 3.0) / 100.0;
 
@@ -268,9 +284,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 			e_t = sigma_e*dist(gen);              // individual: transient shock
 
 			// update interest rate
-			rm_str[t][n] = rho_rm*rm_str[t - 1][n] + theta_rm*(rm_str[t - 1][n] - rm_mu) + eps_r; 
-			// TODO: verify vasicek formula here
-
+			rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
 
 			// update income path 
 			eta_t = rho_y_city*eta_t0 + eps_y;        // set city-wide income component

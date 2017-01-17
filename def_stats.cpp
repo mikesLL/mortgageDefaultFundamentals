@@ -58,12 +58,14 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 		gammap = (*snodes1).gammat[i_t_hor];     // State transition matrix
 
+		sdist2[134] = sdist2[134] + sdist[0] * gammap[0][134];
+
 		// COMPUTE: wdist2: wealth distribution in the next period
 		for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
 			for (i_s2p = 0; i_s2p < n_s; i_s2p++) {
 				for (i_w1p = 0; i_w1p < w_n; i_w1p++) {
-					w2_l = (*snodes1).w_t2_state[t_hor][i_s1p][i_s2p][i_w1p][0];    // load in wealth in next period given state
-					w2_h = (*snodes1).w_t2_state[t_hor][i_s1p][i_s2p][i_w1p][1];    // (low and high wealth realizations)
+					w2_l = (*snodes1).w_t2_state[i_t_hor][i_s1p][i_s2p][i_w1p][0];    // load in wealth in next period given state
+					w2_h = (*snodes1).w_t2_state[i_t_hor][i_s1p][i_s2p][i_w1p][1];    // (low and high wealth realizations)
 
 					i_w2l = round((w2_l - w_min) / (w_max - w_min));   // round wealth realization to closest wealth index
 					i_w2l = min(max(i_w2l, 0), w_n - 1);               // TODO: double check round fn
@@ -77,8 +79,12 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 				sdist2[i_s2p] = sdist2[i_s2p] + sdist[i_s1p] * gammap[i_s1p][i_s2p];
 			}
+		}
 
-			hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * (1.0 - double((*snodes1).own_state[t_hor][i_s1p][i_w1p]));
+		for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
+			for (i_w1p = 0; i_w1p < w_n; i_w1p++) {
+				hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * (1.0 - double((*snodes1).own_state[i_t_hor][i_s1p][i_w1p]));
+			}
 		}
 
 		wdist_store[i_t_hor + 1] = wdist2;

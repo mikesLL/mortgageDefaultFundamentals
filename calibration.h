@@ -21,7 +21,7 @@ const int mort_term_int = 3; //30;
 // state variable: mortgage rates
 const int n_rm = 5;  // mortgage rate / apr states (n_rm more in-line with notation)
 const int rm_n = 5; // adding two mortgage rate / apr states
-const double rm_store[rm_n] = { 0.01, 0.02, 0.03, 0.04, 0.05 };
+const double rm_store[rm_n] = { 0.035, 0.045, 0.055, 0.065, 0.075 };
 
 // state var
 // loan_bal_rt contains the loan balance associated with each mortgage rate
@@ -50,9 +50,9 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 10; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 400; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 36; //35; //65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 35; //35; //65;                  // age at which household retires / annuitizes wealth  
 					
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 

@@ -5,6 +5,9 @@ mortg::mortg(){
 
 	// store zeros associated with each rate and then each time period
 	// NOTE: use n_rm
+	loan_init = 4.0; // 400k! nice
+	N_term = 30;
+
 	vector<double> zeros_RMN(rm_n, 0.0);
 	vector<int> zeros_int_MN(m_n, 0);
 	vector<vector<double>> zeros_RMN_T(rm_n, vector<double>(N_term, 0.0));
@@ -36,12 +39,6 @@ mortg::mortg(){
 		}
 	}
 	
-
-
-	
-
-
-
 	// Value of refinancing: eval value fn at i_m_refi
 	
 	// compute initial mortgage payment

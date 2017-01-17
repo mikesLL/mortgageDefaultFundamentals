@@ -73,8 +73,6 @@ vector<double> x_guess(5, 0.0);
 
 vector<double> x_ti1(5, 0.0);       // policy: owns smallest home
 double v_ti1 = -1.0e20;              // value: owns smallest home
-//x1 = x_ti1 * 1.2;
-//v1 = v_ti1 * (1.2);
 
 double h_mult = 0.0;
 double bond_est = 0.0;
@@ -100,7 +98,6 @@ t_i2 = 0;
 // Note: renter problem: Do not need to cycle through different mortgage states
 for (i_s = 0; i_s < n_s; i_s++) {
 
-	int foo_i_s = 0;
 	// load in states
 	i_yi = (*snodes1).s2i_yi[i_s];
 	i_rent = (*snodes1).s2i_rent[i_s];

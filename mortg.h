@@ -9,9 +9,8 @@ class mortg {
 	int i_m;   // index for mortgage states
 	int i_r2;  // index for mortgage rates
 	int t_yr;    // index for time periods
-	int N_term = 30; // mortgage term 
-	
-	double loan_init = 1.0; // initialize mortgage bal at 100k 
+	int N_term;        // mortgage term 
+	double loan_init;    // initialize mortgage bal at 100k 
 
 
 public:
