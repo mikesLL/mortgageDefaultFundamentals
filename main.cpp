@@ -26,11 +26,7 @@ Copyright A. Michael Sharifi, 2016
 int main(){
 	string city_init, city_filename;                                   // city name
 	hdata city_data;                                     // housing data structure stores previous rents and lagged returns
-	mortg mortg1;
-	cout << "Finished Loading Mortgage Class" << endl;
-
-	//cin.get();
-
+	
 	const string city_init_vec[] = {"sd", "sf", "lax", "bos", "chi", "den", "mia", "nym"  };
 	const string city_filename_vec[] = { "sd_read_in.csv", "sf_read_in.csv", "lax_read_in.csv",
 		                                 "bos_read_in.csv", "chi_read_in.csv", "den_read_in.csv",
@@ -94,7 +90,13 @@ int main(){
 				load_simpath(&snodes1, city_data.rent[t], city_data.price[t], city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
+				mortg mortg1(&snodes1, city_data.price[t]);
+				cout << "Finished Loading Mortgage Class" << endl;
+
+				// mortg: compute payments
+
 				snodes1.adj_tax();
+				// 
 
 				cout << "main.cpp: begin enter data" << endl;
 				vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);

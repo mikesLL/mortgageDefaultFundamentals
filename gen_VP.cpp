@@ -95,14 +95,13 @@ int i_rcurr, i_rpmt, i_rlb;  // mortgage state: current rate, payment rate, loan
 // permanent renter case: set t_i2 = 0!
 t_i2 = 0;
 	
-// Note: renter problem: Do not need to cycle through different mortgage states
+// COMPUTE Renter problem
+// Do NOT need to cycle through different mortgage states
 for (i_s = 0; i_s < n_s; i_s++) {
 
-	// load in states
-	i_yi = (*snodes1).s2i_yi[i_s];
+	i_yi = (*snodes1).s2i_yi[i_s];              // load in states
 	i_rent = (*snodes1).s2i_rent[i_s];
 	i_ph = (*snodes1).s2i_ph[i_s];
-
 
 	start = clock();
 	cout << "i_m = " << i_m << "  i_s = " << i_s << "  t_i = " << t_i << "  i_yi = " << i_yi
@@ -117,78 +116,75 @@ for (i_s = 0; i_s < n_s; i_s++) {
 			
 		b_min = b_min_unsec;
 		beg_equity = -1.0e6;
-		mpmt = -1.0e6;
+		mpmt = -1.0e6;             // TODO: check on this
 
 		// load previous w_i policy as a benchmark
-		// MODS HERE
 		(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);
-		t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
+		t_i2_lag_w = t_i2; // tenure choice: previous wealth  
 		v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 
 		// load t_i2-restricted guess as an initial starting point
 		x_guess = x_lag_wt[t_i2];
 
+		// compute cash on hand
 		coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi]
 			- (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj;
 
-		(*rr2).i_s1 = i_s;  // pass in current state to next-period value function
+		(*rr2).i_s1 = i_s;          // pass in current state to next-period value function
 		(*rr2).t_i1 = t_i;
 		(*rr2).w_i1 = w_i;
-		(*rr2).t_i2 = t_i2; //  t_i2 is a choice variable, so adding it to fn pointer 
+		(*rr2).t_i2 = t_i2;         //  t_i2 is a choice variable, so adding it to fn pointer 
+		(*rr2).m_i1 = i_m;          // Pass current mortgage state to next-period value fn
+		(*rr2).def_flag = 0;
 
-		// load in states
-		(*snodes1).i_s1 = i_s;
+		(*snodes1).i_s1 = i_s;      // load states
 		(*snodes1).i_w1 = w_i;
 		(*snodes1).t_hor = t_hor;
-
-		// MOD HERE: pass in current mortgage rate state to next-period value fn
-		(*rr2).m_i1 = i_m;
-
-		if (t_i2 == 0) {
-			(*rr2).def_flag = 1;
-			res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
-			(*rr1).vw3_def_grid[i_s][w_i] = res1.v_opt;
-			//cout << res1.v_opt << endl; 
-			(*rr2).def_flag = 0;
-		}
-
+	
 		res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);                               // pass problem into gen_V1_w
 
-		if (t_i2 == 1) {
-			v_ti1 = res1.v_opt;
-			x_ti1 = res1.x_opt;
-		}
+		v1 = res1.v_opt;                 // guess for the current vfn given current t_i2
+		x1 = res1.x_opt;                 // guess for current policy given current t_i2
 
-		v1 = res1.v_opt;   // guess for the current vfn given current t_i2
-		x1 = res1.x_opt;    // guess for current policy given current t_i2
+		(*rr1).v_move[w_i] = v1;         // set moving value fn
+	
+		x_lag_wt[t_i2] = x1;             // store x_opt as a guess for the next wealth under same tenure
 
-		if (t_i2 == 0) {
-			(*rr1).v_move[w_i] = v1;
-		}
-
-		// store the just retrieved x_opt as a guess for the next period under same tenure
-		x_lag_wt[t_i2] = x1;
-
-		for (i_m = 0; i_m < m_n; i_m++) {
-
-			(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);  // set x, t_i2, v0 in
+		for (i_m = 0; i_m < m_n; i_m++) {                          // set opt result for all mort states
+			(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);      
 
 			if (res1.valid_flag == 0) {
-				//(*rr1).set_pol_ten_v(t_i, i_s, w_i, x1, 0, v1);
-				// MOD HERE
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, 0, v1);
 			}
 		}
 	}
-	//(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
-	// MOD HERE
+
 	for (i_m = 0; i_m < m_n; i_m++) {
 		(*rr1).interp_vw3(t_i, i_m, i_s);  // clean and interpolate grid	
 	}
 	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 	cout << "time elapsed: " << duration << '\n';
 }
+
 //}
+
+/* TODO: THINK ABOUT REMOVING DEFAULT SETTINGS
+if (t_i2 == 0) {
+(*rr2).def_flag = 1;
+res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
+(*rr1).vw3_def_grid[i_s][w_i] = res1.v_opt;
+//cout << res1.v_opt << endl;
+(*rr2).def_flag = 0;
+}*/
+
+/*
+if (t_i2 == 1) {
+v_ti1 = res1.v_opt;
+x_ti1 = res1.x_opt;
+} */
+
+//(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
+// MOD HERE
 
 // now that the t_i = 0 case has been solved, t_i = 1,2 cases when sale or trade-up are equivalent
 //to t_i = 0 with the correct downward wealth adjustment; 
@@ -217,7 +213,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
 			<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
 
-//#pragma omp parallel for
 		for (i_m = 0; i_m < m_n; i_m++) { // Loop through mortgage states
 
 			// given i_m, load in mortgage state details
@@ -245,7 +240,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 				v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 				(*rr2).m_i1 = i_m;
 
-				mpmt = -1.0e6;
+				mpmt = 0.0; //-1.0e6;                // FOR NOW: set = 0.0; think about getting rid of
 				beg_equity = -1.0e6;
 
 				(*rr2).i_s1 = i_s;
@@ -259,8 +254,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 				x1 = res1.x_opt;  // guess for current policy
 
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);    // store opt result
-
-					                                                             
+                                                          
 				// COMPUTE CASE: HH REFINANCES
 				if (i_rcurr < i_rpmt) {
 					t_refi = 1;  // tenure index in event of refi

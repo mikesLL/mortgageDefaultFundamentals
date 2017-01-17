@@ -10,8 +10,10 @@ class mortg {
 	int i_r2;  // index for mortgage rates
 	int t_yr;    // index for time periods
 	int N_term;        // mortgage term 
-	double loan_init;    // initialize mortgage bal at 100k 
-
+	double loan_init;    // initialize mortgage bal
+	double ph0;          // initial home price
+	
+	vector<double> rm_grid;  // mortgage rate grid
 
 public:
 	vector<vector<double>> bal;  //mortgage balances indexed by rate then year 
@@ -27,7 +29,7 @@ public:
 
 	//vector<int> m2mrefi_map; // state map: m to m refi
 
-	mortg(); // constructor
+	mortg( void *snodes_in, double ph0_in ); // constructor
 	double fpmt(double loan_bal_in, double rm_in, int t_left_in); // mortgage payment formula
 };
 

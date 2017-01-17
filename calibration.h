@@ -21,8 +21,9 @@ const int mort_term_int = 3; //30;
 // state variable: mortgage rates
 const int n_rm = 5;  // mortgage rate / apr states (n_rm more in-line with notation)
 const int rm_n = 5; // adding two mortgage rate / apr states
-const double rm_store[rm_n] = { 0.035, 0.045, 0.055, 0.065, 0.075 };
+//const double rm_store[rm_n] = { 0.035, 0.045, 0.055, 0.065, 0.075 };
 
+const double ltv_init = 0.8;  // Loan to value at origination
 // state var
 // loan_bal_rt contains the loan balance associated with each mortgage rate
 const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.5} };
@@ -176,7 +177,7 @@ const double max_ltv = 0.80; // .95;  0.8;                        // max loan to
 
 // mortgage risk criteria
 const double max_lti = 0.3;
-const double mort_spread = .00;                       // mortgage spread above risk-free rate
+const double mort_spread = 0.00;                       // mortgage spread above risk-free rate
 const double pmi_dpmt = 0.00;                          // if down payment below this amount, add to mortgage spread
 const double pmi_prem = 0.0; //0.01;                         // pmi premium
 const double credit_prem = .15;                       // unsecured credit apr

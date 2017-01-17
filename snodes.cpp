@@ -38,19 +38,6 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 	i_s = 0;
 
-	/*
-	for (i_ph = 0; i_ph < n_ph; i_ph++) {
-		for (i_rent = 0; i_rent < n_rent; i_rent++) {
-			for (i_yi = 0; i_yi < n_yi; i_yi++) {
-				i2s_map[i_ph][i_rent][i_yi] = i_s;   // initialize i2s map
-				s2i_ph[i_s] = i_ph;                 // initialize s2_i maps
-				s2i_rent[i_s] = i_rent;
-				s2i_yi[i_s] = i_yi;
-				i_s++;
-			}
-		}
-	}*/
-
 	for (i_ph = 0; i_ph < n_ph; i_ph++) {
 		for (i_rent = 0; i_rent < n_rent; i_rent++) {
 			for (i_yi = 0; i_yi < n_yi; i_yi++) {

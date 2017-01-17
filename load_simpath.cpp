@@ -336,6 +336,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	// use: 
 	// vector<vector<double>> rm_str_nds(T_sim + 1, vector<double>(n_rm, 0.0) );         // interest rate nodes
 	// vector<vector<double>> rm_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store short/mortgage rates
+	//for (t = 0; t < T_sim; t++) {
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(rm_str[t].begin(), rm_str[t].end(), 0.0);
 		res_mean = res_sum / (double)rm_str[t].size();
@@ -347,9 +348,11 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 		}
 
 		for (n = 0; n < n_rm; n++) {
-			rm_str_nds[t][n] = res_mean + rm_nd_std[n] * res_std;  // compute home price nodes (log scale)
-			(*snodes1).rm_gridt[t][n] = rm_str_nds[t][n]; 
-			cout << (*snodes1).rm_gridt[t][n] << "...";      // print out interest rate grid entry
+			rm_str_nds[t][n] = res_mean + rm_nd_std[n] * res_std;   // compute home price nodes (log scale)
+			rm_str_nds[t][n] = max(rm_str_nds[t][n], 0.0);          // set non-negative short-rate
+			(*snodes1).rm_gridt[t][n] = rm_str_nds[t][n];
+			
+			cout << (*snodes1).rm_gridt[t][n] << "...";              // print out interest rate grid entry
 		}
 		cout << endl;
 	}

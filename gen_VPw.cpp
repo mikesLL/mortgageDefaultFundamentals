@@ -27,7 +27,6 @@ gen_res gen_VPw(void *snodes_in,  void *vf1_in, void *vf2_in,
 	//double v0_default =  -1.0e20;
 	double v_guess, v_guess_prop, v_w_lag;
 
-
 	ufnEV2 ufnEV21;
 	ufnEV21.enter_data(snodes1, vf2);
 
