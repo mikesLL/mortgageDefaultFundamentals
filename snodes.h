@@ -50,7 +50,10 @@ public:
 	// w_t2_state: wealth outcome matrix
 	// (t_hor, i_s1, i_s2, w_i1, w2 {low, high} )
     // given above values, w_t2_state returns wealth in next period (either low or high)
-	vector<vector<vector<vector<vector<double>>>>> w_t2_state;
+	//vector<vector<vector<vector<vector<double>>>>> w_t2_state;
+
+	vector<vector<vector<vector<double>>>> w_t2_state_low;
+	vector<vector<vector<vector<double>>>> w_t2_state_high;
 
 	// default outcome matrix
 	vector<vector<vector<int>>> own_state;  // for each (t_hor, i_s1, w_i1 ) track whether HH defaults

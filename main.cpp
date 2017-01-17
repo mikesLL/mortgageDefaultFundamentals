@@ -69,8 +69,9 @@ int main(){
 
 				// discretized states including home prices, rents, incomes
 				snodes snodes1(age0, T_max, city_id);
+				cout << "main.cpp: snodes1 finished" << endl;
 
-				def_stats def_stats1(&snodes1);
+				def_stats def_stats1(&snodes1); 
 				def_stats1.wtrans_iterate(T_max);
 				def_stats1.print_def_stats(T_max);
 

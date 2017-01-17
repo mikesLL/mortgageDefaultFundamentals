@@ -217,6 +217,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // consider t_i = 0 fir
 		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
 			<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
 
+//#pragma omp parallel for
 		for (i_m = 0; i_m < m_n; i_m++) { // Loop through mortgage states
 
 			// given i_m, load in mortgage state details

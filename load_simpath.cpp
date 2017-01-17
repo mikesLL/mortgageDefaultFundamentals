@@ -58,7 +58,6 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 
 	double y_city_mult[] = { 1.23, 1.54, 1.02, 1.34, 1.02, 1.00,  0.95, 1.39 };
 
-	double rm_str0 = 0.01;  // initial short rate
 	double rho_rm = 0.4;    // short-rate: autocorrelation
 	double theta_rm = 1.0;  // short-rate: mean-reversion
 	double rm_mu = 0.04; // long-run short rate mean
@@ -74,17 +73,19 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	double hp_rhof_hat = 0.768;
 	double hp_theta_hat = -0.18;
 	double hp_sigma_ret = 0.0699;
-	double hp_gamma0_hat = 4.69;
-	double hp_gamma1_hat = 0.50;
+	double hp_gamma0_hat = -0.7022; //4.69;
+	double hp_gamma1_hat = 0.5314;
 
-	double sr_mu_est = 0.00;
-	double sr_rho_est = 0.0;
+	double sr_mu_est = 0.0124;
+	double sr_rho_est = 0.9085;
 	double sr_mort_term =  10.0;
 	double sr_mort_prem = 0.0322;
-	double sr_gamma0_hat = 4.69;
 	double sr_sigma_est = 0.0175;
 		 
-	double p_min = 0.01;                                                         // lower bound on home prices										   
+	double p_min = 0.01;                                                         // lower bound on home prices	
+
+	double rm_str0 = 0.0124;                                                      // initial short rate
+	double mort_rate = rm_str0 + sr_mort_prem;                                 // initial mortgage rate
 	
 	// stdev centers (tauchen-style discretization) 
     double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
@@ -127,7 +128,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 
 	// MODS HERE: adding vectors for i_rcurr, i_rpmt, i_lb
 	double eps_r;                  // interest rate innovation
-	double sigma_r = 0.02;         // interest rate standard deviation
+	double sigma_r = 0.0175;         // interest rate standard deviation
 
 	vector<vector<double>> rm_str(T_sim + 1, vector<double>(N_sim, 0.0));               // store short/mortgage rates
 
@@ -231,7 +232,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 		z3 = dist(gen); // interest rate innovation
 		
 		eps_r = sr_sigma_est*z3;
-		eps_h = sigma_ret*z1;
+		eps_h = hp_sigma_ret*z1;
 		eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
 
 		g_yc_t = mu_yc + sigma_yc*dist(gen);    // city-wide income / rent
@@ -245,12 +246,24 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 												 
 		// compute interest rate
 		rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
+		rm_str[t][n] = max(rm_str[t][n], 0.0);
 
 		// compute age-related component of log-income (deterministic)
 		log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 + 0.0033*pow(age_td, 3.0) / 100.0;
 
+		// compute mortgage rate
+		mort_rate = (1.0 - pow(sr_rho_est, sr_mort_term))*sr_mu_est + pow(sr_rho_est, sr_mort_term)*rm_str[t][n] + +sr_mort_prem;
+
+		// cointegrate interest rates, rents, and prices
+		ecm = log(mort_rate*(exp(ph_str_city[t - 1][n]))) - (hp_gamma0_hat + hp_gamma1_hat*log(rent_str[t - 1][n]));
+
+		// load lagged home price
+		ret_lag = 0.0;
+
 		// compute home price appreciation
-		ret_tn = (csf_1yr - ph0) / ph0 + eps_h;
+		ret_tn = hp_alpha_hat + hp_rhof_hat*ret_lag + hp_theta_hat*ecm + eps_h;         // return series
+
+		//ret_tn = (csf_1yr - ph0) / ph0 + eps_h;
 		//ret_tn = (csf_1yr - ph0) / ph0 + sigma_ret*dist(gen);  // impose first year expected return equals the futures-based forecast
 
 		rent_str[t][n] = exp(g_rent)*rent_str[t-1][n]; // update rent path
@@ -276,7 +289,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 			z2 = dist(gen);
 			z3 = dist(gen);
 			eps_r = sigma_r*z3;                   // interest rate innovation 
-			eps_h = sigma_ret*z1;
+			eps_h = hp_sigma_ret*z1;
 			eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
 			
 			g_yc_t = mu_yc + sigma_yc*dist(gen);  // city-wide income / rent
@@ -285,6 +298,10 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 
 			// update interest rate
 			rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
+			rm_str[t][n] = max(rm_str[t][n], 0.0);
+
+			// compute mortgage rate
+			mort_rate = (1.0 - pow(sr_rho_est, sr_mort_term))*sr_mu_est + pow(sr_rho_est, sr_mort_term)*rm_str[t][n] +  + sr_mort_prem;
 
 			// update income path 
 			eta_t = rho_y_city*eta_t0 + eps_y;        // set city-wide income component
@@ -294,9 +311,12 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 			
 			// compute home price
 			ret_lag = ph_str_city[t - 1][n] - ph_str_city[t - 2][n];                                       // ph_str is in logs 
-			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str_city[t - 1][n]);          // cointegrate rents, prices
-			
-			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
+			//ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str_city[t - 1][n]);          // cointegrate rents, prices
+
+			// cointegrate interest rates, rents, and prices
+			ecm = log( mort_rate*( exp(ph_str_city[t - 1][n]) ) ) - ( hp_gamma0_hat + hp_gamma1_hat*log( rent_str[t-1][n] ) );
+						
+			ret_tn = hp_alpha_hat + hp_rhof_hat*ret_lag + hp_theta_hat*ecm + eps_h;         // return series
 		
 			rent_str[t][n] = exp(g_rent)*rent_str[t-1][n];
 

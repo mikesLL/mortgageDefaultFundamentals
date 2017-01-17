@@ -91,13 +91,42 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	}
 	rent_adj = hu_ten[0] / hu_med[city_id];
 
+	// work here
+	int i1, i2, i3, i4, i5;
+	w_t2_state_low.resize(T_max);
+	w_t2_state_high.resize(T_max);
+
+	for (i1 = 0; i1 < T_max; i1++) {
+		w_t2_state_low[i1].resize(n_s);
+		w_t2_state_high[i1].resize(n_s);
+
+		for (i2 = 0; i2 < n_s; i2++) {
+			w_t2_state_low[i1][i2].resize(n_s);
+			w_t2_state_high[i1][i2].resize(n_s);
+
+			for (i3 = 0; i3 < n_s; i3++) {
+				w_t2_state_low[i1][i2][i3].resize(w_n);
+				w_t2_state_high[i1][i2][i3].resize(w_n);
+
+				w_t2_state_low[i1][i2][i3].assign(w_n, 0.0);
+				w_t2_state_high[i1][i2][i3].assign(w_n, 0.0);
+			}
+		}
+	}
+	
+	
 	 
 	// work here
-	vector<vector<double>> zeros_WN_RX(w_n, vector<double>(retxn, 0.0));
-	vector<vector<vector<vector<double>>>> zeros_NS_NS_WN_RX(n_s, vector<vector<vector<double>>>(n_s, zeros_WN_RX));
-	vector<vector<vector<vector<vector<double>>>>> zeros_T_NS_NS_WN_RX(T_max, zeros_NS_NS_WN_RX);
+	//vector<vector<double>> zeros_WN_RX(w_n, vector<double>(retxn, 0.0));
+	//vector<vector<vector<double>>> zeros_NS_WN_RX(n_s, zeros_WN_RX);
+	//vector<vector<vector<vector<double>>>> zeros_NS_NS_WN_RX(n_s, zeros_NS_WN_RX );
+	//vector<vector<vector<vector<vector<double>>>>> zeros_T_NS_NS_WN_RX(T_max, zeros_NS_NS_WN_RX);
 
-	w_t2_state = zeros_T_NS_NS_WN_RX; 
+	//vector<double> foo_large( T_max*n_s*n_s*w_n*2, 0.0);
+	//vector<double> foo_large(100000000, 0.0);
+	//vector<vector<double>> foo_large(10000, vector<double>(10000, 0.0));
+	//w_t2_state = zeros_T_NS_NS_WN_RX; 
+	//w_t2_state.assign(T_max, zeros_NS_NS_WN_RX);
 	// w_t2_state
 	// given s1, s2, plots where wealth will be in next period (based on equity returns)
 	// Given: (t_hor, i_s1, i_s2, i_w1), 
@@ -125,9 +154,11 @@ void snodes::w_state_swap( int i_w1_swap_in) {
 	int i_s2, i_x2;
 	
 	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
-		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
-			w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
-		}
+		w_t2_state_low[t_hor][i_s1][i_s2][i_w1] = w_t2_state_low[t_hor][i_s1][i_s2][i_w1_swap];
+		w_t2_state_high[t_hor][i_s1][i_s2][i_w1] = w_t2_state_high[t_hor][i_s1][i_s2][i_w1_swap];
+		//for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+		//	w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
+		//}
 	}
 
 	 

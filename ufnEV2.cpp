@@ -139,10 +139,13 @@ void ufnEV2::store_wlh2(vector<double> x ) {
 	
 	// compute liquid wealth in each state
 	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
-		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
-			w2 = rb_eff_agg + exp(retxv[i_x2])*x[2];
-			(*snodes1).w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w2;
-		}
+		(*snodes1).w_t2_state_low[t_hor][i_s1][i_s2][i_w1] = rb_eff_agg + exp(retxv[0])*x[2];
+		(*snodes1).w_t2_state_high[t_hor][i_s1][i_s2][i_w1] = rb_eff_agg + exp(retxv[1])*x[2];
+
+		//for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+		//	w2 = rb_eff_agg + exp(retxv[i_x2])*x[2];
+		//	(*snodes1).w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w2;
+		//}
 	}
 }
 
