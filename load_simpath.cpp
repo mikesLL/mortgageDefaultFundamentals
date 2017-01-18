@@ -489,7 +489,8 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 				if (row_sum >= 1.0) {
 					(*snodes1).gammat[t][i][j] = (double)gamma_store[i][j] / row_sum;   // load transition matrix into structure
 				} else {
-					(*snodes1).gammat[t][i][j] = 0.0;
+					//(*snodes1).gammat[t][i][j] = 0.0;
+					(*snodes1).gammat[t][i][j] = 1.0 / double(n_s); // default setting if no obs in space
 				}
 			}
 		}

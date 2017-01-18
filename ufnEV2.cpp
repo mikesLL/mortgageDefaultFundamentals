@@ -87,6 +87,10 @@ double ufnEV2::eval( vector<double> x ){
 	double csf_basis[] =  { 0.0, 0.0 };             //{ -0.045, 0.045 };    
 	double pcsf_basis[] =   { 1.0, 0.0 };           // { 0.5, 0.5 }; 
 
+	if (N_s2p <= 0) {
+		cout << "ufnEV2.cpp: issue " << endl;
+	}
+
 	// cycle accross possible future states to compute value function expectation
 	for (i_csf_basis = 0; i_csf_basis < n_csf_basis; i_csf_basis++){
 		for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
@@ -118,14 +122,11 @@ void ufnEV2::store_wlh2( vector<double> x ) {
 
 	int i_s1 = (*snodes1).i_s1;
 	int i_w1 = (*snodes1).i_w1;
-	
 
 	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
 	double rb_eff = rb;                            // effective return on bonds	(default = rb)       
-	//double Evw_2 = 0.0;                            // Value Function Expectation
+	
 	double w2, w2_move, vw2;
-
-	//double uc = ufn(x[0], hu, (*vf2).pref);  // composite utility
 	double rb_eff_agg;                       // aggregated gross return on bonds
 
 	double b_unsec = 0.0;

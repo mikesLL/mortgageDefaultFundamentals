@@ -78,12 +78,13 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 	N_controlh = N_control2; // for larger step sizes, only allow access to C,B,X
 
 	int k1 = 0, k2 = 0;
-	int nds = 2; // 10;
-	int nds2 = 2; // 10;
+	int nds = 10; // 10;
+	int nds2 = 10; // 10;
 	int nds2_low = 4;
 	
 
-	if ( (*vf2).w_i1 % 10 == 0 ) {
+	//if ( (*vf2).w_i1 % 10 == 0 ) {
+	if ( (*vf2).w_i1 % 1 == 0 ) {
 
 		// first, compute a rough guess without access to csf
 		for (k1 = 0; k1 <= nds; k1++) {
