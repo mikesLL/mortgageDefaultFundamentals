@@ -53,7 +53,7 @@ const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // man
 const double csfLev = csfLevStore[param_id];
 const int w_n = 20; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 31; //35; //65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 32; //35; //65;                  // age at which household retires / annuitizes wealth  
 					
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 
@@ -82,7 +82,7 @@ const int n_rent = 1; // 3;  possible rent states
 const int n_yi = 3; // 3;  // labor income states
 
 //const int n_s = n_ph * n_rent * n_yi;  // number of states
-const int n_s = n_ph * n_rent * n_yi * n_rm;  // number of states
+const int n_s = n_ph * n_rent * n_yi * rm_n;  // number of states
 
 // Labor income related parameters
 const double maint_mult = 0.98;

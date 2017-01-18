@@ -89,6 +89,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	
 	// stdev centers (tauchen-style discretization) 
     double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
+	//double rm_nd_std[] = { -1.0, 0.0, 1.0 };
 	double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
 	double rent_nd_std[] = { 0.0 };                                           // can also set { -1.0, 0.0, 1.0 };
 	double yi_nd_std[] = { -1.0, 0.0, 1.0 }; 

@@ -24,10 +24,20 @@ def_stats::def_stats( void *snodes_in ) {
 
 	// Initial conditions
 	int t_hor = 0;
-	sdist[floor(n_s / 2.0)] = 1.0;                                  // First Year: impose in median state
-	double w_med = 0.4;                                             // impose median wealth = 40k
-	int i_w_med = int(floor((w_med - w_min) / (w_max - w_min)));    // convert to wealth index
-	wdist[i_w_med] = 1.0;                                           // impose mass of wealth is in median of w_n
+	//sdist[floor(n_s / 2.0)] = 1.0;                                  // First Year: impose in median state
+	int i_s1p, i_w1p;
+
+	for (i_s1p = 0; i_s1p < n_s; i_s1p++) {
+		sdist[i_s1p] = 1.0 / double(n_s); 
+	}
+
+	for (i_w1p = 0; i_w1p < w_n; i_w1p++) {
+		wdist[i_w1p] = 1.0 / double(w_n);
+	}
+
+	//double w_med = 0.4;                                             // impose median wealth = 40k
+	//int i_w_med = int(floor((w_med - w_min) / (w_max - w_min)));    // convert to wealth index
+	//wdist[i_w_med] = 1.0;                                           // impose mass of wealth is in median of w_n
 
 	sdist_store[t_hor] = sdist;
 	wdist_store[t_hor] = wdist;
@@ -58,7 +68,7 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 		gammap = (*snodes1).gammat[i_t_hor];     // State transition matrix
 
-		sdist2[134] = sdist2[134] + sdist[0] * gammap[0][134];
+        // sdist2[134] = sdist2[134] + sdist[0] * gammap[0][134];
 
 		// COMPUTE: wdist2: wealth distribution in the next period
 		for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
