@@ -87,10 +87,7 @@ double ufnEV2::eval( vector<double> x ){
 	double csf_basis[] =  { 0.0, 0.0 };             //{ -0.045, 0.045 };    
 	double pcsf_basis[] =   { 1.0, 0.0 };           // { 0.5, 0.5 }; 
 
-	if (N_s2p <= 0) {
-		cout << "ufnEV2.cpp: issue " << endl;
-	}
-
+	
 	// cycle accross possible future states to compute value function expectation
 	for (i_csf_basis = 0; i_csf_basis < n_csf_basis; i_csf_basis++){
 		for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
