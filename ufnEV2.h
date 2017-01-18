@@ -33,6 +33,18 @@ class ufnEV2 {
 	vector<vector<double>> vw3_d_grid_ti2;
 	vector<vector<double>> vw3_dd_grid_ti2;
 
+	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
+	double rb_eff = rb;                            // effective return on bonds	(default = rb)       
+	double Evw_2 = 0.0;                            // Value Function Expectation
+	double w2, w2_move, vw2;
+
+	double uc; // = ufn(x[0], hu, (*vf2).pref);  // composite utility
+	double rb_eff_agg;                       // aggregated gross return on bonds
+
+	double b_unsec; // = 0.0;
+	double b_sec; // = 0.0;
+	double rb_unsec; //  = rb + credit_prem;
+
 public:
 	int i_s1;             // current state
 	int t_hor;

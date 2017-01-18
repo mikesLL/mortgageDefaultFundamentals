@@ -63,8 +63,19 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 // given vector of control variables x, evaluate value function
 double ufnEV2::eval( vector<double> x ){
 
-	// MOD HERE: adding mortgage payment
+	//int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
+	//rb_eff = rb;                            // effective return on bonds	(default = rb)       
+	Evw_2 = 0.0;                            // Value Function Expectation
+	//double w2, w2_move, vw2;
 
+	uc = ufn(x[0], hu, (*vf2).pref);  // composite utility
+	//double rb_eff_agg;                       // aggregated gross return on bonds
+
+	//b_unsec = 0.0;
+	//b_sec = 0.0;
+	rb_unsec = rb + credit_prem;
+
+	/*
 	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
 	double rb_eff = rb;                            // effective return on bonds	(default = rb)       
 	double Evw_2 = 0.0;                            // Value Function Expectation
@@ -76,39 +87,37 @@ double ufnEV2::eval( vector<double> x ){
 	double b_unsec = 0.0;
 	double b_sec = 0.0; 
 	double rb_unsec = rb + credit_prem;
-	
+	*/
+
 	// calc effective effective interest rate
 	b_sec = max( x[1], - max_ltv*( (*snodes1).ten_w[t_i2] * ph1 - loan_bal1  )  );
 	b_unsec = x[1] - b_sec;
 	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec; 
 	
-	int i_csf_basis = 0;
-	int n_csf_basis = 1;
-	double csf_basis[] =  { 0.0, 0.0 };             //{ -0.045, 0.045 };    
-	double pcsf_basis[] =   { 1.0, 0.0 };           // { 0.5, 0.5 }; 
+	//int i_csf_basis = 0;
+	//int n_csf_basis = 1;
+	//double csf_basis[] =  { 0.0, 0.0 };             //{ -0.045, 0.045 };    
+	//double pcsf_basis[] =   { 1.0, 0.0 };           // { 0.5, 0.5 }; 
 
 	
 	// cycle accross possible future states to compute value function expectation
-	for (i_csf_basis = 0; i_csf_basis < n_csf_basis; i_csf_basis++){
-		for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
-			i_s2 = i_s2p_vec[i_s2p];
-			i_ph2 = (*snodes1).s2i_ph[i_s2];
+	for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
+		i_s2 = i_s2p_vec[i_s2p];
+		i_ph2 = (*snodes1).s2i_ph[i_s2];
 
-			for (i_x2 = 0; i_x2 < retxn; i_x2++) {
+		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
 				
-				w2 = rb_eff_agg + exp(retxv[i_x2])*x[2] +
-					exp(csf_basis[i_csf_basis])*csfLevSn * csf_net2[i_s2] * (x[3] - x[4]) +
-					x[3] + x[4] + (*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor + 1][i_ph2];
-
-					res1 = eval_v(i_s2, w2);                                   // evaluate value function in state
-					res1_move = (*vf2).eval_v_def(i_s2, w2);
-					vw2 = (1.0 - p_move)* res1.v_out + p_move * res1_move.v_out;
+			w2 = rb_eff_agg + exp(retxv[i_x2])*x[2] + x[3] + x[4];
+				
+			res1 = eval_v(i_s2, w2);                                   // evaluate value function in state
+			res1_move = (*vf2).eval_v_def(i_s2, w2);
+			vw2 = (1.0 - p_move)* res1.v_out + p_move * res1_move.v_out;
 					
-				Evw_2 = Evw_2 + pcsf_basis[i_csf_basis] * retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
+			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
 
-			}
 		}
 	}
+	
 	
 	return uc + beta*Evw_2;
 }

@@ -24,8 +24,8 @@ vector<double> gen_x0(double coh_in, double b_min, void *vf1_in, void *vf2_in, v
 
 	int opt_flag = 1, it_max = 10000;
 	int N_control2 = N_control - 3;  // For part without csf
-	int N_control3 = N_control - 2; // -1;  // for part with csf
-	int N_control4 = N_control - 1; 
+	//int N_control3 = N_control - 2; // -1;  // for part with csf
+	//int N_control4 = N_control - 1; 
 
 	int N_controlh;
 	double h_step0 = 0.05; // 0.2;
