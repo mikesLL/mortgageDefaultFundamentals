@@ -63,42 +63,15 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 // given vector of control variables x, evaluate value function
 double ufnEV2::eval( vector<double> x ){
 
-	//int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
-	//rb_eff = rb;                            // effective return on bonds	(default = rb)       
 	Evw_2 = 0.0;                            // Value Function Expectation
-	//double w2, w2_move, vw2;
-
-	uc = ufn(x[0], hu, (*vf2).pref);  // composite utility
-	//double rb_eff_agg;                       // aggregated gross return on bonds
-
-	//b_unsec = 0.0;
-	//b_sec = 0.0;
+	uc = ufn(x[0], hu, (*vf2).pref);        // composite utility
+	
 	rb_unsec = rb + credit_prem;
-
-	/*
-	int i_s2, i_ph2, i_x2;                         // state index, price index, equity return index
-	double rb_eff = rb;                            // effective return on bonds	(default = rb)       
-	double Evw_2 = 0.0;                            // Value Function Expectation
-	double w2, w2_move, vw2;
-
-	double uc = ufn(x[0], hu, (*vf2).pref);  // composite utility
-	double rb_eff_agg;                       // aggregated gross return on bonds
-
-	double b_unsec = 0.0;
-	double b_sec = 0.0; 
-	double rb_unsec = rb + credit_prem;
-	*/
 
 	// calc effective effective interest rate
 	b_sec = max( x[1], - max_ltv*( (*snodes1).ten_w[t_i2] * ph1 - loan_bal1  )  );
 	b_unsec = x[1] - b_sec;
 	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec; 
-	
-	//int i_csf_basis = 0;
-	//int n_csf_basis = 1;
-	//double csf_basis[] =  { 0.0, 0.0 };             //{ -0.045, 0.045 };    
-	//double pcsf_basis[] =   { 1.0, 0.0 };           // { 0.5, 0.5 }; 
-
 	
 	// cycle accross possible future states to compute value function expectation
 	for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
@@ -117,8 +90,6 @@ double ufnEV2::eval( vector<double> x ){
 
 		}
 	}
-	
-	
 	return uc + beta*Evw_2;
 }
 

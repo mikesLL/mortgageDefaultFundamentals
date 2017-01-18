@@ -333,6 +333,7 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 	int i_m; // mortgage state
 	int i_rlb; // load in loan balance state
 	double loan_bal_term; 
+	double ph0;
 
 	for (i_t = 0; i_t < t_n; i_t++) {
 		for (i_s = 0; i_s < n_s; i_s++) {
@@ -340,12 +341,16 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 				for (i_w = 0; i_w < w_n; i_w++) {
 
 					loan_bal_term = 0.0; 
+					ph0 = 0.0; 
+
 					if (i_t >= 1) {
+						i_ph3 = (*snodes1).s2i_ph[i_s];
 						i_rlb = (*mortg1).m2rlb_map[i_m];                               // loan balance index
 						loan_bal_term = (*mortg1).bal[i_rlb][t_hor_term];               // retrieve current loan balance
-					}
+						ph0 = (*snodes1).p_gridt[t_hor_term][i_ph3];                    // terminal home price
+					} 
 
-					w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] - loan_bal_term, 0.0);      // terminal wealth (adjusted)
+					w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
 					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
 
