@@ -78,13 +78,13 @@ gen_res gen_VPw(void *snodes_in,  void *vf1_in, void *vf2_in,
 	// current cash on hand; wealth and income only
 	double cohQ = (*vf1).w_grid[(*vf2).w_i1] + (*snodes1).yi_gridt[t_hor][i_yi];
 	
-	if ( cohQ  < beg_equity ) {
-		opt_flag = 0;
-	}
+	//if ( cohQ  < beg_equity ) {
+	//	opt_flag = 0;
+	//}
 
-	if ( (*snodes1).yi_gridt[t_hor][i_yi]*max_lti <= mpmt ) {
-		opt_flag = 0;
-	}
+	//if ( (*snodes1).yi_gridt[t_hor][i_yi]*max_lti <= mpmt ) {
+	//	opt_flag = 0;
+	//}
 
 	if ( opt_flag >= 1 ) {
 		res1.x_opt = gen_x0(coh, b_min, vf1, vf2, &ufnEV21, x_guess);              // get x policy from loop and optimization
