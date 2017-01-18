@@ -50,7 +50,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	double inf_mult = 104.5; // inflation multiplier
 
 	//determnistic (real) rent growth
-	double g_rent = 0.02;
+	double g_rent = 0.0; //0.02;
 
 	ph0_in = ph0_in / inf_mult * 100.0;
 	rent_in = rent_in / inf_mult * 100.0;

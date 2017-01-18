@@ -116,6 +116,7 @@ const double hu_med[N_cities] = { 1.6, 1.7, 1.5, 1.9, 1.8, 1.6, 1.5, 1.83 };   /
 
 
 // MOD HERE: assume representative house
+/*
 const double hu_ten_store[N_cities][t_n] = {
 {1.60, 1.60 },
 {1.70, 1.70 },
@@ -126,7 +127,18 @@ const double hu_ten_store[N_cities][t_n] = {
 {1.50, 1.50 },
 {1.83, 1.83 }
 };
+*/
 
+const double hu_ten_store[N_cities][t_n] = {
+	{ 1.0, 1.60 },
+	{ 1.0, 1.70 },
+	{ 1.00, 1.50 },
+	{ 1.00, 1.90 },
+	{ 1.00, 1.80 },
+	{ 1.00, 1.60 },
+	{ 1.00, 1.50 },
+	{ 1.03, 1.83 }
+};
 
 /*
 const double hu_ten_store[N_cities][t_n] = {
