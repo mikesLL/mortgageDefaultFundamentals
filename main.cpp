@@ -91,10 +91,10 @@ int main(){
 				mortg mortg1(&snodes1, city_data.price[t]);
 				cout << "Finished Loading Mortgage Class" << endl;
 
-				// mortg: compute payments
-
 				snodes1.adj_tax();
-				// 
+
+				// TEST: print this out
+				//def_stats1.print_def_stats(T_max); // print out transition matrices
 
 				cout << "main.cpp: begin enter data" << endl;
 				vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);

@@ -68,14 +68,12 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 		gammap = (*snodes1).gammat[i_t_hor];     // State transition matrix
 
-        // sdist2[134] = sdist2[134] + sdist[0] * gammap[0][134];
-
+       
 		// COMPUTE: wdist2: wealth distribution in the next period
 		for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
 			for (i_s2p = 0; i_s2p < n_s; i_s2p++) {
 				for (i_w1p = 0; i_w1p < w_n; i_w1p++) {
-					//w2_l = (*snodes1).w_t2_state[i_t_hor][i_s1p][i_s2p][i_w1p][0];    // load in wealth in next period given state
-					//w2_h = (*snodes1).w_t2_state[i_t_hor][i_s1p][i_s2p][i_w1p][1];    // (low and high wealth realizations)
+					
 					w2_l = (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];    // load in wealth in next period given state
 					w2_h = (*snodes1).w_t2_state_high[i_t_hor][i_s1p][i_s2p][i_w1p];    // (low and high wealth realizations)
 
@@ -167,6 +165,69 @@ void def_stats::print_def_stats( int t_hor_in) {
 	}
 	v3_file << endl;
 	v3_file.close();
+
+
+	// PRINT: gammat (flat file)
+	ofstream v4_file;                                           // open output file stream 
+	string file_name4 = "def_results/gammat_flat.csv";
+	v4_file.open(file_name4, ios::out | ios::trunc);              // outstream, truncate
+	//int i_wf;
+	int i_s1f, i_s2f;
+	// print headers
+	v4_file << "t_hor,s1,s2,prob" << endl;
+	for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
+		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
+			for (i_s2f = 0; i_s2f < n_s; i_s2f++) {
+				v4_file << i_t_hor << "," << i_s1f << "," << i_s2f << "," << 
+					(*snodes1).gammat[i_t_hor][i_s1f][i_s2f] << "," << endl;
+			}
+		}
+	}
+
+	v4_file.close();
+
+	// PRINT: own_state (flat file)
+	// (*snodes1).own_state[i_t_hor][i_s1p][i_w1p])
+	ofstream v5_file;                                           // open output file stream 
+	string file_name5 = "def_results/own_state_flat.csv";
+	v5_file.open(file_name5, ios::out | ios::trunc);              // outstream, truncate
+	
+	v5_file << "t_hor,s1,i_w1,own_state" << endl;                     // print headers
+	for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
+		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
+			for (i_wf = 0; i_wf < w_n; i_wf++) {
+				v5_file << i_t_hor << "," << i_s1f << "," << i_wf << "," <<
+					(*snodes1).own_state[i_t_hor][i_s1f][i_wf] << "," << endl;
+			}
+		}
+	}
+
+	v5_file.close();
+
+
+	// PRINT: w_t2_state  (flat, low, high)
+	// (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];
+	ofstream v6_file;                                           // open output file stream 
+	string file_name6 = "def_results/w_t2_state_flat.csv";
+	v6_file.open(file_name6, ios::out | ios::trunc);              // outstream, truncate
+
+	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
+	for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
+		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
+			for (i_s2f = 0; i_s2f <= 0; i_s2f++) {                //for (i_s2f = 0; i_s2f < n_s; i_s2f++) {
+				for (i_wf = 0; i_wf < w_n; i_wf++) {
+					v6_file << i_t_hor << "," << i_s1f << "," << i_s2f << "," << i_wf << "," <<
+						(*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] << "," <<
+						(*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] << "," << endl;
+				}
+			}
+		}
+	}
+
+	v6_file.close();
+
+
+
 
 	// RUN CODE TO PRINT OUT 
 	// hazard_store, sdist_store, wdist_store
