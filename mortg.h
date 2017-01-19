@@ -29,7 +29,7 @@ public:
 
 	//vector<int> m2mrefi_map; // state map: m to m refi
 
-	mortg( void *snodes_in, double ph0_in ); // constructor
+	mortg( void *snodes_in, double ph0_in, double ltv0_in ); // constructor
 	double fpmt(double loan_bal_in, double rm_in, int t_left_in); // mortgage payment formula
 };
 

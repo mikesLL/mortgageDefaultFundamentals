@@ -1,7 +1,7 @@
 // Copyright A. Michael Sharifi, 2016
 #include "headers.h"
 
-mortg::mortg( void *snodes_in, double ph0_in ){
+mortg::mortg( void *snodes_in, double ph0_in, double ltv0_in ){
 
 	snodes *snodes1 = (snodes *)snodes_in;
 
@@ -15,8 +15,9 @@ mortg::mortg( void *snodes_in, double ph0_in ){
 		rm_grid[i_rpmt] = rm_grid[i_rpmt] + sr_mort_prem;
 	}
 
+	double ltv0 = ltv0_in;
 	ph0 = ph0_in;                  // Load in home price
-	loan_init = ltv_init*ph0;      // Compute initial loan balance
+	loan_init = ltv0*ph0; //ltv_init*ph0;      // Compute initial loan balance
 	N_term = 30;                   // mortgage term
 
 	vector<double> zeros_RMN(rm_n, 0.0);

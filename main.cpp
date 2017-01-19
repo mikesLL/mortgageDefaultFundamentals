@@ -64,7 +64,7 @@ int main(){
 t = 11;
 
 #pragma omp parallel for
-	for (id = 0; id < 8; id++) {
+	for (id = 0; id <= 7; id++) {
 		id_grent = (id % 2 >= 1);
 		id_ltv0 = (id % 4 >= 2);
 		id_rp0 = (id % 8 >= 4);
@@ -110,7 +110,7 @@ t = 11;
 				load_simpath(&snodes1, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
-				mortg mortg1(&snodes1, city_data.price[t]);
+				mortg mortg1(&snodes1, city_data.price[t], ltv0 );
 				cout << "Finished Loading Mortgage Class" << endl;
 
 				snodes1.adj_tax();
