@@ -350,7 +350,8 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 						ph0 = (*snodes1).p_gridt[t_hor_term][i_ph3];                    // terminal home price
 					} 
 
-					w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
+					//w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
+					w_adj = c_fs + max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
 					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
 

@@ -23,7 +23,7 @@ const int n_rm = 5;  // mortgage rate / apr states (n_rm more in-line with notat
 const int rm_n = 5; // adding two mortgage rate / apr states
 //const double rm_store[rm_n] = { 0.035, 0.045, 0.055, 0.065, 0.075 };
 
-const double ltv_init = 0.8;  // Loan to value at origination
+const double ltv_init = 0.95;  // Loan to value at origination
 // state var
 // loan_bal_rt contains the loan balance associated with each mortgage rate
 const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.5} };
