@@ -119,7 +119,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 	// PRINT: hazard store
 	ofstream v1_file;                                           // open output file stream 
-	string file_name1 = "def_results/hazard_rate" + to_string(id) + ".csv";
+	string file_name1 = "def_results/" + to_string(id) + "hazard_rate.csv";
 	v1_file.open(file_name1, ios::out | ios::trunc);              // outstream, truncate
 
 	// print headers
@@ -133,7 +133,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 	// PRINT: sdist store
 	ofstream v2_file;                                           // open output file stream 
-	string file_name2 = "def_results/sdist_store" + to_string(id) + ".csv" ;
+	string file_name2 = "def_results/" + to_string(id) + "sdist_store.csv" ;
 	v2_file.open(file_name2, ios::out | ios::trunc);              // outstream, truncate
 	int i_sf;
 																 // print headers
@@ -151,7 +151,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 	// PRINT: wdist store
 	ofstream v3_file;                                           // open output file stream 
-	string file_name3 = "def_results/wdist_store" + to_string(id) + ".csv";
+	string file_name3 = "def_results/" + to_string(id) + "wdist_store.csv";
 	v3_file.open(file_name3, ios::out | ios::trunc);              // outstream, truncate
 	int i_wf;
 	// print headers
@@ -170,7 +170,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 	// PRINT: gammat (flat file)
 	ofstream v4_file;                                           // open output file stream 
-	string file_name4 = "def_results/gammat_flat" + to_string(id) + ".csv";
+	string file_name4 = "def_results/" + to_string(id) + "gammat_flat.csv";
 	v4_file.open(file_name4, ios::out | ios::trunc);              // outstream, truncate
 	//int i_wf;
 	int i_s1f, i_s2f;
@@ -190,7 +190,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	// PRINT: own_state (flat file)
 	// (*snodes1).own_state[i_t_hor][i_s1p][i_w1p])
 	ofstream v5_file;                                           // open output file stream 
-	string file_name5 = "def_results/own_state_flat" + to_string(id) + ".csv";
+	string file_name5 = "def_results/" + to_string(id) + "own_state_flat.csv";
 	v5_file.open(file_name5, ios::out | ios::trunc);              // outstream, truncate
 	
 	v5_file << "t_hor,s1,i_w1,own_state" << endl;                     // print headers
