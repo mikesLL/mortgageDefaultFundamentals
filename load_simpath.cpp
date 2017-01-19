@@ -31,7 +31,9 @@ Income grows in real terms as the agent ages and city-wide income increases
 
 #include "headers.h"
 
-void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
+void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
+
+	snodes *snodes1 = (snodes*)snodes_in;
 
 	int s1, s2, s_test;                             // state in current period, state in next period
 
@@ -50,7 +52,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	double inf_mult = 104.5; // inflation multiplier
 
 	//determnistic (real) rent growth
-	double g_rent = 0.0; //0.02;
+	double g_rent = grent_in; // 0.0; //0.02;
 
 	ph0_in = ph0_in / inf_mult * 100.0;
 	rent_in = rent_in / inf_mult * 100.0;
@@ -104,8 +106,7 @@ void load_simpath(void *snodes_in, double rent_in, double ph0_in, double ret0_in
 	double ph0 = ph0_in;
 	double ret0 = ret0_in;
 	double csf_1yr = csf_1yr_in;
-	
-	snodes *snodes1 = (snodes*)snodes_in;
+
 	int T_max = (*snodes1).T_max;
 
 	cout << "begin load_simpath" << endl ;

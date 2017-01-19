@@ -47,19 +47,41 @@ int main(){
 		load_csv(&city_data, city_filename);
 
 		int i_age, t, age0;
+		//i_age = 0;
 
-		for (i_age = 0; i_age < n_age; i_age++) {
+		//for (i_age = 0; i_age < n_age; i_age++) {
+
+		double grent_store[] = { 0.0, 0.02 };
+		double ltv0_store[] = {0.2, 0.05};
+		double rp0_store[] = { 0.07, 0.04 };
+
+		double grent;
+		double ltv0;
+		double rp0;
+		
+		int id = 0, id_grent, id_ltv0, id_rp0;
+
+t = 11;
 
 #pragma omp parallel for
-			for (t = t_begin; t <= t_end; t++) {
+	for (id = 0; id < 8; id++) {
+		id_grent = (id % 2 >= 1);
+		id_ltv0 = (id % 4 >= 2);
+		id_rp0 = (id % 8 >= 4);
 
-				age0 = age_begin_store2[param_id][i_age];
-
+				//age0 = age_begin_store2[param_id][i_age];
+				
+				double grent = grent_store[id_grent];
+				double ltv0 = ltv0_store[id_ltv0];
+				double rp0 = rp0_store[id_rp0]; 
+				
+				age0 = 30;
 				int T_max = age_max - age0;            // optimization problem horizon
 				int t_hor = T_max;                     // household's planning horizon time index
 			       
 				double duration;
 				double phr_in = city_data.rent[t];     // load in current median rent
+				double ph0 = 1.0 / rp0 * phr_in;       // rent to price parameter imposes current price
 				
 				clock_t start = clock();                 
 
@@ -85,7 +107,7 @@ int main(){
 				// load city_data and into ps1 and gs1; include current rent, current home price,
 				// lagged home price appreciation, Case-Shiller Futures Price, current time
 				// load_simpath store discretized approximation in snodes1 structure 
-				load_simpath(&snodes1, city_data.rent[t], city_data.price[t], city_data.ret_lag[t],
+				load_simpath(&snodes1, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
 				mortg mortg1(&snodes1, city_data.price[t]);
@@ -93,8 +115,7 @@ int main(){
 
 				snodes1.adj_tax();
 
-				// TEST: print this out
-				//def_stats1.print_def_stats(T_max); // print out transition matrices
+				def_stats1.print_def_stats(T_max, id);     // TEST: print this out
 
 				cout << "main.cpp: begin enter data" << endl;
 				vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
@@ -120,7 +141,7 @@ int main(){
 					vf_F = vf_P;
 				}
 				def_stats1.wtrans_iterate(T_max);
-				def_stats1.print_def_stats(T_max); // print out transition matrices
+				def_stats1.print_def_stats(T_max, id); // print out transition matrices
 
 				t_hor = 0;
 
@@ -128,7 +149,7 @@ int main(){
 				duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 				cout << "total run time: " << duration << '\n';
 			}
-		}
+		//}
 	}
 
 	cin.get();

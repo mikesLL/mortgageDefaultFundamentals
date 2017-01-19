@@ -77,10 +77,10 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 					w2_l = (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];    // load in wealth in next period given state
 					w2_h = (*snodes1).w_t2_state_high[i_t_hor][i_s1p][i_s2p][i_w1p];    // (low and high wealth realizations)
 
-					i_w2l = round((w2_l - w_min) / (w_max - w_min));   // round wealth realization to closest wealth index
+					i_w2l = round((w2_l - w_min) / (w_max - w_min)*(w_n-1));   // round wealth realization to closest wealth index
 					i_w2l = min(max(i_w2l, 0), w_n - 1);               // TODO: double check round fn
 
-					i_w2h = round((w2_h - w_min) / (w_max - w_min));
+					i_w2h = round((w2_h - w_min) / (w_max - w_min)*(w_n-1));
 					i_w2h = min(max(i_w2h, 0), w_n - 1);
 
 					wdist2[i_w2l] = wdist2[i_w2l] + 0.5*sdist[i_s1p] * gammap[i_s1p][i_s2p] * wdist[i_w1p];  // add outcome probability mass
@@ -112,13 +112,14 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 //wdist_store[t_hor + 1] = wdist2;
 
-void def_stats::print_def_stats( int t_hor_in) {
+void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	int t_hor = t_hor_in;
 	int i_t_hor;
+	int id = id_in; 
 
 	// PRINT: hazard store
 	ofstream v1_file;                                           // open output file stream 
-	string file_name1 = "def_results/hazard_rate.csv";
+	string file_name1 = "def_results/hazard_rate" + to_string(id) + ".csv";
 	v1_file.open(file_name1, ios::out | ios::trunc);              // outstream, truncate
 
 	// print headers
@@ -132,7 +133,7 @@ void def_stats::print_def_stats( int t_hor_in) {
 
 	// PRINT: sdist store
 	ofstream v2_file;                                           // open output file stream 
-	string file_name2 = "def_results/sdist_store.csv";
+	string file_name2 = "def_results/sdist_store" + to_string(id) + ".csv" ;
 	v2_file.open(file_name2, ios::out | ios::trunc);              // outstream, truncate
 	int i_sf;
 																 // print headers
@@ -150,7 +151,7 @@ void def_stats::print_def_stats( int t_hor_in) {
 
 	// PRINT: wdist store
 	ofstream v3_file;                                           // open output file stream 
-	string file_name3 = "def_results/wdist_store.csv";
+	string file_name3 = "def_results/wdist_store" + to_string(id) + ".csv";
 	v3_file.open(file_name3, ios::out | ios::trunc);              // outstream, truncate
 	int i_wf;
 	// print headers
@@ -169,7 +170,7 @@ void def_stats::print_def_stats( int t_hor_in) {
 
 	// PRINT: gammat (flat file)
 	ofstream v4_file;                                           // open output file stream 
-	string file_name4 = "def_results/gammat_flat.csv";
+	string file_name4 = "def_results/gammat_flat" + to_string(id) + ".csv";
 	v4_file.open(file_name4, ios::out | ios::trunc);              // outstream, truncate
 	//int i_wf;
 	int i_s1f, i_s2f;
@@ -189,7 +190,7 @@ void def_stats::print_def_stats( int t_hor_in) {
 	// PRINT: own_state (flat file)
 	// (*snodes1).own_state[i_t_hor][i_s1p][i_w1p])
 	ofstream v5_file;                                           // open output file stream 
-	string file_name5 = "def_results/own_state_flat.csv";
+	string file_name5 = "def_results/own_state_flat" + to_string(id) + ".csv";
 	v5_file.open(file_name5, ios::out | ios::trunc);              // outstream, truncate
 	
 	v5_file << "t_hor,s1,i_w1,own_state" << endl;                     // print headers
@@ -208,7 +209,7 @@ void def_stats::print_def_stats( int t_hor_in) {
 	// PRINT: w_t2_state  (flat, low, high)
 	// (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];
 	ofstream v6_file;                                           // open output file stream 
-	string file_name6 = "def_results/w_t2_state_flat.csv";
+	string file_name6 = "def_results/w_t2_state_flat" + to_string(id) + ".csv";
 	v6_file.open(file_name6, ios::out | ios::trunc);              // outstream, truncate
 
 	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers

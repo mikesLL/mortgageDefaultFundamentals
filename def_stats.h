@@ -22,7 +22,7 @@ public:
 	vector<double> hazard_store;                       // hazard rate in each year
 	vector<vector<double>> sdist_store, wdist_store;  // sdist, wdist in each year
 
-	void print_def_stats( int t_hor_in );
+	void print_def_stats( int t_hor_in, int id_in );
 
 
 };
