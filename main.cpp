@@ -52,7 +52,7 @@ int main(){
 		//for (i_age = 0; i_age < n_age; i_age++) {
 
 		double grent_store[] = { 0.0, 0.02 };
-		double ltv0_store[] = {0.2, 0.05};
+		double ltv0_store[] = {0.8, 0.95};
 		double rp0_store[] = { 0.07, 0.04 };
 
 		double grent;
