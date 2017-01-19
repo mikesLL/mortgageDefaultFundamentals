@@ -209,7 +209,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	// PRINT: w_t2_state  (flat, low, high)
 	// (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];
 	ofstream v6_file;                                           // open output file stream 
-	string file_name6 = "def_results/w_t2_state_flat" + to_string(id) + ".csv";
+	string file_name6 = "def_results/" + to_string(id) + "w_t2_state_flat.csv";
 	v6_file.open(file_name6, ios::out | ios::trunc);              // outstream, truncate
 
 	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
