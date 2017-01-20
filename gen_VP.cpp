@@ -263,29 +263,37 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 						
 					i_m_refi = (*mortg1).r2m_map[i_rcurr][i_rlb];                // refi: i_rpmt = i_rcurr, i_rlb is the same
 
-					loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor];
-					// loan balance if ammort at repayment rate - loan balance if ammort at current market rate
-					// IF > 0, need to put up loan difference; decrease in liquid assets
-					// IF < 0, cash-out refinance; increase in liquid assets
-
+					// loan balance: ammort at repayment rate - ammort at current market rate
+					loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor]; 
+		
 					w_refi = (*rr1).w_grid[w_i] - loan_diff;                                        // compute liquid wealth if HH refinances
-					res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                            // evaluate value fn if household refinances
+					res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                             // evaluate value fn if household refinances
 
-					// w (liquid assets) under refi must be greater than 0.0
-					// v1: current guess for value fn given optimization, default
-					// lower estimate for value of refinance must be greater than v1
 					if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0)) {
+					
+						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);              // load in policy associated with refinance
+						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);   // set policy associated with refinance
+						v1 = res_refi.v_i_floor;                                                   // upadate value fn guess
 
-						// load in policy associated with refinance
-						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);                    // submit x as reference and load in x pol from t1 = 0
-
-						// set policy associated with refinance
-						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);      // first arguments are current state variables, x containts updated policy
-						v1 = res_refi.v_i_floor;                                                      // upadate value fn guess
-
-						(*snodes1).w_state_swap(res_refi.w_i_floor);                                  // update wealth transition state
+						(*snodes1).w_state_swap(res_refi.w_i_floor);                               // update wealth transition state
 					}
 				}
+
+				// COMPUTE CASE: HH SELLS
+				w_adj = (*rr1).w_grid[w_i] + (*snodes1).p_gridt[t_hor][i_ph] - loan_bal;           // calc wealth if HH sells
+				res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH sells
+
+				// CASE: value of selling > value of owning
+				if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
+					(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
+					t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
+					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+
+					v1 = res_t_0.v_i_floor;                        // update v1 with value of default
+					(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
+					(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
+				}
+
 				// COMPUTE CASE: HH DEFAULTS
 				w_adj = (*rr1).w_grid[w_i];                                // calc wealth if HH defaults
 				res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH defaults
@@ -298,6 +306,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 					v1 = res_t_0.v_i_floor;                        // update v1 with value of default
 					(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
+					(*snodes1).def_state[t_hor][i_s][w_i] = 1;     // update default state
 					(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
 				}
 			}

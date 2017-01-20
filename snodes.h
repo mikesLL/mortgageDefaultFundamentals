@@ -56,8 +56,9 @@ public:
 	vector<vector<vector<vector<double>>>> w_t2_state_low;
 	vector<vector<vector<vector<double>>>> w_t2_state_high;
 
-	// default outcome matrix
+	
 	vector<vector<vector<int>>> own_state;  // for each (t_hor, i_s1, w_i1 ) track whether HH defaults
+	vector<vector<vector<int>>> def_state;  // default outcome matrix
 
 	void w_state_swap(int i_w1_new_in);
 

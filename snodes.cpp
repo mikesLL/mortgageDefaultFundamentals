@@ -120,18 +120,22 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	// Last two arguments store w_low, w_high at beginning of next period
 
 	// work here 
-	int own_state0 = 1;  // assume household is homeowner by default
+	int own_state0 = 1, def_state0 = 0;  // assume household is homeowner by default
 	vector<vector<int>> ones_int_NS_WN(n_s, vector<int>(w_n, own_state0));
+	vector<vector<int>> zeros_int_NS_WN(n_s, vector<int>(w_n, def_state0));
+
 	vector<vector<vector<int>>> ones_int_T_NS_WN(T_max, ones_int_NS_WN);
+	vector<vector<vector<int>>> zeros_int_T_NS_WN(T_max, zeros_int_NS_WN);
 
 	own_state = ones_int_T_NS_WN;
-	// own_state
-	// Given: (t_hor, i_s1) and assume HH begins period as owner
-	// i_w1 value = {0 (HH defaults), 1 (HH owns) }
-
-	// in order to go further, will have to assume the wealth distribution
+	def_state = zeros_int_T_NS_WN;
+	
 }
+// own_state
+// Given: (t_hor, i_s1) and assume HH begins period as owner
+// i_w1 value = {0 (HH defaults), 1 (HH owns) }
 
+// in order to go further, will have to assume the wealth distribution
 
 // This function is used to model wealth when household refinances or defaults
 // i_w1_new: new wealth index once costs of refinace/default are accounted for
