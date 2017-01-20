@@ -31,7 +31,7 @@ Income grows in real terms as the agent ages and city-wide income increases
 
 #include "headers.h"
 
-void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
+void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
 
 	snodes *snodes1 = (snodes*)snodes_in;
 
@@ -253,10 +253,17 @@ void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_i
 		// compute age-related component of log-income (deterministic)
 		log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 + 0.0033*pow(age_td, 3.0) / 100.0;
 
+		rent_str[t][n] = exp(g_rent)*rent_str[t - 1][n]; // update rent path
+
 		// compute mortgage rate
 		mort_rate = (1.0 - pow(sr_rho_est, sr_mort_term))*sr_mu_est + pow(sr_rho_est, sr_mort_term)*rm_str[t][n] + +sr_mort_prem;
 
 		// cointegrate interest rates, rents, and prices
+		//double foo1 = exp(ph_str_city[t - 1][n]);
+		//double foo2 = rent_str[t - 1][n];
+		//double foo3 = log(mort_rate*foo1);
+		//double foo4 = log(foo2);
+
 		ecm = log(mort_rate*(exp(ph_str_city[t - 1][n]))) - (hp_gamma0_hat + hp_gamma1_hat*log(rent_str[t - 1][n]));
 
 		// load lagged home price
@@ -267,8 +274,6 @@ void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_i
 
 		//ret_tn = (csf_1yr - ph0) / ph0 + eps_h;
 		//ret_tn = (csf_1yr - ph0) / ph0 + sigma_ret*dist(gen);  // impose first year expected return equals the futures-based forecast
-
-		rent_str[t][n] = exp(g_rent)*rent_str[t-1][n]; // update rent path
 		
 		yi_str[t][n] = y_city_mult[city_id]*mult_unit*mult_2005*exp( log_fe + log_y_age + eta_t + v_t + e_t );  // Cocco, Maenhoust, Gomes parameters are in 1000's; convert to 100k
 		yi_str[t][n] = log(yi_str[t][n]);
@@ -331,7 +336,7 @@ void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_i
 	}
 
 	cout << "load_simpath.cpp: Finished Running Simulations" << endl;
-	cout << "load_simpath.cpp: Compute Home Price Nodes " << endl;
+	cout << "load_simpath.cpp: Compute Rate Nodes " << endl;
 
 
 	// HERE: going to add code to compute interest-rate nodes
@@ -359,6 +364,7 @@ void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_i
 		cout << endl;
 	}
 
+	cout << "load_simpath.cpp: Compute Home Price Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(ph_str[t].begin(), ph_str[t].end(), 0.0);
 		res_mean = res_sum / (double)ph_str[t].size();

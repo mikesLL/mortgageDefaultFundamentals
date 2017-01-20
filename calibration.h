@@ -55,9 +55,9 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 20; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 31; //35; //65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 35; //35; //65;                  // age at which household retires / annuitizes wealth  
 					
 //const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
 
