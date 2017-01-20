@@ -93,7 +93,7 @@ t = 11;
 				
 				cout << "main.cpp : finished running def_stats" << endl;
 
-				cout << "snoedes1.rent_adj = " << snodes1.rent_adj << endl; 
+				cout << "snodes1.rent_adj = " << snodes1.rent_adj << endl; 
 
 				cout << "housing tenure: " << endl;
 				cout << snodes1.hu_ten[0] << "..." << snodes1.hu_ten[1] << "..." << snodes1.hu_ten[2] << "..." << endl;
@@ -115,7 +115,7 @@ t = 11;
 
 				snodes1.adj_tax();
 
-				def_stats1.print_def_stats(T_max, id);     // TEST: print this out
+				//def_stats1.print_def_stats(T_max, id);     // TEST: print this out
 
 				cout << "main.cpp: begin enter data" << endl;
 				vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
