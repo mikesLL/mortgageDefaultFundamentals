@@ -39,7 +39,7 @@ void load_simpath(void *snodes_in, double rent_in, double grent_in, double ph0_i
 
 	// MOD HERE: limiting number of simulations for now 
 	int N_print =  1000;                          // number of observations to print to file
-	int N_sim = 10000;                                            // number of simulations
+	int N_sim = 1000000;                                            // number of simulations
 
 	//int N_print =  40000;                                           // number of observations to print to file
 	//int N_sim = 2000000;                                            // number of simulations
