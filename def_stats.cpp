@@ -205,6 +205,24 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 	v5_file.close();
 
+	// PRINT: def_state (flat file)
+	// (*snodes1).def_state[i_t_hor][i_s1p][i_w1p])
+	ofstream v51_file;                                           // open output file stream 
+	string file_name51 = "def_results/" + to_string(id) + "def_state_flat.csv";
+	v51_file.open(file_name51, ios::out | ios::trunc);              // outstream, truncate
+
+	v51_file << "t_hor,s1,i_w1,own_state" << endl;                     // print headers
+	for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
+		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
+			for (i_wf = 0; i_wf < w_n; i_wf++) {
+				v51_file << i_t_hor << "," << i_s1f << "," << i_wf << "," <<
+					(*snodes1).def_state[i_t_hor][i_s1f][i_wf] << "," << endl;
+			}
+		}
+	}
+
+	v51_file.close();
+
 
 	// PRINT: w_t2_state  (flat, low, high)
 	// (*snodes1).w_t2_state_low[i_t_hor][i_s1p][i_s2p][i_w1p];
