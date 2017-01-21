@@ -53,7 +53,7 @@ int main(){
 
 		double grent_store[] = { 0.0, 0.02 };
 		double ltv0_store[] = {0.8, 0.95};
-		double rp0_store[] = { 0.07, 0.04 };
+		double rp0_store[] = { 0.06, 0.045 };
 
 		double grent;
 		double ltv0;
