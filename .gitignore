@@ -58,6 +58,7 @@ eval_perf/*.png
 eval_perf/*.asv
 
 def_stats/*.csv
+def_results/*.csv
 
 figures/*
 
