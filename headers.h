@@ -50,5 +50,5 @@ void load_csv( void *city_in, string file_name );
 
 double ufn( double c_in, double hu_in, int pref_in);
 	
-
+void matrix_mult(double(&c)[3], double(&A)[3][3], double(&x)[3], double(&b)[3], int niter);
 

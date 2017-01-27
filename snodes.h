@@ -28,13 +28,27 @@ public:
 	int t_hor;
 	int s_ph_midry[n_ph];                               // states where home prices index from low to high, but rent and yi are always median
 
+
+	// State Grids
 	vector<vector<double>> p_gridt, rent_gridt, yi_gridt, yi_gridt_btax;
 	vector<vector<double>> rm_gridt;
 
+	vector<vector<double>> plevel_gridt;     // price level grid
+	vector<vector<double>> urate_gridt;       // unemployment grid
+	vector<vector<double>> fedfunds_gridt;     // fedfunds
+	
 	vector<vector<vector<double>>> gammat;              // state transition matrix for each time period
 
 	//vector<vector<vector<int>>> i2s_map;                // maps individual dimensions to state
 	vector<vector<vector<vector<int>>>> i2s_map;                // maps individual dimensions to state
+
+	vector<vector<vector<vector<int>>>> i2s_map2;              // maps individual dimension to state (version2)
+
+	//vector<int> s2i_ph;                                 // maps state to current home price
+	vector<int> s2i_plevel;                             // maps state to current price level
+	vector<int> s2i_urate;                              // maps state to current unemployment rate
+	vector<int> s2i_fedfunds;                           // maps state to current fedfunds
+	
 	vector<int> s2i_ph;                                 // maps state to current price
 	vector<int> s2i_rent;                               // maps state to current rent
 	vector<int> s2i_yi;                                 // maps state to current income

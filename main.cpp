@@ -47,19 +47,29 @@ int main(){
 		load_csv(&city_data, city_filename);
 
 		int i_age, t, age0;
-		//i_age = 0;
+	
 
-		//for (i_age = 0; i_age < n_age; i_age++) {
-
-		double grent_store[] = { 0.0, 0.02 };
+		double grent_store[] = { 0.0, 0.02 };  // TODO: switch these
 		double ltv0_store[] = {0.8, 0.95};
 		double rp0_store[] = { 0.06, 0.045 };
-
-		double grent;
-		double ltv0;
-		double rp0;
 		
 		int id = 0, id_grent, id_ltv0, id_rp0;
+
+		for (id = 0; id <= 7; id++) {
+			id_grent = (id % 2 >= 1);
+			id_ltv0 = (id % 4 >= 2);
+			id_rp0 = (id % 8 >= 4);
+
+			double grent = grent_store[id_grent];
+			double ltv0 = ltv0_store[id_ltv0];
+			double rp0 = rp0_store[id_rp0];
+
+			cout << "grent = " << grent << "   ltv0 = " << ltv0 << "   rp0 = " << rp0 << endl;
+		}
+
+		//cin.get();
+
+
 
 t = 11;
 

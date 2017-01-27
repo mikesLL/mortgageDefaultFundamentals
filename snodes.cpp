@@ -16,6 +16,10 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	rent_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_rent, 0.0));
 	yi_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_yi, 0.0));
 	yi_gridt_btax = vector<vector<double>>(T_max + 1, vector<double>(n_yi, 0.0));
+
+	plevel_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_plevel, 0.0));
+	urate_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_urate, 0.0));
+	fedfunds_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_fedfunds, 0.0));
 	
 
 	// initialize gammat state-state transition matrix
@@ -30,6 +34,8 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	vector<int> zeros_NS(n_s, 0);
 
 	i2s_map = zeros_NPH_NRENT_NYI_NRM;
+
+	//i2s_map2 = zeros
 	//i2s_map = zeros_NPH_NRENT_NYI;
 	s2i_ph = zeros_NS;
 	s2i_rent = zeros_NS;
@@ -52,6 +58,54 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 			}
 		}
 	}
+
+	// states: home price, price level, urate, fed funds
+	// [n_ph][n_plevel][n_urate][n_fedfunds]
+	// i2s_map2 will capture information on all states
+	int i_plevel, i_urate, i_fedfunds;
+	
+	i2s_map2.resize(n_ph);
+	for (i_ph = 0; i_ph < n_ph; i_ph++) {
+		i2s_map2[i_ph].resize(n_plevel);
+
+		for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+			i2s_map2[i_ph][i_plevel].resize(n_urate);
+
+			for (i_urate = 0; i_urate < n_urate; i_urate++) {
+				i2s_map2[i_ph][i_plevel][i_urate].resize(n_fedfunds);
+
+				i2s_map2[i_ph][i_plevel][i_urate].assign(n_fedfunds, 0);
+			}
+		}
+	}
+
+	//for (i_ph = 0; i_ph) 
+
+	i_s = 0;
+	s2i_plevel.resize(n_s2);
+	s2i_urate.resize(n_s2);
+	s2i_fedfunds.resize(n_s2);
+
+	for (i_ph = 0; i_ph < n_ph; i_ph++) {
+		for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+			for (i_urate = 0; i_urate < n_urate; i_urate++) {
+				for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++){
+
+					i2s_map2[i_ph][i_plevel][i_urate][i_fedfunds] = i_s;          // initialize i2s map
+					//s2i_ph[i_s] = i_ph;                                           // initialize s2_i maps
+					//s2i_rent[i_s] = i_rent;
+					//s2i_yi[i_s] = i_yi;
+					//s2i_rm[i_s] = i_rm;
+
+					s2i_plevel[i_s] = i_plevel;                            // maps state to current price level
+					s2i_urate[i_s] = i_urate;                              // maps state to current unemployment rate
+					s2i_fedfunds[i_s] = i_fedfunds;                        // maps state to current fedfunds
+					i_s++;
+				}
+			}
+		}
+	}
+
 
 	// compute i_s_mid;
 	i_ph_mid = (int) floor( 0.5*n_ph );

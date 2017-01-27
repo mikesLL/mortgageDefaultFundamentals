@@ -32,11 +32,16 @@ const double rent_price0 = 0.05; // rent to price ratio at origination
 // loan_bal_rt contains the loan balance associated with each mortgage rate
 const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.5} };
 
+
 // current rate: current mortgage rate
 // pmt rates: payment on mortgage
 // mortgage balance
 //const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
 const int m_n = rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+
+const int n_plevel = 3;
+const int n_urate = 3;
+const int n_fedfunds = 3;
 
 const int city_begin = 2;
 const int city_end = 2;
@@ -83,10 +88,13 @@ const int N_cities = 8;                    // number of cities
 
 const int n_ph = 9;      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
-const int n_yi = 3; // 3;  // labor income states
+const int n_yi = 3; //3; // 3;  // labor income states
+// add u-rate to state of economy
 
 //const int n_s = n_ph * n_rent * n_yi;  // number of states
 const int n_s = n_ph * n_rent * n_yi * rm_n;  // number of states
+
+const int n_s2 = n_ph * n_plevel * n_urate * n_fedfunds; 
 
 // Labor income related parameters
 const double maint_mult = 0.98;
