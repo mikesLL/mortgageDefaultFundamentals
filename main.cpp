@@ -69,8 +69,6 @@ int main(){
 
 		//cin.get();
 
-
-
 t = 11;
 
 #pragma omp parallel for

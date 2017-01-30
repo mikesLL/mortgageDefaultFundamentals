@@ -97,11 +97,14 @@ t_i2 = 0;
 	
 // COMPUTE Renter problem
 // Do NOT need to cycle through different mortgage states
+
 for (i_s = 0; i_s < n_s; i_s++) {
 
 	i_yi = (*snodes1).s2i_yi[i_s];              // load in states
 	i_rent = (*snodes1).s2i_rent[i_s];
 	i_ph = (*snodes1).s2i_ph[i_s];
+
+	
 
 	start = clock();
 	cout << "i_m = " << i_m << "  i_s = " << i_s << "  t_i = " << t_i << "  i_yi = " << i_yi
@@ -200,6 +203,32 @@ int i_m_refi;  // mortgage state associated with refinancing
 double mortg_pmt3;  // mortgage payment
 double loan_diff;  // loan balance difference
 double loan_bal; // current loan balance
+
+
+cout << "gen_VP.cpp: minimum working example for new state-space setup" << endl;
+// mod here: states are the macroeconomy
+// minimum working example
+int i_plevel, i_urate, i_fedfunds;
+for (i_s = 0; i_s < n_s2; i_s++) {
+	i_ph = (*snodes1).s2i_ph[i_s];                        // load in home price
+	i_plevel = (*snodes1).s2i_plevel[i_s];                // load in price level
+	i_urate = (*snodes1).s2i_urate[i_s];                  // load in urate
+	i_fedfunds = (*snodes1).s2i_fedfunds[i_s];            // load in fedfunds
+
+	for (i_m = 0; i_m < m_n; i_m++) {                      // Cycle through mortgage states
+		for (w_i = 0; w_i < w_n; w_i++) {
+
+			                                               // Load mortgage state 
+			i_rpmt = (*mortg1).m2rpmt_map[i_m];            // current payment rate on mortgage
+			i_rlb = (*mortg1).m2rlb_map[i_m];              // current loan balance (given ammort rate)
+									 
+			mpmt = (*mortg1).pmt[i_m][t_hor];              // mortgage payment 
+
+			coh = 1.0/(*snodes1).plevel_gridt[t_hor][i_s]*(*rr1).w_grid[w_i] - mpmt;        // COH = liquid assets + income - mortgage payment)
+
+		}
+	}
+}
 
 cout << "gen_VP.cpp: begin homeowner problem" << endl; 
 for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
