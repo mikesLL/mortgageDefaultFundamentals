@@ -9,7 +9,22 @@ mortg::mortg( void *snodes_in, double ph0_in, double ltv0_in ){
 
 	// TODO: get rid of rm_store
 	double sr_mort_prem = 0.0322;                             // TODO: move this somewhere else
+
 	rm_grid = (*snodes1).rm_gridt[0];
+
+	// rm_gridt[0] : is a vector of mortgage rates from the initial time-horizon
+	// the current code imposes that the mortgage rate is one from the initial time horizon
+	// in the future, will 
+	// scratch work: allow rm_grid to take ANY of the rm_gridt values from each year
+
+	int T_max = (*snodes1).T_max; // load in max time period
+	
+	//rm_gridt.resize(T_max);
+	//int i_thor;
+	//for(i_thor = 0; i_thor < T_max; i_thor++) {
+	//	rm_gridt[i_thor] =  (*snodes1).rm_gridt[i_thor] ;
+	//}
+	//rm_grid[i_rpmt] = rm_grid[i_rpmt] + sr_mort_prem;
 
 	for (i_rpmt = 0; i_rpmt < rm_n; i_rpmt++) {
 		rm_grid[i_rpmt] = rm_grid[i_rpmt] + sr_mort_prem;

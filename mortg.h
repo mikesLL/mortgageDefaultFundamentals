@@ -15,6 +15,8 @@ class mortg {
 	
 	vector<double> rm_grid;  // mortgage rate grid
 
+	vector<vector<double>> rm_gridt; // mortgage rate grid by year
+
 public:
 	vector<vector<double>> bal;  //mortgage balances indexed by rate then year 
 	vector<vector<double>> pmt; // mortgage payments indexed by state then year
@@ -24,6 +26,7 @@ public:
 	vector<int> m2rcurr_map;
 	vector<int> m2rpmt_map;
 	vector<int> m2rlb_map;
+
 	//vector<vector<vector<int>>> r2m_map;
 	vector<vector<int>> r2m_map;
 

@@ -37,7 +37,10 @@ const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.
 // pmt rates: payment on mortgage
 // mortgage balance
 //const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
-const int m_n = rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+
+//const int m_n = rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
+const int m_n = 2; // 2 mortgage states: i_m = 0 for no mortgage, i_m = 1 for a mortgage
+
 
 const int n_plevel = 3;
 const int n_urate = 3;
@@ -94,7 +97,10 @@ const int n_yi = 3; //3; // 3;  // labor income states
 //const int n_s = n_ph * n_rent * n_yi;  // number of states
 const int n_s = n_ph * n_rent * n_yi * rm_n;  // number of states
 
-const int n_s2 = n_ph * n_plevel * n_urate * n_fedfunds; 
+//const int n_s2 = n_ph * n_plevel * n_urate * n_fedfunds;
+const int n_s2 = n_ph * n_plevel * n_urate;   // impose fedfunds determined by plevel, urate
+// Fedfunds = f
+
 
 // Labor income related parameters
 const double maint_mult = 0.98;
