@@ -25,7 +25,7 @@ public:
 
 	int i_m1;
 
-	double urate1, fed_funds1, yinc1;
+	double urate1, fed_funds1, yinc1, plevel1;
 
 	int def_flag; 
 	int lcount;
@@ -39,7 +39,6 @@ public:
 	int T_max;
 
 	snodes *snodes1;    // pointer to snodes
-	//mortg *mortg1;      // pointer to mortgage
 
 	vector<double> v_move;
 

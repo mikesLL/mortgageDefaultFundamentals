@@ -102,9 +102,9 @@ for (i_s = 0; i_s < n_s; i_s++) {
 
 	// pass in URATE, PLEVEL, and FEDFUNDS
 	(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];                   // pass in initial unemployment rate
-	(*rr2).fed_funds1 = (*snodes1).fedfunds_gridt[t_hor][(*snodes1).s2i_fedfunds[i_s]];         // pass in fed funds
-	(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];                     // pass in income
-
+	(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][0];                                               // pass in income
+	(*rr2).fed_funds1 = (*snodes1).fedfunds_store[t_hor][i_s];                                  // pass in fed funds
+	(*rr2).plevel1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_plevel[i_s]];
 
 	i_yi = 0; //i_yi = (*snodes1).s2i_yi[i_s];              // load in states
 	i_rent = 0;                                   // (*snodes1).s2i_rent[i_s];
@@ -197,13 +197,13 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 	for (i_s = 0; i_s < n_s; i_s++) {                  // Cycle through macro states
 
-		// pass in URATE, PLEVEL, and FEDFUNDS
-		(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];              // pass in initial unemployment rate
-		(*rr2).fed_funds1 = (*snodes1).fedfunds_gridt[t_hor][(*snodes1).s2i_fedfunds[i_s]];      // pass in fed funds
-		(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];                     // pass in income
-		
+		// pass in URATE, FEDFUNDS, YINC
+		(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];            // pass in initial unemployment rate
+		(*rr2).fed_funds1 = (*snodes1).fedfunds_store[t_hor][i_s];                            // pass in fed funds
+		(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][0];                                         // pass in income
+		(*rr2).plevel1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_plevel[i_s]];          // pass in plevel
 
-		t_i2 = t_i;                                      // impose t_i2 = t_i (homeowner)
+		t_i2 = t_i;                                                                // impose t_i2 = t_i (homeowner)
 
 		i_ph = (*snodes1).s2i_ph[i_s];
 		

@@ -42,18 +42,6 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	vw3_d_grid_ti2 = (*vf2).vw3_d_grid[t_i2];
 	vw3_dd_grid_ti2 = (*vf2).vw3_dd_grid[t_i2];
 
-	// compute home price expectation
-	for (i_s2 = 0; i_s2 < n_s; i_s2++) {                     
-		i_ph2 = (*snodes1).s2i_ph[i_s2];        // pass in single state; return price index
-		ph_2e = ph_2e + (*snodes1).gammat[t_hor][i_s1][i_s2] * (*snodes1).p_gridt[t_hor+1][i_ph2];
-	}
-
-	// compute home price future payout in each state
-	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
-		i_ph2 = (*snodes1).s2i_ph[i_s2];
-		csf_net2[i_s2] = ( (*snodes1).p_gridt[t_hor + 1][i_ph2] - ph_2e ) / ph_2e;
-	}
-
 	i_s2p = 0;
 	for (i_s2 = 0; i_s2 < n_s; i_s2++) {
 		if ( (*snodes1).gammat[t_hor][i_s1][i_s2] > 0.0) {
@@ -69,16 +57,17 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 double ufnEV2::eval( vector<double> x ){
 
 	Evw_2 = 0.0;                            // Value Function Expectation
-	uc = ufn(x[0], hu, (*vf2).pref);        // composite utility
+	uc = ufn(x[0] / (*vf2).plevel1 , hu, (*vf2).pref);        // composite utility
 	
-	rb_unsec = rb + credit_prem;
-	//rb_unsec = (*snodes1).fedfunds_gridt[t_hor][i_s1]
-
+	//rb_unsec = rb + credit_prem;
+	rb_unsec = (1.0 + (*vf2).fed_funds1) + credit_prem;
+	rb_sec = (1.0 + (*vf2).fed_funds1);
+	
 
 	// calc effective effective interest rate
 	b_sec = max( x[1], - max_ltv*( (*snodes1).ten_w[t_i2] * ph1 - loan_bal1  )  );
 	b_unsec = x[1] - b_sec;
-	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec; 
+	rb_eff_agg = rb_sec*b_sec + rb_unsec*b_unsec;
 	
 	eval_res res1_unemp, res1_emp;
 

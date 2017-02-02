@@ -44,6 +44,7 @@ class ufnEV2 {
 	double b_unsec; // = 0.0;
 	double b_sec; // = 0.0;
 	double rb_unsec; //  = rb + credit_prem;
+	double rb_sec;
 
 	int i_urate1, i_fedfunds1, i_plevel1, i_yi1;
 

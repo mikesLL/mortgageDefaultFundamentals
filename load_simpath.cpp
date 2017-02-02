@@ -273,9 +273,6 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		cout << endl;
 	}
 
-	// TODO
-	// HERE, you can load in the nodes for pinf and plevel and use the VAR to compute FEDFUNDS
-	// node deterministically
 	cout << "load_simpath.cpp: Compute Fedfunds Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(fedfunds_str[t].begin(), fedfunds_str[t].end(), 0.0);
@@ -372,8 +369,14 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 
 	int i_plevel, i_urate, i_fedfunds;
 
+	vector<double> fedfunds_store_sum(n_s, 0.0);
+	vector<int> fedfunds_store_count(n_s, 0);
+
 	cout << "load_simpath.cpp: Cycle Through Observations" << endl;
 	for (t = 0; t < T_sim; t++) {
+		fedfunds_store_sum = vector<double>(n_s, 0.0);
+		fedfunds_store_count = vector<int>(n_s, 0);
+
 		gamma_store = zeros_NS_NS;                                  // initialize current-period transition matrix
 
 		ph_step = ph_str_nds[t][1] - ph_str_nds[t][0];                         // step-sizes
@@ -399,8 +402,12 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			i_urate = min(max(i_urate, 0), n_urate - 1);              // bound extremes
 			i_fedfunds = min(max(i_fedfunds, 0), n_fedfunds - 1);              // bound extremes
 			 
-			s1 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];                // map node to state
+			s1 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];             // map node to state
 
+			// fedfunds: store observation
+			fedfunds_store_sum[s1] += fedfunds_str[t][n];
+			fedfunds_store_count[s1] += 1;
+			
 			// next period: map observation to closest node
 			i_ph = (int)round((ph_str[t + 1][n] - ph_str_nds[t + 1][0]) / ph_step1);
 			i_plevel = (int)round((plevel_str[t+1][n] - plevel_str_nds[t+1][0]) / plevel_step1);
@@ -432,6 +439,13 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 				}
 			}
 		}
+
+		// load fedfunds into data structure
+		for (i = 0; i < n_s; i++) {
+			fedfunds_store_count[i] = max(fedfunds_store_count[i], 1);
+			(*snodes1).fedfunds_store[t][i] = max( fedfunds_store_sum[i] / (double)fedfunds_store_count[i], 0.0 );
+		}
+
 	}
 
 	cout << "load_simpath.cpp: Finished Computing Transition Matrix" << endl;

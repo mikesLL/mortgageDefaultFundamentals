@@ -37,6 +37,8 @@ public:
 	vector<vector<double>> urate_gridt;       // unemployment grid
 	vector<vector<double>> fedfunds_gridt;     // fedfunds
 	
+	vector<vector<double>> fedfunds_store;   // fed funds value
+
 	vector<vector<vector<double>>> gammat;              // state transition matrix for each time period
 
 	//vector<vector<vector<int>>> i2s_map;                // maps individual dimensions to state

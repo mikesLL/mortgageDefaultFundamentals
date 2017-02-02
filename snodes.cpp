@@ -17,6 +17,10 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	plevel_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_plevel, 0.0));
 	urate_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_urate, 0.0));
 	fedfunds_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_fedfunds, 0.0));
+
+	// fedfunds store: pass in t_hor, i_s
+	// retrieve fedfunds rate
+	fedfunds_store = vector<vector<double>>(T_max + 1, vector<double>(n_s, 0.0));            
 	
 	// initialize gammat state-state transition matrix
 	vector<vector<vector<double>>> zeros_T_NS_NS(T_max + 1, vector<vector<double>>(n_s, vector<double>(n_s, 0.0)));
@@ -35,6 +39,7 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	s2i_plevel.resize(n_s);
 	s2i_urate.resize(n_s);
 	s2i_fedfunds.resize(n_s);
+	//s2i_yi.resize(n_s);
 
 	i2s_map.resize(n_ph);
 

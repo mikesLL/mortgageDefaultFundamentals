@@ -49,10 +49,10 @@ int main(){
 		int i_age, t, age0;
 	
 
-		double grent_store[] = { 0.0, 0.02 };  // TODO: switch these
+		double grent_store[] = { 0.02, 0.0 };  // TODO: switch these
 		double ltv0_store[] = {0.8, 0.95};
 		double rp0_store[] = { 0.06, 0.045 };
-		
+			
 		int id = 0, id_grent, id_ltv0, id_rp0;
 
 		for (id = 0; id <= 7; id++) {
@@ -106,6 +106,10 @@ int main(){
 
 			vfn vf_F;
 			vfn vf_P;
+
+			double mapr = 0.06;
+			int N_term = 30;
+			mortg mortg1(&snodes1, city_data.price[t], ltv0, mapr, N_term);
 				
 			// load city_data and into ps1 and gs1; include current rent, current home price,
 			// lagged home price appreciation, Case-Shiller Futures Price, current time
@@ -113,9 +117,7 @@ int main(){
 			load_simpath(&snodes1, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
-			double mapr = 0.06;
-			int N_term = 30;
-			mortg mortg1(&snodes1, city_data.price[t], ltv0, mapr, N_term );
+			
 			cout << "Finished Loading Mortgage Class" << endl;
 
 			//snodes1.adj_tax();
