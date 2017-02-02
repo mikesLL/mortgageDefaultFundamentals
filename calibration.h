@@ -14,6 +14,8 @@ const double mort_term = 30.0;
 const int mort_term_int = 3; //30;
 
 // state variable: mortgage rates
+const double unemp_mult = 0.25; // Proportion of income received unemployment shock
+
 const double ltv_init = 0.95;  // Loan to value at origination
 const double rent_price0 = 0.05; // rent to price ratio at origination
 const int m_n = 2; // 2 mortgage states: i_m = 0 for no mortgage, i_m = 1 for a mortgage
@@ -39,7 +41,7 @@ const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // man
 const double csfLev = csfLevStore[param_id];
 const int w_n = 20; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 31; //35; //65;                  // age at which household retires / annuitizes wealth  
+const int age_max = 35; //35; //65;                  // age at which household retires / annuitizes wealth  
 
 
 

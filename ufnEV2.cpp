@@ -18,6 +18,11 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	t_hor = (*snodes1).t_hor; // current horizon / value function under computation
 	i_s1 = (*vf2).i_s1;       // current state
 	t_i2 = (*vf2).t_i2;       // next period tenure (predetermined)
+
+	(*snodes1).s2i_urate[i_s1];
+
+	i_yi1 = 0;
+	
 	hu = (*snodes1).hu_ten[t_i2];        // housing utility (fn of tenure)
 	ph_2e = 0.0;    
          
@@ -26,7 +31,7 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 
 	// MODS HERE
 	int i_m1;
-	i_m1 = (*vf2).m_i1;
+	i_m1 = (*vf2).i_m1;
 	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_m1];
 	//vw3_grid_ti2 = (*vf2).vw3_grid[t_i2];
 
@@ -67,29 +72,36 @@ double ufnEV2::eval( vector<double> x ){
 	uc = ufn(x[0], hu, (*vf2).pref);        // composite utility
 	
 	rb_unsec = rb + credit_prem;
+	//rb_unsec = (*snodes1).fedfunds_gridt[t_hor][i_s1]
+
 
 	// calc effective effective interest rate
 	b_sec = max( x[1], - max_ltv*( (*snodes1).ten_w[t_i2] * ph1 - loan_bal1  )  );
 	b_unsec = x[1] - b_sec;
 	rb_eff_agg = rb*b_sec + rb_unsec*b_unsec; 
 	
+	eval_res res1_unemp, res1_emp;
+
 	// cycle accross possible future states to compute value function expectation
 	for (i_s2p = 0; i_s2p < N_s2p; i_s2p++) {
 		i_s2 = i_s2p_vec[i_s2p];
 		i_ph2 = (*snodes1).s2i_ph[i_s2];
-
+		
 		for (i_x2 = 0; i_x2 < retxn; i_x2++) {
-				
+			
 			w2 = rb_eff_agg + exp(retxv[i_x2])*x[2] + x[3] + x[4];
-				
-			res1 = eval_v(i_s2, w2);                                   // evaluate value function in state
-			res1_move = (*vf2).eval_v_def(i_s2, w2);
-			vw2 = (1.0 - p_move)* res1.v_out + p_move * res1_move.v_out;
-					
-			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
+			
+			// evaluate value function in state
+			res1_unemp = eval_v(i_s2, w2 + unemp_mult* (*vf2).yinc1 );
+			res1_emp = eval_v(i_s2, w2 + (*vf2).yinc1 );
+			
+			vw2 = (1.0 - (*vf2).urate1 )*res1_emp.v_out +
+				(*vf2).urate1 * res1_unemp.v_out;
 
+			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
 		}
 	}
+	
 	return uc + beta*Evw_2;
 }
 

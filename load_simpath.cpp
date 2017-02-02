@@ -68,36 +68,22 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	double sigma_ret = 0.08;
 	double gamma0_hat = -2.27;
 	double gamma1_hat = 0.59;
-
-	double hp_alpha_hat = 0.0041;
-	double hp_rhof_hat = 0.768;
-	double hp_theta_hat = -0.18;
-	double hp_sigma_ret = 0.0699;
-	double hp_gamma0_hat = -0.7022; //4.69;
-	double hp_gamma1_hat = 0.5314;
-
-	double sr_mu_est = 0.0124;
-	double sr_rho_est = 0.9085;
-	double sr_mort_term =  10.0;
-	double sr_mort_prem = 0.0322;
-	double sr_sigma_est = 0.0175;
-		 
+	 
 	double p_min = 0.01;                                                         // lower bound on home prices	
 
 	double rm_str0 = 0.0124;                                                      // initial short rate
-	double mort_rate = rm_str0 + sr_mort_prem;                                 // initial mortgage rate
+	//double mort_rate = rm_str0 + sr_mort_prem;                                 // initial mortgage rate
 	
 	// stdev centers (tauchen-style discretization) 
     double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
 	double ph_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };     
 	//double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
-	double rent_nd_std[] = { 0.0 };                                           // can also set { -1.0, 0.0, 1.0 };
+	double rent_nd_std[] = { 0.0 };                                            // can also set { -1.0, 0.0, 1.0 };
 	
 	double plevel_nd_std[] = { -1.0, 0.0, 1.0 };            // store price-level std nodes
 	double urate_nd_std[] = { -1.0, 0.0, 1.0 };             // store unemployment rate std nodes
 	double fedfunds_nd_std[] = { 0.0 };                     // fed funds mean income std nodes
 	double yi_nd_std[] = { 0.0, 0.0, 0.0 };                 // store mean income 
-	
 	
 	string city_init = city_init_in;                                          // initial conditions for simulation
 	    
@@ -128,91 +114,44 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	
 	double ret_tn, ret_lag, ecm;
 
-	// MODS HERE: adding vectors for i_rcurr, i_rpmt, i_lb
-	double eps_r;                  // interest rate innovation
-	double sigma_r = 0.0175;         // interest rate standard deviation
-
-	// MODS HERE: adding vectors for: plevel, inflation, unemployment, fedfunds
+	// store observations
 	vector<vector<double>> plevel_str(T_sim + 1, vector<double>(N_sim, 0.0));               // prive level
 	vector<vector<double>> urate_str(T_sim + 1, vector<double>(N_sim, 0.0));               // unemployment rate
 	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));             // fed-funds rate	
 	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store city-wide home prices
-	vector<vector<double>> ph_str_city(T_sim + 1, vector<double>(N_sim, 0.0));              // store city-wide home prices
 	vector<vector<double>> rent_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store city-wide rent
-	//vector<vector<double>> yi_str(T_sim + 1, vector<double>(N_sim, 0.0));               // individual income
 
 	// NODES 
 	vector<vector<double>> plevel_str_nds(T_sim + 1, vector<double>(n_plevel, 0.0));           // price-level nodes
 	vector<vector<double>> urate_str_nds(T_sim + 1, vector<double>(n_urate, 0.0));           // unemployment rate nodes
 	vector<vector<double>> fedfunds_str_nds(T_sim + 1, vector<double>(n_fedfunds, 0.0));           // fed funds nodes
-
 	vector<vector<double>> ph_str_nds(T_sim + 1, vector<double> (n_ph, 0.0) );         // home price nds
 	vector<vector<double>> rent_str_nds(T_sim + 1, vector<double> (n_rent, 0.0) );     // rent nds
-	//vector<vector<double>> yi_str_nds(T_sim + 1, vector<double>(n_yi, 0.0) );          // individual-income nds
 
-	double v_t0 = 0.0;                                   // initial permanent income shock
-	double v_t = 0.0;                                    // permanent income state
-	
-	double sigma_city_ind = 0.00; //0.09; // also set == 0; check flavin / yamashita  set = 0.0 for no neighborhood-level tracking risk
-	
-	double log_fe = 2.3831 + 0.4831 - 0.0228*2.0;        //2.18 // fixed effects
-	double y_mu_city = 0.005;                            // city-wide real income/rent growth
-	double y_sig_city = 0.005;
-
-	//double var_y = 0.0169; 
-
-	double sigma_u = pow(0.0169, 0.5);  //pow(0.0106, 0.5);  //0.005;                              // permanent income shock stdev
-	double sigma_e = pow(0.0584, 0.5);  //pow(0.0738, 0.5); // 0.005;                              // transitory income shock stdev
-
-	double mu_yc =  0.000;    // 0.0                             // avg real income / rent growth
-	double sigma_yc = 0.0001; //0.01;   // 0.0                  // avg real income / rent growth stdev
-
-	double y_city_agg = 0.0;
-	double y_city_agg0 = 0.0;
-
-	double var_y_city = 0.0; // pow(0.019, 2.0); // Coco RFS
-	double var_h = pow(sigma_ret, 2.0); // estimated from AHS
-	double cov_y_city_h = 0.553*var_y_city*pow(sigma_ret, 2.0);
-	double y_city_sigma = 0.0; //0.019;
 	double z1, z2, z3;
-	double corr_y_city_h = 0.0; // 0.553;
-	double corr_delta = pow(pow(1.0 - corr_y_city_h, 2.0), 0.5); 
-
-
 	double mult_2005 =   .56 / .51; // 1.5;                              // multiplier: convert $1992 to $2005
 	double mult_unit = 0.01;                             // multiplier: convert $1000s from parameters to $100000s in paper
 
-	double log_y_rand = 0.0;                             // random componenet of income (log)
-	double log_y_age;                                    // age-based (deterministic) component of income
-    double g_yc_t = 0.0;                                 // city-wide income growth
-    double u_t = 0.0;                                    // individual permanent income shock
-    double e_t = 0.0;                                    // idiosyncratic income shock
 
 	int t = 0, n = 0, n1 = 0, n2 = 0;                                          // time and simulation indices
 	double res_sum, res_sq_sum, res_mean, res_std, row_sum;                    // sums for computing means and standard deviations
 
-    //int i_age; // Track agent's age
-	//int age_t = age_begin_in;  // track household age
-	double age_td; // track household age as double
-
-	// added work here
+ 
 	double eps_h; // housing shock
-	double eps_y; // city-wide income shock 
-	double rho_y_city = 0.748; // cocco rfs
-	double eta_t, eta_t0;
 
-	// adding work here
+	// Macro initial conditions
 	double pinf0 = 0.3;
 	double urate0 = 0.05;
-	double fedfunds0 = 0.01;
+	double fedfunds0 = 0.01; 
+	double y_inc0 = 0.8; // TODO: let be a fn of MTI
+	double g_y = 0.01; // Real income growth
 
-	double var_a[] = { 0.0025, 0.0395, 0.0474 };
+	double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
 
-	double var_b[3][3] = { {-0.2505,    0.2879,    0.3663}, 
+	double var_b[3][3] = { {-0.2505,    0.2879,    0.3663},            // VAR: coefficients
 	                       {0.0528,    0.4644, -0.1822},
 						   {-0.5300, -0.4020, 0.7285} };
-
-
+	
 	//double var_b[3][3] = { { 1.0, 0.0, 0.0 },
 	//						{ 1.0, 1.0, 1.0 },
 	//						{ 0.0, 0.0, 1.0 } };
@@ -226,10 +165,8 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 
 	double vz1, vz2, vz3;
 	double vu1, vu2, vu3;
-	//double ecm;
+
 	double pinf, pinf_lag;
-	
-	//matrix; 
 	
 	// loop through simulations
 	cout << "load_simpath.cpp: Begin Simulations" << endl;
@@ -264,7 +201,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			vu1 = cholQ[0][0] * vz1;          //  VAR shocks (reduced form)
 			vu2 = cholQ[1][0] * vz1 + cholQ[1][1] * vz2;
  
-			eps_h = hp_sigma_ret*z1;                // home price innovation
+			eps_h = sigma_ret*z1;                // home price innovation
 			
 			// compute inflation, unemp, fedfunds using the VAR + shocks
 			v0[0] = pinf_lag; // pinf_str[t - 1][n];
@@ -397,6 +334,14 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		for (n = 0; n < n_rent; n++) {
 			rent_str_nds[t][n] = res_mean + rent_nd_std[n] * res_std;
 			(*snodes1).rent_gridt[t][n] = rent_str_nds[t][n];    // load rent nodes into rent_gridt
+		}
+	}
+
+
+	cout << "load_simpath.cpp: Compute Y income (Median City-wide income) Nodes " << endl;
+	for (t = 0; t < T_sim; t++) {
+		for (n = 0; n < n_yi; n++) {
+			(*snodes1).yi_gridt[t][n] = y_inc0 * pow( 1.0 + g_y, t );    // load rent nodes into rent_gridt
 		}
 	}
 	
@@ -535,7 +480,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	fedfunds_obs_file.open(fn_beg + "_fedfunds_obs_file.csv", ios::out | ios::trunc);
 	for (n = 0; n < N_print; n++) {
 		for (t = 0; t < T_sim; t++) {
-			fedfunds_obs_file << plevel_str[t][n] << ",";
+			fedfunds_obs_file << fedfunds_str[t][n] << ",";
 		}
 		fedfunds_obs_file << endl;
 	}

@@ -23,7 +23,9 @@ public:
 
 	int t_i2, t_i1, w_i1, i_s1;
 
-	int m_i1;
+	int i_m1;
+
+	double urate1, fed_funds1, yinc1;
 
 	int def_flag; 
 	int lcount;

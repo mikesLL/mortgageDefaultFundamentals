@@ -12,6 +12,7 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	// initialize home price, price level, urate, and fedfunds grids
 	p_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_ph, 0.0));
 	rent_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_rent, 0.0));
+	yi_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_yi, 0.0));
 
 	plevel_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_plevel, 0.0));
 	urate_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_urate, 0.0));

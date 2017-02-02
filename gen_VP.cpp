@@ -95,8 +95,16 @@ int i_rcurr, i_rpmt, i_rlb;  // mortgage state: current rate, payment rate, loan
 // permanent renter case: set t_i2 = 0!
 t_i2 = 0;
 	
+int i_urate, i_fedfunds, i_plevel;
+
 // COMPUTE Renter problem
 for (i_s = 0; i_s < n_s; i_s++) {
+
+	// pass in URATE, PLEVEL, and FEDFUNDS
+	(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];                   // pass in initial unemployment rate
+	(*rr2).fed_funds1 = (*snodes1).fedfunds_gridt[t_hor][(*snodes1).s2i_fedfunds[i_s]];         // pass in fed funds
+	(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];                     // pass in income
+
 
 	i_yi = 0; //i_yi = (*snodes1).s2i_yi[i_s];              // load in states
 	i_rent = 0;                                   // (*snodes1).s2i_rent[i_s];
@@ -130,9 +138,9 @@ for (i_s = 0; i_s < n_s; i_s++) {
 
 		(*rr2).i_s1 = i_s;          // pass in current state to next-period value function
 		(*rr2).t_i1 = t_i;
+		(*rr2).i_m1 = i_m; 
 		(*rr2).w_i1 = w_i;
 		(*rr2).t_i2 = t_i2;         //  t_i2 is a choice variable, so adding it to fn pointer 
-		(*rr2).m_i1 = i_m;          // Pass current mortgage state to next-period value fn
 		(*rr2).def_flag = 0;
 
 		(*snodes1).i_s1 = i_s;      // load states into snodes
@@ -184,23 +192,20 @@ int t_sell, i_m_sell;
 double w_sell;
 eval_res res_sell;
 
-int i_plevel, i_urate, i_fedfunds;
 
 for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
 
 	for (i_s = 0; i_s < n_s; i_s++) {                  // Cycle through macro states
 
+		// pass in URATE, PLEVEL, and FEDFUNDS
+		(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];              // pass in initial unemployment rate
+		(*rr2).fed_funds1 = (*snodes1).fedfunds_gridt[t_hor][(*snodes1).s2i_fedfunds[i_s]];      // pass in fed funds
+		(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];                     // pass in income
+		
+
 		t_i2 = t_i;                                      // impose t_i2 = t_i (homeowner)
 
-		// load in macro-state: price-level, unemployment rate, fed funds
-		i_plevel = (*snodes1).s2i_plevel[i_s];                // load in price level
-		i_urate = (*snodes1).s2i_urate[i_s];                  // load in urate
-		i_fedfunds = (*snodes1).s2i_fedfunds[i_s];            // load in fedfunds
-		
 		i_ph = (*snodes1).s2i_ph[i_s];
-		// NOTE: given fed funds, should be able to compute the ARM rate
-		// TODO: check the s2i_maps are correct
-		// TODO: get rid of labor income state
 		
 		start = clock();
 		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
@@ -226,7 +231,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 				v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
-				(*rr2).m_i1 = i_m;
+				(*rr2).i_m1 = i_m;
 
 				beg_equity = -1.0e6;
 
