@@ -41,8 +41,6 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	int N_print =  1000;                          // number of observations to print to file
 	int N_sim = 10000;                                            // number of simulations
 
-	//int N_print =  40000;                                           // number of observations to print to file
-	//int N_sim = 2000000;                                            // number of simulations
 	int i_ph, i_rent, i_yi, i_rm, i_s;                                      // state and individual dimension indices
 
 	cout << "load ppath: ph0_in:  " << ph0_in << endl;
@@ -91,17 +89,15 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	
 	// stdev centers (tauchen-style discretization) 
     double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
-	//double rm_nd_std[] = { -1.0, 0.0, 1.0 };
-	double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
+	double ph_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };     
+	//double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
 	double rent_nd_std[] = { 0.0 };                                           // can also set { -1.0, 0.0, 1.0 };
 	
-	double plevel_nd_std[] = { -1.0, 0.0, 1.0 };        // store price-level std nodes
-	double urate_nd_std[] = { -1.0, 0.0, 1.0 };         // store unemployment rate std nodes
-	double fedfunds_nd_std[] = { -1.0, 0.0, 1.0 };      // fed funds mean income std nodes
-
-	double yi_nd_std[] = { 0.0, 0.0, 0.0 }; // store mean income 
-	//double yi_nd_std[] = { -1.0, 0.0, 1.0 }; 
-	//double yi_nd_std[] = { -1.0, 0.0, 1.0 }; //{  -1.5, 0.0, 1.5 }; 
+	double plevel_nd_std[] = { -1.0, 0.0, 1.0 };            // store price-level std nodes
+	double urate_nd_std[] = { -1.0, 0.0, 1.0 };             // store unemployment rate std nodes
+	double fedfunds_nd_std[] = { 0.0 };                     // fed funds mean income std nodes
+	double yi_nd_std[] = { 0.0, 0.0, 0.0 };                 // store mean income 
+	
 	
 	string city_init = city_init_in;                                          // initial conditions for simulation
 	    
@@ -111,8 +107,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	
 	double ph0 = ph0_in;
 	double ret0 = ret0_in;
-	double csf_1yr = csf_1yr_in;
-
+	
 	int T_max = (*snodes1).T_max;
 
 	cout << "begin load_simpath" << endl ;
@@ -120,7 +115,6 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	clock_t start;                          // instantiate timer
 	start = clock();
 	
-
 	random_device rd;                       // instantiate random generator
 	mt19937 gen(rd());
 	normal_distribution<> dist(0.0, 1.0);   // standard normal distribution
@@ -138,21 +132,14 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	double eps_r;                  // interest rate innovation
 	double sigma_r = 0.0175;         // interest rate standard deviation
 
-	// MODS HERE: adding vectors for: 
-	// 1) inflation
-	// 2) unemployment
-	// 3) fedfunds
+	// MODS HERE: adding vectors for: plevel, inflation, unemployment, fedfunds
 	vector<vector<double>> plevel_str(T_sim + 1, vector<double>(N_sim, 0.0));               // prive level
 	vector<vector<double>> urate_str(T_sim + 1, vector<double>(N_sim, 0.0));               // unemployment rate
-	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));             // fed-funds rate
-
-	vector<vector<double>> rm_str(T_sim + 1, vector<double>(N_sim, 0.0));               // mortgage rates
-
+	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));             // fed-funds rate	
 	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store city-wide home prices
 	vector<vector<double>> ph_str_city(T_sim + 1, vector<double>(N_sim, 0.0));              // store city-wide home prices
-
 	vector<vector<double>> rent_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store city-wide rent
-	vector<vector<double>> yi_str(T_sim + 1, vector<double>(N_sim, 0.0));               // individual income
+	//vector<vector<double>> yi_str(T_sim + 1, vector<double>(N_sim, 0.0));               // individual income
 
 	// NODES 
 	vector<vector<double>> plevel_str_nds(T_sim + 1, vector<double>(n_plevel, 0.0));           // price-level nodes
@@ -161,11 +148,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 
 	vector<vector<double>> ph_str_nds(T_sim + 1, vector<double> (n_ph, 0.0) );         // home price nds
 	vector<vector<double>> rent_str_nds(T_sim + 1, vector<double> (n_rent, 0.0) );     // rent nds
-	vector<vector<double>> yi_str_nds(T_sim + 1, vector<double>(n_yi, 0.0) );          // individual-income nds
-
-	vector<vector<double>> rm_str_nds(T_sim + 1, vector<double>(n_rm, 0.0));          // mortgage rate nodes
-
-
+	//vector<vector<double>> yi_str_nds(T_sim + 1, vector<double>(n_yi, 0.0) );          // individual-income nds
 
 	double v_t0 = 0.0;                                   // initial permanent income shock
 	double v_t = 0.0;                                    // permanent income state
@@ -241,12 +224,6 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	double v1[] = { 0.0, 0.0, 0.0 };
 	double v2[] = { 0.0, 0.0, 0.0 };
 
-	//double foo[] = {0.0, 0.0, 0.0};
-	//matrix_mult(var_a, var_b, v0, v1, 1);
-	//v1;
-	//matrix_mult(var_a, var_b, v0, v1, 3);
-	//v1;
-
 	double vz1, vz2, vz3;
 	double vu1, vu2, vu3;
 	//double ecm;
@@ -261,154 +238,34 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			cout << "n = " << n << endl;
 		}
 		
-		// t = 0: initial year
+		// Initial year
 		t = 0;            
 
 		pinf_lag = pinf0;
-		v0[0] = pinf_lag;
-		v0[1] = urate0;
-		v0[2] = fedfunds0;
-
-		plevel_str[t][n] = 1.0; // pinf0;             // inflation rate
+		
+		plevel_str[t][n] = 1.0;             // original price level
 		urate_str[t][n] = urate0;           // unemployment rate
 		fedfunds_str[t][n] = fedfunds0;     // fed-funds rate
 
-		age_td = double(age_begin_in) + double(t); // initial age
-		
 		ph_str[t][n] = log(ph0);
-		ph_str_city[t][n] = log(ph0);
 		rent_str[t][n] = rent0;
 
-		rm_str[t][n] = rm_str0;
-	
-		// compute age-related component of log-income (deterministic)
-		
-		log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 
-			+ 0.0033*pow(age_td, 3.0) / 100.0;
-		
-		yi_str[t][n] = y_city_mult[city_id]*mult_unit*mult_2005*exp(log_fe + log_y_age);
-		yi_str[t][n] = log(yi_str[t][n]);
-
-		v_t0 = 0.0;                             // set permanent income shock
-		eta_t0 = 0.0;                           // set city-wide income shock
-
-		// t = 1: first year
-		t = 1;                                  // first year: draw shocks
-		age_td = double(age_begin_in) + double(t);   // current age
-
-		// compute correlated shocks
-		z1 = dist(gen);
-		z2 = dist(gen);
-		z3 = dist(gen); // interest rate innovation
-		
-		eps_r = sr_sigma_est*z3;
-		eps_h = hp_sigma_ret*z1;
-		eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
-
-
-		// MODS HERE: add inflation, unemployment, fedfunds
-		vz1 = dist(gen);
-		vz2 = dist(gen);
-		vz3 = dist(gen);
-
-		vu1 = cholQ[0][0]*vz1;
-		vu2 = cholQ[1][0]*vz1 + cholQ[1][1]*vz2;
-
-		// compute inflation, unemp, fedfunds using the VAR + shocks
-		v0[0] = pinf_lag; //pinf_str[t-1][n];
-		v0[1] = urate_str[t-1][n];
-		v0[2] = fedfunds_str[t-1][n];
-		matrix_mult(var_a, var_b, v0, v1, 1);
-		pinf_lag = v1[0] + vu1; 
-		plevel_str[t][n] = plevel_str[t][n] * (1.0 + pinf_lag);
-		urate_str[t][n] = v1[1] + vu2;
-		fedfunds_str[t][n] = v1[2];
-
-		// compute the mortgage rate
-		matrix_mult(var_a, var_b, v0, v2, 10);
-		rm_str[t][n] = v2[2] + 0.03;                  // Mortgage premium!
-		rm_str[t][n] = max(rm_str[t][n], 0.0);
-
-		g_yc_t = mu_yc + sigma_yc*dist(gen);    // city-wide income / rent
-		u_t = sigma_u*dist(gen);                // individual: permanent shock
-		e_t = sigma_e*dist(gen);                // individual: transient shock
-
-		eta_t = rho_y_city*eta_t0 + eps_y;       // set city-wide income component
-		eta_t0 = eta_t;                           // update city-wide income component 
-		v_t = v_t0 + u_t;                        // upadate income permanent component
-		v_t0 = v_t;                              // update transient component
-												 
-		// compute interest rate
-		//rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
-		//rm_str[t][n] = max(rm_str[t][n], 0.0);
-
-		// compute age-related component of log-income (deterministic)
-		log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 + 0.0033*pow(age_td, 3.0) / 100.0;
-
-		rent_str[t][n] = exp(g_rent)*rent_str[t - 1][n]; // update rent path
-
-		// compute mortgage rate
-		mort_rate = (1.0 - pow(sr_rho_est, sr_mort_term))*sr_mu_est + pow(sr_rho_est, sr_mort_term)*rm_str[t][n] + +sr_mort_prem;
-
-		// cointegrate interest rates, rents, and prices
-		//double foo1 = exp(ph_str_city[t - 1][n]);
-		//double foo2 = rent_str[t - 1][n];
-		//double foo3 = log(mort_rate*foo1);
-		//double foo4 = log(foo2);
-
-		//ecm = log(mort_rate*(exp(ph_str_city[t - 1][n]))) - (hp_gamma0_hat + hp_gamma1_hat*log(rent_str[t - 1][n]));
-
-		// load lagged home price
-		ret_lag = 0.0;
-
-		// compute home price appreciation
-		//ret_lag = ph_str_city[t - 1][n] - ph_str_city[t - 2][n];                                       // ph_str is in logs 
-		
-		ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str_city[t - 1][n]);          // cointegrate rents, prices
-		ret_tn = hp_alpha_hat + hp_rhof_hat*ret_lag + hp_theta_hat*ecm + eps_h;         // return series
-		// cointegrate interest rates, rents, and prices
-		//ecm = log( mort_rate*( exp(ph_str_city[t - 1][n]) ) ) - ( hp_gamma0_hat + hp_gamma1_hat*log( rent_str[t-1][n] ) );
-		ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
-
-		//ret_tn = (csf_1yr - ph0) / ph0 + eps_h;
-		//ret_tn = (csf_1yr - ph0) / ph0 + sigma_ret*dist(gen);  // impose first year expected return equals the futures-based forecast
-		
-		yi_str[t][n] = y_city_mult[city_id]*mult_unit*mult_2005*exp( log_fe + log_y_age + eta_t + v_t + e_t );  // Cocco, Maenhoust, Gomes parameters are in 1000's; convert to 100k
-		yi_str[t][n] = log(yi_str[t][n]);
-
-		//ph_str[t][n] = (ret_tn) + ph_str[t - 1][n];  // home prices in sim are in logs
-		ph_str_city[t][n] =  ret_tn + ph_str_city[t - 1][n];  // home prices in sim are in logs
-		ph_str[t][n] = ret_tn + ph_str[t - 1][n] + sigma_city_ind*dist(gen);  // home prices in sim are in logs
-
-		
 		// simulate later time periods
-		for (t = 2; t < (T_sim + 1); t++){
+		for (t = 1; t < (T_sim + 1); t++){
 			
-			age_td = double(age_begin_in) + double(t);  // compute age
-
-			// compute age-related component of log-income (deterministic)
-			log_y_age = -4.3148 + 0.3194*age_td - 0.0577*pow(age_td, 2.0) / 10.0 + 0.0033*pow(age_td, 3.0) / 100.0;
-
-			// draw shocks
-			z1 = dist(gen);
+			z1 = dist(gen);                    // draw shocks
 			z2 = dist(gen);
 			z3 = dist(gen);
 
-			vz1 = dist(gen);
+			vz1 = dist(gen);                   // VAR shocks (independent)
 			vz2 = dist(gen);
 			vz3 = dist(gen);
 
-			vu1 = cholQ[0][0] * vz1;
+			vu1 = cholQ[0][0] * vz1;          //  VAR shocks (reduced form)
 			vu2 = cholQ[1][0] * vz1 + cholQ[1][1] * vz2;
-
-			eps_r = sigma_r*z3;                   // interest rate innovation 
-			eps_h = hp_sigma_ret*z1;
-			eps_y = y_city_sigma*(corr_y_city_h * z1 - corr_delta * z2);
+ 
+			eps_h = hp_sigma_ret*z1;                // home price innovation
 			
-			g_yc_t = mu_yc + sigma_yc*dist(gen);  // city-wide income / rent
-			u_t = sigma_u*dist(gen);              // individual: permanent shock
-			e_t = sigma_e*dist(gen);              // individual: transient shock
-
 			// compute inflation, unemp, fedfunds using the VAR + shocks
 			v0[0] = pinf_lag; // pinf_str[t - 1][n];
 			v0[1] = urate_str[t - 1][n];
@@ -418,49 +275,24 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			plevel_str[t][n] = plevel_str[t - 1][n] * (1.0 + pinf_lag);
 			urate_str[t][n] = v1[1] + vu2;
 			fedfunds_str[t][n] = v1[2];
-
-			// compute the mortgage rate
-			matrix_mult(var_a, var_b, v0, v2, 10);
-			rm_str[t][n] = v2[2] + 0.03;                  // Mortgage premium!
-			rm_str[t][n] = max(rm_str[t][n], 0.0);
-
-			// update interest rate
-			//rm_str[t][n] = sr_mu_est*(1.0 - sr_rho_est) + sr_rho_est * rm_str[t - 1][n] + eps_r;
-			//rm_str[t][n] = max(rm_str[t][n], 0.0);
-
-			// compute mortgage rate
-			//mort_rate = (1.0 - pow(sr_rho_est, sr_mort_term))*sr_mu_est + pow(sr_rho_est, sr_mort_term)*rm_str[t][n] +  + sr_mort_prem;
-
-			// update income path 
-			eta_t = rho_y_city*eta_t0 + eps_y;        // set city-wide income component
-			eta_t0 = eta_t;                           // update city-wide income component 
-			v_t = v_t0 + u_t;
-			v_t0 = v_t;                               // update transient component
 			
+			matrix_mult(var_a, var_b, v0, v2, 10);          // compute the mortgage rate
+			//rm_str[t][n] = max(v2[2] + 0.03, 0.0);                  // Mortgage premium!
+		
 			// compute home price
-			ret_lag = ph_str_city[t - 1][n] - ph_str_city[t - 2][n];                                       // ph_str is in logs 
-			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str_city[t - 1][n]);          // cointegrate rents, prices
+			ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n];             // ph_str is in logs 
+			
+			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str[t - 1][n]);          // cointegrate rents, prices
 
 			// cointegrate interest rates, rents, and prices
-			//ecm = log( mort_rate*( exp(ph_str_city[t - 1][n]) ) ) - ( hp_gamma0_hat + hp_gamma1_hat*log( rent_str[t-1][n] ) );
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
-			//ret_tn = hp_alpha_hat + hp_rhof_hat*ret_lag + hp_theta_hat*ecm + eps_h;         // return series
-		
 			rent_str[t][n] = exp(g_rent)*rent_str[t-1][n];
-
-			yi_str[t][n] = mult_unit*mult_2005*exp(log_fe + log_y_age + eta_t + v_t + e_t);
-			yi_str[t][n] = log(yi_str[t][n]);
-
-			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + sigma_city_ind*dist(gen);
-			ph_str_city[t][n] = ret_tn + ph_str_city[t - 1][n];
+			ph_str[t][n] = ret_tn + ph_str[t - 1][n];
+			
 		}
 	}
 
 	cout << "load_simpath.cpp: Finished Running Simulations" << endl;
-
-	//vector<vector<double>> plevel_str_nds(T_sim + 1, vector<double>(n_plevel, 0.0));           // price-level nodes
-	//vector<vector<double>> urate_str_nds(T_sim + 1, vector<double>(n_urate, 0.0));           // unemployment rate nodes
-	//vector<vector<double>> fedfunds_str_nds(T_sim + 1, vector<double>(n_fedfunds, 0.0));           // fed funds nodes
 
 	cout << "load_simpath.cpp: Compute Price-Level Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
@@ -504,6 +336,9 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		cout << endl;
 	}
 
+	// TODO
+	// HERE, you can load in the nodes for pinf and plevel and use the VAR to compute FEDFUNDS
+	// node deterministically
 	cout << "load_simpath.cpp: Compute Fedfunds Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(fedfunds_str[t].begin(), fedfunds_str[t].end(), 0.0);
@@ -511,7 +346,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		res_sq_sum = inner_product(fedfunds_str[t].begin(), fedfunds_str[t].end(), fedfunds_str[t].begin(), 0.0);
 		res_std = sqrt(res_sq_sum / (double)fedfunds_str[t].size() - res_mean * res_mean);
 
-		if (t == 0) {
+		if (t >= 0) {
 			res_std = 0.01;  // initial period: manually set stdev 
 		}
 
@@ -525,28 +360,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		cout << endl;
 	}
 
-
-	cout << "load_simpath.cpp: Compute Rate Nodes " << endl;
-	for (t = 0; t < T_sim; t++) {
-		res_sum = accumulate(rm_str[t].begin(), rm_str[t].end(), 0.0);
-		res_mean = res_sum / (double)rm_str[t].size();
-		res_sq_sum = inner_product(rm_str[t].begin(), rm_str[t].end(), rm_str[t].begin(), 0.0);
-		res_std = sqrt(res_sq_sum / (double)rm_str[t].size() - res_mean * res_mean);
-
-		if (t == 0) {
-			res_std = 0.01;  // initial period: manually set stdev 
-		}
-
-		for (n = 0; n < n_rm; n++) {
-			rm_str_nds[t][n] = res_mean + rm_nd_std[n] * res_std;   // compute mortgage rate nodes 
-			rm_str_nds[t][n] = max(rm_str_nds[t][n], 0.0);          // set non-negative short-rate
-			(*snodes1).rm_gridt[t][n] = rm_str_nds[t][n];
-			
-			cout << (*snodes1).rm_gridt[t][n] << "...";              // print out interest rate grid entry
-		}
-		cout << endl;
-	}
-
+	
 	cout << "load_simpath.cpp: Compute Home Price Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(ph_str[t].begin(), ph_str[t].end(), 0.0);
@@ -563,9 +377,10 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			(*snodes1).p_gridt[t][n] = exp(ph_str_nds[t][n]);    // load home price nodes into p_gridt
 			cout << (*snodes1).p_gridt[t][n] << "...";      // print out price grid entry
 		}
-		cout << endl;
+		cout << endl;    
 	}
 
+	
 	cout << "load_simpath.cpp: Compute Rent Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		res_sum = accumulate(rent_str[t].begin(), rent_str[t].end(), 0.0);
@@ -584,31 +399,8 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			(*snodes1).rent_gridt[t][n] = rent_str_nds[t][n];    // load rent nodes into rent_gridt
 		}
 	}
-
-	cout << "load_simpath.cpp: Compute Income Nodes " << endl;
-	for (t = 0; t < T_sim; t++) {
-		res_sum = accumulate(yi_str[t].begin(), yi_str[t].end(), 0.0);
-		res_mean = res_sum / (double)yi_str[t].size();
-
-		res_sq_sum = inner_product(yi_str[t].begin(), yi_str[t].end(), yi_str[t].begin(), 0.0);
-		res_std = sqrt(res_sq_sum / (double)yi_str[t].size() - res_mean * res_mean);
-
-		if (t == 0) {
-			res_std = 0.01;
-		}
-		for (n = 0; n < n_yi; n++) {
-			yi_str_nds[t][n] = res_mean + yi_nd_std[n] * res_std; // compute income nodes (log scale)
-			//yi_str_nds[t][n] = res_mean + yi_nd_std[n] * res_std; // compute income nodes (log scale)
-			(*snodes1).yi_gridt[t][n] = exp(yi_str_nds[t][n]);    // load individual-income nodes into income_gridt
-			cout << t << "..." << n << "..." << (*snodes1).yi_gridt[t][n] << "...";
-
-			//if (t <= 5) {
-			//	(*snodes1).yi_gridt[t][n] = 0.0;
-			//}
-		}
-		cout << endl;
-	}
-
+	
+	
 	cout << "load_simpath.cpp: Begin Computing State-Space Transition Matrix" << endl;
 
 	vector<vector<int>> zeros_NS_NS(n_s, vector<int>(n_s, 0)); // default matrix for state to state transition
@@ -620,53 +412,62 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	double yi_step;
 	double rm_step;
 
+	double plevel_step;
+	double urate_step;
+	double fedfunds_step;
+
 	double ph_step1;
 	double rent_step1;
 	double yi_step1;
 	double rm_step1;
 
+	double plevel_step1;
+	double urate_step1;
+	double fedfunds_step1;
+
+	int i_plevel, i_urate, i_fedfunds;
+
 	cout << "load_simpath.cpp: Cycle Through Observations" << endl;
 	for (t = 0; t < T_sim; t++) {
 		gamma_store = zeros_NS_NS;                                  // initialize current-period transition matrix
 
-		ph_step = ph_str_nds[t][1] - ph_str_nds[t][0];          // step-sizes
-		rent_step = 0.001; //rent_str_nds[t][1] - rent_str_nds[t][0];
-		yi_step = yi_str_nds[t][1] - yi_str_nds[t][0];
-		rm_step = rm_str_nds[t][1] - rm_str_nds[t][0]; 
+		ph_step = ph_str_nds[t][1] - ph_str_nds[t][0];                         // step-sizes
+		plevel_step = plevel_str_nds[t][1] - plevel_str_nds[t][0];             // step-sizes
+		urate_step = urate_str_nds[t][1] - urate_str_nds[t][0];                // step-sizes
+		fedfunds_step = 0.001; // fedfunds_str_nds[t][1] - fedfunds_str_nds[t][0];    
 
 		ph_step1 = ph_str_nds[t + 1][1] - ph_str_nds[t + 1][0];
-		rent_step1 = 0.001; //rent_str_nds[t+1][1] - rent_str_nds[t+1][0];
-		yi_step1 = yi_str_nds[t + 1][1] - yi_str_nds[t + 1][0];
-		rm_step1 = rm_str_nds[t + 1][1] - rm_str_nds[t + 1][0]; 
-
+		plevel_step1 = plevel_str_nds[t+1][1] - plevel_str_nds[t+1][0];          // step-sizes
+		urate_step1 = urate_str_nds[t+1][1] - urate_str_nds[t+1][0];             // step-sizes
+		fedfunds_step1 = 0.001; // fedfunds_str_nds[t + 1][1] - fedfunds_str_nds[t + 1][0];    
 
 		for (n = 0; n < N_sim; n++) {
 
 			// current period: map observation to closest node
 			i_ph = (int) round( (ph_str[t][n] - ph_str_nds[t][0]) / ph_step);
-			i_rent = (int) round( (rent_str[t][n] - rent_str_nds[t][0]) / rent_step);
-			i_yi = (int) round( (yi_str[t][n] - yi_str_nds[t][0]) / yi_step);
-			i_rm = (int) round( (rm_str[t][n] - rm_str_nds[t][0]) / rm_step);
+			i_plevel = (int) round( (plevel_str[t][n] - plevel_str_nds[t][0]) / plevel_step);
+			i_urate = (int) round( (urate_str[t][n] - urate_str_nds[t][0]) / urate_step);
+			i_fedfunds = (int) round( (fedfunds_str[t][n] - fedfunds_str_nds[t][0]) / fedfunds_step);
 			
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
-			i_rent = min(max(i_rent, 0), n_rent - 1);
-			i_yi = min(max(i_yi, 0), n_yi - 1);
-			i_rm = min(max(i_rm, 0), n_rm - 1);
-
-			s1 = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm];                // map node to state
+			i_plevel = min(max(i_plevel, 0), n_plevel - 1);              // bound extremes
+			i_urate = min(max(i_urate, 0), n_urate - 1);              // bound extremes
+			i_fedfunds = min(max(i_fedfunds, 0), n_fedfunds - 1);              // bound extremes
+			 
+			s1 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];                // map node to state
 
 			// next period: map observation to closest node
 			i_ph = (int)round((ph_str[t + 1][n] - ph_str_nds[t + 1][0]) / ph_step1);
-			i_rent = (int)round((rent_str[t + 1][n] - rent_str_nds[t + 1][0]) / rent_step1);
-			i_yi = (int)round( (yi_str[t + 1][n] - yi_str_nds[t + 1][0]) / yi_step1);
-			i_rm = (int)round( (rm_str[t+1][n] - rm_str_nds[t+1][0]) / rm_step1);
+			i_plevel = (int)round((plevel_str[t+1][n] - plevel_str_nds[t+1][0]) / plevel_step1);
+			i_urate = (int)round((urate_str[t+1][n] - urate_str_nds[t+1][0]) / urate_step1);
+			i_fedfunds = (int)round((fedfunds_str[t+1][n] - fedfunds_str_nds[t+1][0]) / fedfunds_step1);
 
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
-			i_rent = min(max(i_rent, 0), n_rent - 1);
-			i_yi = min(max(i_yi, 0), n_yi - 1);
-			i_rm = min(max(i_rm, 0), n_rm - 1);
-			
-			s2 = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm];                 // map node to state
+			i_plevel = min(max(i_plevel, 0), n_plevel - 1);              // bound extremes
+			i_urate = min(max(i_urate, 0), n_urate - 1);              // bound extremes
+			i_fedfunds = min(max(i_fedfunds, 0), n_fedfunds - 1);              // bound extremes
+
+			s2 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];          // map node to state
 			
 			gamma_store[s1][s2] += 1;                                // store  in transition matrix
 		}
@@ -694,7 +495,8 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	
 	string fn_beg = "price_results/" + city_init + "_age" + to_string((*snodes1).age0) + "_yr" + to_string(t_id);
 
-	// print sample price paths
+	// PRINT: HOME PRICE, PLEVEL, URATE< FEDFUNDS PATHS
+	// print sample HOME PRICE paths
 	ofstream price_obs_file;                                        
 	price_obs_file.open(fn_beg + "_price_obs_file.csv", ios::out | ios::trunc);
 
@@ -706,32 +508,43 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	}
 	price_obs_file.close();
 
-	// print sample rent paths
-	ofstream rent_obs_file;                                       
-	rent_obs_file.open( fn_beg + "_rent_obs_file.csv", ios::out | ios::trunc);
+	// print sample PLEVEL paths
+	ofstream plevel_obs_file;                                     
+	plevel_obs_file.open( fn_beg +  "_plevel_obs_file.csv", ios::out | ios::trunc);
 	for (n = 0; n < N_print; n++) {
 		for (t = 0; t < T_sim; t++) {
-			rent_obs_file << rent_str[t][n] << ",";
+			plevel_obs_file << plevel_str[t][n] << ",";
 		}
-		rent_obs_file << endl;
+		plevel_obs_file << endl;
 	}
-	rent_obs_file.close();
-
-	// print sample income paths
-	ofstream yi_obs_file;                                     
-	yi_obs_file.open( fn_beg +  "_yi_obs_file.csv", ios::out | ios::trunc);
+	plevel_obs_file.close();
+	
+	// print sample URATE paths
+	ofstream urate_obs_file;
+	urate_obs_file.open(fn_beg + "_urate_obs_file.csv", ios::out | ios::trunc);
 	for (n = 0; n < N_print; n++) {
 		for (t = 0; t < T_sim; t++) {
-			yi_obs_file << exp(yi_str[t][n]) << ",";
+			urate_obs_file << urate_str[t][n] << ",";
 		}
-		yi_obs_file << endl;
+		urate_obs_file << endl;
 	}
-	yi_obs_file.close();
+	urate_obs_file.close();
+
+	// print sample fedfunds paths
+	ofstream fedfunds_obs_file;
+	fedfunds_obs_file.open(fn_beg + "_fedfunds_obs_file.csv", ios::out | ios::trunc);
+	for (n = 0; n < N_print; n++) {
+		for (t = 0; t < T_sim; t++) {
+			fedfunds_obs_file << plevel_str[t][n] << ",";
+		}
+		fedfunds_obs_file << endl;
+	}
+	fedfunds_obs_file.close();
 
 
-	// print out price grid
-	ofstream pstruct_file;                                                  
-	pstruct_file.open( fn_beg + "_pstruct_file.csv", ios::out | ios::trunc);
+	// print out HOME PRICE grid
+	ofstream pstruct_file;
+	pstruct_file.open(fn_beg + "_pstruct_file.csv", ios::out | ios::trunc);
 	for (t = 0; t < T_sim; t++) {
 		for (n = 0; n < n_ph; n++) {
 			pstruct_file << (*snodes1).p_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
@@ -739,15 +552,36 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		pstruct_file << endl;
 	}
 
-	// print out income grid
-	ofstream ystruct_file;                                                              
-	ystruct_file.open( fn_beg + "_ystruct_file.csv", ios::out | ios::trunc);
+	// print out PLEVEL grid
+	ofstream plevel_struct_file;
+	plevel_struct_file.open(fn_beg + "_plevel_struct_file.csv", ios::out | ios::trunc);
 	for (t = 0; t < T_sim; t++) {
-		for (n = 0; n < n_yi; n++) {
-			ystruct_file << (*snodes1).yi_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
+		for (n = 0; n < n_plevel; n++) {
+			plevel_struct_file << (*snodes1).plevel_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
 		}
-		ystruct_file << endl;
+		plevel_struct_file << endl;
 	}
+
+	// print out URATE grid
+	ofstream urate_struct_file;
+	urate_struct_file.open(fn_beg + "_urate_struct_file.csv", ios::out | ios::trunc);
+	for (t = 0; t < T_sim; t++) {
+		for (n = 0; n < n_urate; n++) {
+			urate_struct_file << (*snodes1).urate_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
+		}
+		urate_struct_file << endl;
+	}
+
+	// print out FEDFUNDS grid
+	ofstream fedfunds_struct_file;
+	fedfunds_struct_file.open(fn_beg + "_fedfunds_struct_file.csv", ios::out | ios::trunc);
+	for (t = 0; t < T_sim; t++) {
+		for (n = 0; n < n_fedfunds; n++) {
+			fedfunds_struct_file << (*snodes1).fedfunds_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
+		}
+		fedfunds_struct_file << endl;
+	}
+
 
 	// print out rent grid
 	ofstream rstruct_file;
@@ -758,6 +592,17 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 		}
 		rstruct_file << endl;
 	}
+
+	// print sample rent paths
+	ofstream rent_obs_file;
+	rent_obs_file.open(fn_beg + "_rent_obs_file.csv", ios::out | ios::trunc);
+	for (n = 0; n < N_print; n++) {
+		for (t = 0; t < T_sim; t++) {
+			rent_obs_file << rent_str[t][n] << ",";
+		}
+		rent_obs_file << endl;
+	}
+	rent_obs_file.close();
 
 	// print out transition matrix
 	ofstream gstruct_file;                                                           
@@ -779,3 +624,77 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 
 }
 
+
+// print out income grid
+/*
+ofstream ystruct_file;
+ystruct_file.open( fn_beg + "_ystruct_file.csv", ios::out | ios::trunc);
+for (t = 0; t < T_sim; t++) {
+for (n = 0; n < n_yi; n++) {
+ystruct_file << (*snodes1).yi_gridt[t][n] << ",";         // alt: ph_str_nds[t][n];
+}
+ystruct_file << endl;
+}*/
+
+/*
+// print sample income paths
+ofstream yi_obs_file;
+yi_obs_file.open( fn_beg +  "_yi_obs_file.csv", ios::out | ios::trunc);
+for (n = 0; n < N_print; n++) {
+for (t = 0; t < T_sim; t++) {
+yi_obs_file << exp(yi_str[t][n]) << ",";
+}
+yi_obs_file << endl;
+}
+yi_obs_file.close();
+*/
+
+
+/*
+cout << "load_simpath.cpp: Compute Rate Nodes " << endl;
+for (t = 0; t < T_sim; t++) {
+res_sum = accumulate(rm_str[t].begin(), rm_str[t].end(), 0.0);
+res_mean = res_sum / (double)rm_str[t].size();
+res_sq_sum = inner_product(rm_str[t].begin(), rm_str[t].end(), rm_str[t].begin(), 0.0);
+res_std = sqrt(res_sq_sum / (double)rm_str[t].size() - res_mean * res_mean);
+
+if (t == 0) {
+res_std = 0.01;  // initial period: manually set stdev
+}
+
+for (n = 0; n < n_rm; n++) {
+rm_str_nds[t][n] = res_mean + rm_nd_std[n] * res_std;   // compute mortgage rate nodes
+rm_str_nds[t][n] = max(rm_str_nds[t][n], 0.0);          // set non-negative short-rate
+(*snodes1).rm_gridt[t][n] = rm_str_nds[t][n];
+
+cout << (*snodes1).rm_gridt[t][n] << "...";              // print out interest rate grid entry
+}
+cout << endl;
+}
+*/
+
+/*
+cout << "load_simpath.cpp: Compute Income Nodes " << endl;
+for (t = 0; t < T_sim; t++) {
+res_sum = accumulate(yi_str[t].begin(), yi_str[t].end(), 0.0);
+res_mean = res_sum / (double)yi_str[t].size();
+
+res_sq_sum = inner_product(yi_str[t].begin(), yi_str[t].end(), yi_str[t].begin(), 0.0);
+res_std = sqrt(res_sq_sum / (double)yi_str[t].size() - res_mean * res_mean);
+
+if (t == 0) {
+res_std = 0.01;
+}
+for (n = 0; n < n_yi; n++) {
+yi_str_nds[t][n] = res_mean + yi_nd_std[n] * res_std; // compute income nodes (log scale)
+//yi_str_nds[t][n] = res_mean + yi_nd_std[n] * res_std; // compute income nodes (log scale)
+(*snodes1).yi_gridt[t][n] = exp(yi_str_nds[t][n]);    // load individual-income nodes into income_gridt
+cout << t << "..." << n << "..." << (*snodes1).yi_gridt[t][n] << "...";
+
+//if (t <= 5) {
+//	(*snodes1).yi_gridt[t][n] = 0.0;
+//}
+}
+cout << endl;
+}
+*/

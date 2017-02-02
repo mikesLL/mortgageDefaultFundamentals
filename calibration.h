@@ -13,74 +13,39 @@ const double apr_frm = 0.06;
 const double mort_term = 30.0;
 const int mort_term_int = 3; //30;
 
-// TODO notes here
-// for now, impose mortgages are 30-year, fixed
-// mortgage states: rate, loan balance
-// in this view, refinancing lowers the rate but keeps the same balance
-
 // state variable: mortgage rates
-const int n_rm = 5;  // mortgage rate / apr states (n_rm more in-line with notation)
-const int rm_n = 5; // adding two mortgage rate / apr states
-//const double rm_store[rm_n] = { 0.035, 0.045, 0.055, 0.065, 0.075 };
-
 const double ltv_init = 0.95;  // Loan to value at origination
-
-// Work here: addint rent to price ratio at origination
 const double rent_price0 = 0.05; // rent to price ratio at origination
-
-// state var
-// loan_bal_rt contains the loan balance associated with each mortgage rate
-const double loan_bal_rt[rm_n][mort_term_int] = { {1.0, 0.9, 0.8}, {1.0, 0.7, 0.5} };
-
-
-// current rate: current mortgage rate
-// pmt rates: payment on mortgage
-// mortgage balance
-//const int m_n = rm_n*rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
-
-//const int m_n = rm_n*rm_n; // for now, rm_n current rates * rm_n pmt rates * rm_n mortgage balances
 const int m_n = 2; // 2 mortgage states: i_m = 0 for no mortgage, i_m = 1 for a mortgage
-
 
 const int n_plevel = 3;
 const int n_urate = 3;
-const int n_fedfunds = 3;
+const int n_fedfunds = 1;
 
 const int city_begin = 2;
 const int city_end = 2;
 
-// MOD HERE: begin in final time period, compute this only
-const int t_begin = 11;     // originally: =5        // begin in year 5 from .csv
-const int t_end = 11;                    // = 11 to cycle through all time periods;
+const int t_begin = 11;    // MOD HERE: begin in final time period, compute this only
+const int t_end = 11;                   
 
 // MOD HERE: Fix param_id = 0 for manual selection
 const int param_id = 0;  // set = 0 to define parameters here manually; set = 1, 2, 3, 4 for presets and load in main
 
 const int age_begin_store[] = { 30, 30, 30 }; // manual age settings here
-//const int age_begin_store[] = { 60, 45, 30 }; // manual age settings here
 const int n_age_store[] = { 1, 1, 1, 2, 2 };
 const int n_age = n_age_store[param_id]; 
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 20; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
-const int age_max = 35; //35; //65;                  // age at which household retires / annuitizes wealth  
-					
-//const double margin_store[] = { 0.0, 0.0, 0.02524, 0.032408, 0.0, 0.019866, 0.0, }; 
+const int age_max = 31; //35; //65;                  // age at which household retires / annuitizes wealth  
 
-const double csfLev_pidxw[] = {0.0, 0.0, 0.0, 0.0, 0.0 };  // change in future notl to index weight
-//const double csfLev_pidxw[] = {1.0, 1.0, 0.0, 1.0, 0.0 };  // change in future notl to index weight
-
-// csf margin requirement by city
-//const double csfmarg_store[] = { 0.036444571, 0.039967956, 0.032995124, 0.033871271,
-//	0.025347143, 0.023869709, 0.037148076, 0.030927638 };
-const double csfmarg_store[] = { 0.036444571, 0.039967956, 0.032995124, 0.033871271,
-	0.025347143, 0.023869709, 0.037148076, 0.030927638 };
 
 
 //const double csfLev = 2.5 / csfLev_store[city_id];
 //const double csfLev = 1.0 * ( 1.0 / 0.055 );       // Case-Shiller Index Future margin-implied leverage; (notional value contract)/(median home price)*(1/margin)
+
 const int csfLevi = int(floor(csfLev));   // Floor for identification
 
 // MOD HERE: set = 0 for renting, = 1 for owning
@@ -89,17 +54,20 @@ const int pref = 0;                       // set pref = 0 for Cobb-Douglas, = 1 
 const int N_control = 6;
 const int N_cities = 8;                    // number of cities
 
-const int n_ph = 9;      // possible home price states
+const int n_ph = 5; //9      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
-const int n_yi = 3; //3; // 3;  // labor income states
+const int n_yi = 1; // 3; //3; // 3;  // labor income states
 // add u-rate to state of economy
 
 //const int n_s = n_ph * n_rent * n_yi;  // number of states
-const int n_s = n_ph * n_rent * n_yi * rm_n;  // number of states
+//const int n_s = n_ph * n_rent * n_yi * rm_n;  // number of states
+
+// just set n_rent
 
 //const int n_s2 = n_ph * n_plevel * n_urate * n_fedfunds;
-const int n_s2 = n_ph * n_plevel * n_urate;   // impose fedfunds determined by plevel, urate
-// Fedfunds = f
+//const int n_s = n_ph * n_plevel * n_urate * n_fedfunds * n_rent * n_yi;   // impose fedfunds determined by plevel, urate
+
+const int n_s = n_ph * n_plevel * n_urate * n_fedfunds;   // impose fedfunds determined by plevel, urate
 
 
 // Labor income related parameters

@@ -7,96 +7,50 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	age0 = age0_in;
 	T_max = T_max_in;
 
-	csfLevSn = csfLev_pidxw[param_id] * 1.0 / csfmarg_store[city_id];
+	//csfLevSn = csfLev_pidxw[param_id] * 1.0 / csfmarg_store[city_id];
 
-	// initialize price, rent, income grids
-	// use max time horizon, n_ph, n_rent, n_yi gridpoints
-	rm_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_rm, 0.0));
+	// initialize home price, price level, urate, and fedfunds grids
 	p_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_ph, 0.0));
 	rent_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_rent, 0.0));
-	yi_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_yi, 0.0));
-	yi_gridt_btax = vector<vector<double>>(T_max + 1, vector<double>(n_yi, 0.0));
 
 	plevel_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_plevel, 0.0));
 	urate_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_urate, 0.0));
 	fedfunds_gridt = vector<vector<double>>(T_max + 1, vector<double>(n_fedfunds, 0.0));
 	
-
 	// initialize gammat state-state transition matrix
 	vector<vector<vector<double>>> zeros_T_NS_NS(T_max + 1, vector<vector<double>>(n_s, vector<double>(n_s, 0.0)));
 	gammat = zeros_T_NS_NS;
 
 	// initialize i2s and s2i mappings
-	vector<vector<vector<int>>> zeros_NPH_NRENT_NYI(n_ph, vector<vector<int>>(n_rent, vector<int>(n_yi, 0)));
-
-	vector<vector<vector<vector<int>>>> zeros_NPH_NRENT_NYI_NRM(n_ph, vector<vector<vector<int>>>(n_rent, vector<vector<int>>(n_yi, vector<int>(n_rm, 0))));
-	
 	vector<int> zeros_NS(n_s, 0);
-
-	i2s_map = zeros_NPH_NRENT_NYI_NRM;
-
-	//i2s_map2 = zeros
-	//i2s_map = zeros_NPH_NRENT_NYI;
-	s2i_ph = zeros_NS;
-	s2i_rent = zeros_NS;
-	s2i_yi = zeros_NS;
-	s2i_rm = zeros_NS;
-
-	i_s = 0;
-
-	for (i_ph = 0; i_ph < n_ph; i_ph++) {
-		for (i_rent = 0; i_rent < n_rent; i_rent++) {
-			for (i_yi = 0; i_yi < n_yi; i_yi++) {
-				for (i_rm = 0; i_rm < n_rm; i_rm++) {
-					i2s_map[i_ph][i_rent][i_yi][i_rm] = i_s;      // initialize i2s map
-					s2i_ph[i_s] = i_ph;                           // initialize s2_i maps
-					s2i_rent[i_s] = i_rent;     
-					s2i_yi[i_s] = i_yi;
-					s2i_rm[i_s] = i_rm; 
-					i_s++;
-				}
-			}
-		}
-	}
 
 	// states: home price, price level, urate, fed funds
 	// [n_ph][n_plevel][n_urate][n_fedfunds]
 	// i2s_map2 will capture information on all states
 	int i_plevel, i_urate, i_fedfunds;
 	
-	i2s_map2.resize(n_ph);
-	for (i_ph = 0; i_ph < n_ph; i_ph++) {
-		i2s_map2[i_ph].resize(n_plevel);
-
-		for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
-			i2s_map2[i_ph][i_plevel].resize(n_urate);
-
-			for (i_urate = 0; i_urate < n_urate; i_urate++) {
-				i2s_map2[i_ph][i_plevel][i_urate].resize(n_fedfunds);
-
-				i2s_map2[i_ph][i_plevel][i_urate].assign(n_fedfunds, 0);
-			}
-		}
-	}
-
-	//for (i_ph = 0; i_ph) 
-
 	i_s = 0;
-	s2i_plevel.resize(n_s2);
-	s2i_urate.resize(n_s2);
-	s2i_fedfunds.resize(n_s2);
+	s2i_ph.resize(n_s);
+	s2i_plevel.resize(n_s);
+	s2i_urate.resize(n_s);
+	s2i_fedfunds.resize(n_s);
+
+	i2s_map.resize(n_ph);
 
 	for (i_ph = 0; i_ph < n_ph; i_ph++) {
+
+		i2s_map[i_ph].resize(n_plevel);
 		for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+
+			i2s_map[i_ph][i_plevel].resize(n_urate);
 			for (i_urate = 0; i_urate < n_urate; i_urate++) {
+
+				i2s_map[i_ph][i_plevel][i_urate].resize(n_fedfunds);
 				for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++){
 
-					i2s_map2[i_ph][i_plevel][i_urate][i_fedfunds] = i_s;          // initialize i2s map
-					//s2i_ph[i_s] = i_ph;                                           // initialize s2_i maps
-					//s2i_rent[i_s] = i_rent;
-					//s2i_yi[i_s] = i_yi;
-					//s2i_rm[i_s] = i_rm;
+					i2s_map[i_ph][i_plevel][i_urate][i_fedfunds] = i_s;          // initialize i2s map
 
+					s2i_ph[i_s] = i_ph;                                           // initialize s2_i maps
 					s2i_plevel[i_s] = i_plevel;                            // maps state to current price level
 					s2i_urate[i_s] = i_urate;                              // maps state to current unemployment rate
 					s2i_fedfunds[i_s] = i_fedfunds;                        // maps state to current fedfunds
@@ -108,15 +62,17 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 
 	// compute i_s_mid;
+	int i_plevel_mid, i_urate_mid, i_fedfunds_mid;
+
 	i_ph_mid = (int) floor( 0.5*n_ph );
-	i_rent_mid = (int) floor( 0.5*n_rent );
-	i_yi_mid = (int) floor( 0.5*n_yi );
-	i_rm_mid = (int)floor(0.5*n_rm);
-	
-	i_s_mid = i2s_map[i_ph_mid][i_rent_mid][i_yi_mid][i_rm_mid];
+	i_plevel_mid = (int)floor(0.5*n_plevel);
+	i_urate_mid = (int)floor(0.5*n_urate);
+	i_fedfunds_mid = (int)floor(0.5*n_fedfunds);
+
+	i_s_mid = i2s_map[i_ph_mid][i_plevel_mid][i_urate_mid][i_fedfunds_mid];
 
     for( i_ph = 0; i_ph < n_ph; i_ph++ ){
-		s_ph_midry[i_ph] = i2s_map[i_ph][i_rent_mid][i_yi_mid][i_rm_mid];
+		s_ph_midry[i_ph] = i2s_map[i_ph][i_plevel_mid][i_urate_mid][i_fedfunds_mid];
     }
 
 	int i_t;
@@ -155,24 +111,6 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 		}
 	}
 	
-	
-	 
-	// work here
-	//vector<vector<double>> zeros_WN_RX(w_n, vector<double>(retxn, 0.0));
-	//vector<vector<vector<double>>> zeros_NS_WN_RX(n_s, zeros_WN_RX);
-	//vector<vector<vector<vector<double>>>> zeros_NS_NS_WN_RX(n_s, zeros_NS_WN_RX );
-	//vector<vector<vector<vector<vector<double>>>>> zeros_T_NS_NS_WN_RX(T_max, zeros_NS_NS_WN_RX);
-
-	//vector<double> foo_large( T_max*n_s*n_s*w_n*2, 0.0);
-	//vector<double> foo_large(100000000, 0.0);
-	//vector<vector<double>> foo_large(10000, vector<double>(10000, 0.0));
-	//w_t2_state = zeros_T_NS_NS_WN_RX; 
-	//w_t2_state.assign(T_max, zeros_NS_NS_WN_RX);
-	// w_t2_state
-	// given s1, s2, plots where wealth will be in next period (based on equity returns)
-	// Given: (t_hor, i_s1, i_s2, i_w1), 
-	// Last two arguments store w_low, w_high at beginning of next period
-
 	// work here 
 	int own_state0 = 1, def_state0 = 0;  // assume household is homeowner by default
 	vector<vector<int>> ones_int_NS_WN(n_s, vector<int>(w_n, own_state0));
@@ -185,6 +123,7 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	def_state = zeros_int_T_NS_WN;
 	
 }
+
 // own_state
 // Given: (t_hor, i_s1) and assume HH begins period as owner
 // i_w1 value = {0 (HH defaults), 1 (HH owns) }
@@ -203,6 +142,7 @@ void snodes::w_state_swap( int i_w1_swap_in) {
 		w_t2_state_high[t_hor][i_s1][i_s2][i_w1] = w_t2_state_high[t_hor][i_s1][i_s2][i_w1_swap];
 	}
 }
+
 //for (i_x2 = 0; i_x2 < retxn; i_x2++) {
 //	w_t2_state[t_hor][i_s1][i_s2][i_w1][i_x2] = w_t2_state[t_hor][i_s1][i_s2][i_w1_swap][i_x2];
 //}

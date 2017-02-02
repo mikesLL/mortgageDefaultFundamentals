@@ -72,11 +72,11 @@ gen_res gen_VPw(void *snodes_in,  void *vf1_in, void *vf2_in,
 	res1.v_opt = v0_default;
 	res1.valid_flag = 0;
 
-	int i_yi = (*snodes1).s2i_yi[(*vf2).i_s1];
+	//int i_yi = (*snodes1).s2i_yi[(*vf2).i_s1];
 	int t_hor = (*snodes1).t_hor;
 
 	// current cash on hand; wealth and income only
-	double cohQ = (*vf1).w_grid[(*vf2).w_i1] + (*snodes1).yi_gridt[t_hor][i_yi];
+	double cohQ = (*vf1).w_grid[(*vf2).w_i1]; // +(*snodes1).yi_gridt[t_hor][i_yi];
 	
 	//if ( cohQ  < beg_equity ) {
 	//	opt_flag = 0;

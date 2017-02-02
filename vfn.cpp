@@ -62,24 +62,6 @@ void vfn::enter_data(void *snodes_in, double phr_in, int t_id_in, int t_num_in, 
 }
 
 
-void vfn::mortgage_ammort() {
-	// Function computes mortgage ammortization
-	
-
-}
-void vfn::mortgage_comp() {
-	// Function computes mortgage payment
-	// mortgage payment is a function of:
-	// 1) loan balance and 
-	// 2) payment rate
-
-	// loop through mortgage states
-	// in each state, compute loan balance and payment
-	int i_m2 = 0;
-	for (i_m2 = 0; i_m2 < m_n; i_m2++) {}
-
-}
-
 
 
 
@@ -340,13 +322,16 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 			for (i_m = 0; i_m < m_n; i_m++) {
 				for (i_w = 0; i_w < w_n; i_w++) {
 
-					loan_bal_term = 0.0; 
+					loan_bal_term = 0.0; // loan balance
 					ph0 = 0.0; 
 
-					if (i_t >= 1) {
+					if (i_t >= 1) {                                                     // homeowner index
 						i_ph3 = (*snodes1).s2i_ph[i_s];
-						i_rlb = (*mortg1).m2rlb_map[i_m];                               // loan balance index
-						loan_bal_term = (*mortg1).bal[i_rlb][t_hor_term];               // retrieve current loan balance
+						
+						if (i_m >= 1) {
+							loan_bal_term = (*mortg1).loan_bal[t_hor_term];             // current loan balance (if mortgage holder)
+						}
+						             
 						ph0 = (*snodes1).p_gridt[t_hor_term][i_ph3];                    // terminal home price
 					} 
 

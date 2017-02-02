@@ -10,7 +10,7 @@
 
 void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id_in, int year1t_id_in, int T_max) {
 
-	// MODS HERE
+
 	int i_m = 0;
 
 	int i_rm; 
@@ -28,6 +28,8 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 
 	// main state of interest; represents median income, median home price, median rent out of all states
 	int i_s_mid = (*snodes1).i_s_mid;
+	// WANT: MAIN STATE REPRESENTS MEDIAN HOME PRICE, PRICE LEVEL, UNEMPLOYMENT RATE, FED FUNDS
+	// Double-check this is correct
 
 	ofstream v1_file;                                             // open output file stream    
 
@@ -63,24 +65,50 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 	cout << "store_data.cpp: write v1_file" << endl;
 	v1_file.open(file_name, ios::out | ios::trunc);                                 // outstream, truncate
 
-	// print t_i, ph_i, ph and state headers
-	// commas represent spaces for control variables
-	int i_rm_mid = (*snodes1).i_rm_mid;
-	for ( t_i = 0; t_i < t_n; t_i++) {                                               
-		for (i_ph = 0; i_ph < n_ph; i_ph++) {
-			for (i_rent = 0; i_rent < n_rent; i_rent++) {
-				for (i_yi = 0; i_yi < n_yi; i_yi++) {
-					//for (i_rm = 0; i_rm < n_rm; i_rm++) {
-						v1_file << "t_i = " << t_i << "," << "i_ph = " << i_ph << "," << "ph = " << (*snodes1).p_gridt[year1t_id][i_ph]
-							<< "," << "i_rent = " << i_rent << "," << "i_yi = " << i_yi << ","
-							<< "y = " << (*snodes1).yi_gridt[year1t_id][i_yi] << ",";
+	int i_plevel, i_urate, i_fedfunds;
 
-						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm_mid];
-						if (i_s == i_s_mid) {
-							v1_file << "  i_s_mid";
+	//for (i_rent = 0; i_rent < n_rent; i_rent++) {
+	//for (i_yi = 0; i_yi < n_yi; i_yi++) {
+	//for (i_rm = 0; i_rm < n_rm; i_rm++) {
+
+	
+	int i_rm_mid = (*snodes1).i_rm_mid;
+
+	// print ph_i, plevel, urate, fedfunds state headers
+	// commas represent spaces for control variables
+	for ( t_i = 0; t_i < t_n; t_i++) {
+		for (i_m = 0; i_m < m_n; i_m++) {
+			for (i_ph = 0; i_ph < n_ph; i_ph++) {
+				for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+					for (i_urate = 0; i_urate < n_urate; i_urate++) {
+						for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++) {
+							v1_file << "t_i = " << t_i << "," << "i_m = " << i_m << "," << "i_ph = " << i_ph << "," << "ph = " << (*snodes1).p_gridt[year1t_id][i_ph]
+								<< "," << "i_plevel = " << i_plevel << "," << "i_urate = " << i_urate << "," << "i_fedfunds = " << i_fedfunds << "," ;
+								
+							i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];
+							if (i_s == i_s_mid) {
+
+								v1_file << "  i_s_mid";
+							}
+							v1_file << ",";
 						}
-						v1_file << " , , ";
-					//}
+					}
+				}
+			}
+		}
+	}
+	v1_file << endl;
+
+	// NEW: print policy / control variable headers
+	for (t_i = 0; t_i < t_n; t_i++) {
+		for (i_m = 0; i_m < m_n; i_m++) {
+			for (i_ph = 0; i_ph < n_ph; i_ph++) {
+				for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+					for (i_urate = 0; i_urate < n_urate; i_urate++) {
+						for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++) {
+							v1_file << "W,C,B,X,CSFp,CSFn,t_i2,V,";
+						}
+					}
 				}
 			}
 		}
@@ -88,6 +116,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 	v1_file << endl;
 
 	// print policy / control variable headers
+	/*
 	for ( t_i = 0; t_i < t_n; t_i++) {                                               
 		for ( i_ph = 0; i_ph < n_ph; i_ph++) {
 			for (i_rent = 0; i_rent < n_rent; i_rent++) {
@@ -99,6 +128,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 		}
 	}
 	v1_file << endl;
+	*/
 
 	/* This part of file cycles through wealth and states and prints policy and value at that state
 	   Main variable of interest is how policies change with wealth
@@ -108,19 +138,23 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 	*/
 
 	for ( w_i = 0; w_i < w_n; w_i++) {
-		for ( t_i = 0; t_i < t_n; t_i++) {
-			for (i_ph = 0; i_ph < n_ph; i_ph++) {
-				for (i_rent = 0; i_rent < n_rent; i_rent++) {
-					for (i_yi = 0; i_yi < n_yi; i_yi++) {
-						
-						i_s = (*snodes1).i2s_map[i_ph][i_rent][i_yi][i_rm_mid];  // given i_ph, i_rent, i_yi, get state
-						
-						// MODS HERE					
-						v1_file << (*vfnt).w_grid[w_i] << ","
-							<< (*vfnt).x1_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_m][i_s][w_i] << ","
-							<< (*vfnt).x4_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_m][i_s][w_i] << ","
-							<< (*vfnt).vw3_grid[t_i][i_m][i_s][w_i] << ",";
-						/**/
+		for (t_i = 0; t_i < t_n; t_i++) {
+			for (i_m = 0; i_m < m_n; i_m++) {
+				for (i_ph = 0; i_ph < n_ph; i_ph++) {
+					for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+						for (i_urate = 0; i_urate < n_urate; i_urate++) {
+							for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++) {
+
+								i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];  // get macro state
+
+								// MODS HERE					
+								v1_file << (*vfnt).w_grid[w_i] << ","
+									<< (*vfnt).x1_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_m][i_s][w_i] << ","
+									<< (*vfnt).x4_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_m][i_s][w_i] << ","
+									<< (*vfnt).vw3_grid[t_i][i_m][i_s][w_i] << ",";
+								/**/
+							}
+						}
 					}
 				}
 			}
@@ -144,7 +178,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 		v1_file_flat.close();
 	}
 
-	int foo = city_id;
+	//int foo = city_id;
 
 	if (t_hor <= 0) {
 		ofstream v1_file_flat;
@@ -152,28 +186,34 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 
 		for (w_i = 0; w_i < w_n; w_i++) {
 			for (t_i = 0; t_i < t_n; t_i++) {
-				for (i_ph = 0; i_ph < n_ph; i_ph++) {
-					for (i_rent = 0; i_rent < n_rent; i_rent++) {
-						for (i_yi = 0; i_yi < n_yi; i_yi++) {
-							i_s = (*snodes1).s_ph_midry[i_ph];  // pass in price dimension of interest, receive state given median rent, income
-							v1_file_flat << city_id << "," << age0 << "," << year1_id << "," << year1t_id << "," << rhoi << "," << gammai << "," << csfLev << "," << w_n << ",";
-							v1_file_flat << t_i << "," << i_ph << "," << i_rent << "," << i_yi << "," << w_i << ",";
-							
-							/*
-							v1_file_flat << (*vfnt).w_grid[w_i] << ","
-								<< (*vfnt).x1_grid[t_i][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_s][w_i] << ","
-								<< (*vfnt).x4_grid[t_i][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_s][w_i] << ","
-								<< (*vfnt).vw3_grid[t_i][i_s][w_i] << ",";
-							*/
+				for (i_m = 0; i_m < m_n; i_m++) {
+					for (i_ph = 0; i_ph < n_ph; i_ph++) {
+						for (i_plevel = 0; i_plevel < n_plevel; i_plevel++) {
+							for (i_urate = 0; i_urate < n_urate; i_urate++) {
+								for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++) {
 
-							// MODS HERE						
-							v1_file_flat << (*vfnt).w_grid[w_i] << ","
-								<< (*vfnt).x1_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_m][i_s][w_i] << ","
-								<< (*vfnt).x4_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_m][i_s][w_i] << ","
-								<< (*vfnt).vw3_grid[t_i][i_m][i_s][w_i] << ",";
-							/**/
+									i_s = (*snodes1).s_ph_midry[i_ph];       // pass in price dimension of interest, receive state given median rent, income
+									v1_file_flat << city_id << "," << age0 << "," << year1_id << "," << year1t_id << "," << rhoi << "," << gammai << "," << csfLev << "," << w_n << ",";
+									//v1_file_flat << t_i << "," << i_ph << "," << i_rent << "," << i_yi << "," << w_i << ",";
+									v1_file_flat << t_i << "," << i_m << "," << i_ph << "," << i_plevel << "," << i_urate << "," << i_fedfunds << "," << w_i << ",";
 
-							v1_file_flat << endl;
+									/*
+									v1_file_flat << (*vfnt).w_grid[w_i] << ","
+										<< (*vfnt).x1_grid[t_i][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_s][w_i] << ","
+										<< (*vfnt).x4_grid[t_i][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_s][w_i] << ","
+										<< (*vfnt).vw3_grid[t_i][i_s][w_i] << ",";
+									*/
+
+									// MODS HERE						
+									v1_file_flat << (*vfnt).w_grid[w_i] << ","
+										<< (*vfnt).x1_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x2_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x3_grid[t_i][i_m][i_s][w_i] << ","
+										<< (*vfnt).x4_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).x5_grid[t_i][i_m][i_s][w_i] << "," << (*vfnt).xt_grid[t_i][i_m][i_s][w_i] << ","
+										<< (*vfnt).vw3_grid[t_i][i_m][i_s][w_i] << ",";
+									/**/
+
+									v1_file_flat << endl;
+								}
+							}
 						}
 					}
 				}

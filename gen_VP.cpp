@@ -96,23 +96,19 @@ int i_rcurr, i_rpmt, i_rlb;  // mortgage state: current rate, payment rate, loan
 t_i2 = 0;
 	
 // COMPUTE Renter problem
-// Do NOT need to cycle through different mortgage states
-
 for (i_s = 0; i_s < n_s; i_s++) {
 
-	i_yi = (*snodes1).s2i_yi[i_s];              // load in states
-	i_rent = (*snodes1).s2i_rent[i_s];
-	i_ph = (*snodes1).s2i_ph[i_s];
-
-	
+	i_yi = 0; //i_yi = (*snodes1).s2i_yi[i_s];              // load in states
+	i_rent = 0;                                   // (*snodes1).s2i_rent[i_s];
+	i_ph = (*snodes1).s2i_ph[i_s];                // load in states
 
 	start = clock();
-	cout << "i_m = " << i_m << "  i_s = " << i_s << "  t_i = " << t_i << "  i_yi = " << i_yi
-		<< "  i_ph = " << i_ph << "  begin renter problem" << endl;
+	cout << "i_m = " << i_m << "  i_s = " << i_s << "  t_i = " << t_i << "  i_ph = " << i_ph << "  begin renter problem" << endl;
 	
 	for (w_i = 0; w_i < w_n; w_i++) {
+		i_m = 0;                                                       // No Mortgage
+		t_i = 0;                                                       // Renter
 
-		i_m = 0;
 		if (w_i % 100 == 0) {
 			cout << "w_i = " << w_i << endl;
 		}
@@ -130,8 +126,7 @@ for (i_s = 0; i_s < n_s; i_s++) {
 		x_guess = x_lag_wt[t_i2];
 
 		// compute cash on hand
-		coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi]
-			- (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj;
+		coh = (*rr1).w_grid[w_i] - (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj;
 
 		(*rr2).i_s1 = i_s;          // pass in current state to next-period value function
 		(*rr2).t_i1 = t_i;
@@ -169,34 +164,6 @@ for (i_s = 0; i_s < n_s; i_s++) {
 	cout << "time elapsed: " << duration << '\n';
 }
 
-//}
-
-/* TODO: THINK ABOUT REMOVING DEFAULT SETTINGS
-if (t_i2 == 0) {
-(*rr2).def_flag = 1;
-res1 = gen_VPw(snodes1, rr1, rr2, coh, x_guess, b_min, beg_equity, mpmt);
-(*rr1).vw3_def_grid[i_s][w_i] = res1.v_opt;
-//cout << res1.v_opt << endl;
-(*rr2).def_flag = 0;
-}*/
-
-/*
-if (t_i2 == 1) {
-v_ti1 = res1.v_opt;
-x_ti1 = res1.x_opt;
-} */
-
-//(*rr1).interp_vw3(t_i, i_s);  // clean and interpolate grid			
-// MOD HERE
-
-// now that the t_i = 0 case has been solved, t_i = 1,2 cases when sale or trade-up are equivalent
-//to t_i = 0 with the correct downward wealth adjustment; 
-//do not need to cycle through t_i2 = {0, 1,2}, only t_i2 = t_i
-
-
-// TODO: calculate the HH's mortgage payment (FRM)
-
-double mpmt2_frm = 0.0; // MOD HERE
 
 // MODS HERE
 int i_m_refi;  // mortgage state associated with refinancing
@@ -205,68 +172,7 @@ double loan_diff;  // loan balance difference
 double loan_bal; // current loan balance
 
 
-cout << "gen_VP.cpp: minimum working example for new state-space setup" << endl;
-// mod here: states are the macroeconomy
-// minimum working example
-int i_plevel, i_urate, i_fedfunds;
-for (i_s = 0; i_s < n_s2; i_s++) {
-	i_ph = (*snodes1).s2i_ph[i_s];                        // load in home price
-	i_plevel = (*snodes1).s2i_plevel[i_s];                // load in price level
-	i_urate = (*snodes1).s2i_urate[i_s];                  // load in urate
-	i_fedfunds = (*snodes1).s2i_fedfunds[i_s];            // load in fedfunds
-
-	// ISSUE HERE
-	// Want to remove cycling through mortgage states
-	// let i_m = {0 (does not hold mortgage), 1 (holds mortgage) }; 
-	
-	//m_n = 2; 
-	for (i_m = 0; i_m < 2; i_m++) {                      // Cycle through mortgage states
-
-		for (w_i = 0; w_i < w_n; w_i++) {
-
-			if (i_m == 0) {
-				// setup: HH MPMT = 0.0;
-				mpmt = 0.0;
-			} else {
-				// setep: HH MPMT = ...
-
-
-				// CHOICE: continue paying mortgage -or- switch to state 1?
-				// w_diff: pay loan palance?
-				// w_prime = w - loan_balance; // so that wealth declines by liquid assets
-				// evaluate: V_mort = V(w, t_i = 1, i_m = 1) vs V_refi = V(w_prime, t_i = 1, i_m = 0)
-				// if V_refi > V_mort, then refinance
-				
-				// Q: how to model default? 
-				// w_def = w, V_def = V(w, t_i = 0, i_m = 0) 
-			}
-
-			                                               // Load mortgage state 
-			i_rpmt = (*mortg1).m2rpmt_map[i_m];            // current payment rate on mortgage
-			i_rlb = (*mortg1).m2rlb_map[i_m];              // current loan balance (given ammort rate)
-									 
-			mpmt = (*mortg1).pmt[i_m][t_hor];              // mortgage payment 
-
-			// ISSUE HERE: 
-			// The mortgage structure takes in a:
-			// 1) time-period t_hor and a
-			// 2) rate i_m
-			// WANT: in each year, the possible mortgage rates will change
-			// In each years, n_s2 mortgage rates
-
-			coh = 1.0/(*snodes1).plevel_gridt[t_hor][i_s]*(*rr1).w_grid[w_i] - mpmt;        // COH = liquid assets + income - mortgage payment)
-
-		}
-	}
-}
-
 cout << "gen_VP.cpp: begin homeowner problem" << endl;
-
-//************************************ 
-// NEW VERSION
-//************************************
-cout << "gen_VP.cpp: begin homeowner problem" << endl;
-//int i_urate, i_fedfunds, i_plevel;
 
 double v_refi;
 int t_def, i_m_def;
@@ -278,11 +184,11 @@ int t_sell, i_m_sell;
 double w_sell;
 eval_res res_sell;
 
+int i_plevel, i_urate, i_fedfunds;
 
 for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
 
-
-	for (i_s = 0; i_s < n_s2; i_s++) {                  // Cycle through macro states
+	for (i_s = 0; i_s < n_s; i_s++) {                  // Cycle through macro states
 
 		t_i2 = t_i;                                      // impose t_i2 = t_i (homeowner)
 
@@ -290,25 +196,21 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 		i_plevel = (*snodes1).s2i_plevel[i_s];                // load in price level
 		i_urate = (*snodes1).s2i_urate[i_s];                  // load in urate
 		i_fedfunds = (*snodes1).s2i_fedfunds[i_s];            // load in fedfunds
-		// NOTE: given fed funds, should be able to compute the ARM rate
-	
-		i_yi = (*snodes1).s2i_yi[i_s];                       // Prepare to delete some of these  
-		i_rent = (*snodes1).s2i_rent[i_s];
-		i_ph = (*snodes1).s2i_ph[i_s];
-		i_rcurr = (*snodes1).s2i_rm[i_s];                    // short rate is a state var 
 		
-
+		i_ph = (*snodes1).s2i_ph[i_s];
+		// NOTE: given fed funds, should be able to compute the ARM rate
+		// TODO: check the s2i_maps are correct
+		// TODO: get rid of labor income state
+		
 		start = clock();
 		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
 			<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
 
-		// Cycle through mortgage states
-		// NOTE: m_n = 2;
-		for (i_m = 0; i_m < m_n; i_m++) {                       
+		for (i_m = 0; i_m < m_n; i_m++) {                        // Cycle through mortgage states (m_n = 2)        
 
-			if (i_m > 0) {
-				mpmt = 0.22;              // HERE: add code for computing mortgage payment, loan balance
-				loan_bal = 2.0;
+			if (i_m > 0) {         
+				mpmt = (*mortg1).mpmt;                           // Compute mortgage payment, loan balance
+				loan_bal = (*mortg1).loan_bal[t_hor];
 			} else {
 				mpmt = 0.0;
 				loan_bal = 0.0;
@@ -316,12 +218,11 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 			for (w_i = 0; w_i < w_n; w_i++) {
 
-				//loan_bal = (*mortg1).bal[i_rlb][t_hor];                // retrieve current loan balance
 				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
 
-				coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - mpmt;  // COH = liquid assets + income - mortgage payment)
-
-																							// load previous w_i policy as an initial guess
+				coh = (*rr1).w_grid[w_i] - mpmt;  // COH = liquid assets + income - mortgage payment)
+				
+				// load previous w_i policy as an initial guess
 				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
 				v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
@@ -360,8 +261,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				}
 				
 				// CASE: HH SELLS
-				
-
 				t_sell = 0;
 				i_m_sell = 0;
 
@@ -406,129 +305,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 	}
 }
 
-//************************************ 
-// OLD VERSION
-//************************************
-
-cout << "gen_VP.cpp: begin homeowner problem" << endl; 
-for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
-	for (i_s = 0; i_s < n_s; i_s++) {
-
-		t_i2 = t_i;                                          // impose t_i2 = t_i 
-		i_yi = (*snodes1).s2i_yi[i_s];
-		i_rent = (*snodes1).s2i_rent[i_s];
-		i_ph = (*snodes1).s2i_ph[i_s];
-		i_rcurr = (*snodes1).s2i_rm[i_s];                    // short rate is a state var 
-
-		start = clock();
-		cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
-			<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
-
-		for (i_m = 0; i_m < m_n; i_m++) {                       // Cycle through mortgage states
-
-			// Load mortgage state 
-			
-			i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
-			i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
-
-			// TODO: verify this works			
-			//mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in each state
-			mpmt = (*mortg1).pmt[i_m][t_hor];                   // mortgage payment 
-
-			for (w_i = 0; w_i < w_n; w_i++) {
-
-				loan_bal = (*mortg1).bal[i_rlb][t_hor];                // retrieve current loan balance
-				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
-				
-				coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - mpmt;  // COH = liquid assets + income - mortgage payment)
-
-				// load previous w_i policy as an initial guess
-				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
-				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
-				v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
-				(*rr2).m_i1 = i_m;
-
-				//mpmt = 0.0; //-1.0e6;                // FOR NOW: set = 0.0; think about getting rid of
-				beg_equity = -1.0e6; 
-
-				(*rr2).i_s1 = i_s;
-				(*rr2).t_i1 = t_i;
-				(*rr2).w_i1 = w_i;
-				(*rr2).t_i2 = t_i2;                        
-
-				(*snodes1).i_s1 = i_s;      // load states into snodes
-				(*snodes1).i_w1 = w_i;
-				(*snodes1).loan_bal1 = loan_bal;
-
-				// solve optimization problem
-				res1 = gen_VPw(snodes1, rr1, rr2, coh, x_lag_w, b_min, beg_equity, mpmt);      
-				v1 = res1.v_opt;                                                 // guess for current solution: vfn
-				x1 = res1.x_opt;                                                 // guess for current policy
-
-				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);          // store opt result
-                                                          
-				// COMPUTE CASE: HH REFINANCES
-				if (i_rcurr < i_rpmt) {
-					t_refi = 1;                                                      // tenure index in event of refi
-						
-					i_m_refi = (*mortg1).r2m_map[i_rcurr][i_rlb];                // refi: i_rpmt = i_rcurr, i_rlb is the same
-
-					// loan balance: ammort at repayment rate - ammort at current market rate
-					loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor]; 
-		
-					w_refi = (*rr1).w_grid[w_i] - loan_diff;                                        // compute liquid wealth if HH refinances
-					res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                             // evaluate value fn if household refinances
-
-					if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0)) {
-					
-						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);              // load in policy associated with refinance
-						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);   // set policy associated with refinance
-						v1 = res_refi.v_i_floor;                                                   // upadate value fn guess
-
-						(*snodes1).w_state_swap(res_refi.w_i_floor);                               // update wealth transition state
-					}
-				}
-
-				// COMPUTE CASE: HH SELLS
-				w_adj = (*rr1).w_grid[w_i] + (*snodes1).p_gridt[t_hor][i_ph] - loan_bal;           // calc wealth if HH sells
-				res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH sells
-
-				// CASE: value of selling > value of owning
-				if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
-					(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-					t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
-					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
-
-					v1 = res_t_0.v_i_floor;                        // update v1 with value of default
-					(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
-					(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
-				}
-
-				// COMPUTE CASE: HH DEFAULTS
-				w_adj = (*rr1).w_grid[w_i];                                // calc wealth if HH defaults
-				res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH defaults
-
-			    // CASE: value of default > value of owning
-				if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
-					(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-					t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
-					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
-
-					v1 = res_t_0.v_i_floor;                        // update v1 with value of default
-					(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
-					(*snodes1).def_state[t_hor][i_s][w_i] = 1;     // update default state
-					(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
-				}
-			}
-				
-			(*rr1).interp_vw3(t_i, i_m, i_s);  // clean grid
-
-		}
-
-		duration = (clock() - start) / (double)CLOCKS_PER_SEC;
-		cout << "time elapsed: " << duration << "  lcount = " << (*rr2).lcount << endl;
-	}
-}
 
 // clean grid again
 for (t_i = 0; t_i < t_n; t_i++) {  
@@ -545,3 +321,129 @@ cout << " gen" << to_string( (*rr1).t_num) << "completed" << endl;
 
 //b_min = -max_ltv*(*snodes1).ten_w[t_i2] * (*snodes1).p_gridt[t_hor][i_ph] + b_min_unsec;
 //b_min2 = -max_lti * (*snodes1).yi_gridt_btax[t_hor][i_yi] / (rb + mort_spread - 1.0);
+
+
+//************************************ 
+// OLD VERSION
+//************************************
+/*
+cout << "gen_VP.cpp: begin homeowner problem" << endl;
+for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
+for (i_s = 0; i_s < n_s; i_s++) {
+
+t_i2 = t_i;                                          // impose t_i2 = t_i
+i_yi = (*snodes1).s2i_yi[i_s];
+i_rent = (*snodes1).s2i_rent[i_s];
+i_ph = (*snodes1).s2i_ph[i_s];
+i_rcurr = (*snodes1).s2i_rm[i_s];                    // short rate is a state var
+
+start = clock();
+cout << "i_s = " << i_s << "   t_i = " << t_i << "i_yi = " << i_yi
+<< " i_ph = " << i_ph << " begin homeowner problem " << endl;
+
+for (i_m = 0; i_m < m_n; i_m++) {                       // Cycle through mortgage states
+
+// Load mortgage state
+
+i_rpmt = (*mortg1).m2rpmt_map[i_m];        // current payment rate on mortgage
+i_rlb = (*mortg1).m2rlb_map[i_m];          // loan balance (given ammort rate)
+
+// TODO: verify this works
+//mortg_pmt3 = (*mortg1).pmt[i_m][t_hor]; // compute mortgage payment in each state
+mpmt = (*mortg1).pmt[i_m][t_hor];                   // mortgage payment
+
+for (w_i = 0; w_i < w_n; w_i++) {
+
+loan_bal = (*mortg1).bal[i_rlb][t_hor];                // retrieve current loan balance
+b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
+
+coh = (*rr1).w_grid[w_i] + y_atax*(*snodes1).yi_gridt[t_hor][i_yi] - mpmt;  // COH = liquid assets + income - mortgage payment)
+
+// load previous w_i policy as an initial guess
+(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
+t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
+v_lag_w = (*rr1).vw3_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
+(*rr2).m_i1 = i_m;
+
+//mpmt = 0.0; //-1.0e6;                // FOR NOW: set = 0.0; think about getting rid of
+beg_equity = -1.0e6;
+
+(*rr2).i_s1 = i_s;
+(*rr2).t_i1 = t_i;
+(*rr2).w_i1 = w_i;
+(*rr2).t_i2 = t_i2;
+
+(*snodes1).i_s1 = i_s;      // load states into snodes
+(*snodes1).i_w1 = w_i;
+(*snodes1).loan_bal1 = loan_bal;
+
+// solve optimization problem
+res1 = gen_VPw(snodes1, rr1, rr2, coh, x_lag_w, b_min, beg_equity, mpmt);
+v1 = res1.v_opt;                                                 // guess for current solution: vfn
+x1 = res1.x_opt;                                                 // guess for current policy
+
+(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);          // store opt result
+
+// COMPUTE CASE: HH REFINANCES
+if (i_rcurr < i_rpmt) {
+t_refi = 1;                                                      // tenure index in event of refi
+
+i_m_refi = (*mortg1).r2m_map[i_rcurr][i_rlb];                // refi: i_rpmt = i_rcurr, i_rlb is the same
+
+// loan balance: ammort at repayment rate - ammort at current market rate
+loan_diff = (*mortg1).bal[i_rpmt][t_hor] - (*mortg1).bal[i_rcurr][t_hor];
+
+w_refi = (*rr1).w_grid[w_i] - loan_diff;                                        // compute liquid wealth if HH refinances
+res_refi = (*rr1).eval_v(1, i_m_refi, i_s, w_refi);                             // evaluate value fn if household refinances
+
+if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0)) {
+
+(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);              // load in policy associated with refinance
+(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);   // set policy associated with refinance
+v1 = res_refi.v_i_floor;                                                   // upadate value fn guess
+
+(*snodes1).w_state_swap(res_refi.w_i_floor);                               // update wealth transition state
+}
+}
+
+// COMPUTE CASE: HH SELLS
+w_adj = (*rr1).w_grid[w_i] + (*snodes1).p_gridt[t_hor][i_ph] - loan_bal;           // calc wealth if HH sells
+res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH sells
+
+// CASE: value of selling > value of owning
+if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
+(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
+t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
+(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+
+v1 = res_t_0.v_i_floor;                        // update v1 with value of default
+(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
+(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
+}
+
+// COMPUTE CASE: HH DEFAULTS
+w_adj = (*rr1).w_grid[w_i];                                // calc wealth if HH defaults
+res_t_0 = (*rr1).eval_v(0, i_m, i_s, w_adj);               // eval value fn if HH defaults
+
+// CASE: value of default > value of owning
+if ((w_adj >= 0.0) && (res_t_0.v_i_floor > v1) && (res_t_0.w_i_floor >= 0)) {
+(*rr1).get_pol(0, i_m, i_s, res_t_0.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
+t_adj = (*rr1).xt_grid[0][i_m][i_s][res_t_0.w_i_floor];                    // get t2 pol from t1 = 0; simulated sale
+(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_adj, res_t_0.v_i_floor);     // first arguments are current state variables, x containts updated policy
+
+v1 = res_t_0.v_i_floor;                        // update v1 with value of default
+(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
+(*snodes1).def_state[t_hor][i_s][w_i] = 1;     // update default state
+(*snodes1).w_state_swap(res_t_0.w_i_floor);    // update wealth transition state
+}
+}
+
+(*rr1).interp_vw3(t_i, i_m, i_s);  // clean grid
+
+}
+
+duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+cout << "time elapsed: " << duration << "  lcount = " << (*rr2).lcount << endl;
+}
+}
+*/
