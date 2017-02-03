@@ -269,7 +269,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 					(*snodes1).w_state_swap(res_sell.w_i_floor);                                  // update wealth transition state
 				}
 
-
 				if(i_m >= 1){
 					// CASE: HH REFINANCES
 					t_refi = 1;                                                          // Refi: still owns

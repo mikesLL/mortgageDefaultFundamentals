@@ -93,7 +93,8 @@ void def_stats::wtrans_iterate(int t_hor_in) {
 
 		for (i_s1p = 0; i_s1p < n_s; i_s1p++) {                         // cycle through possible states
 			for (i_w1p = 0; i_w1p < w_n; i_w1p++) {
-				hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * (1.0 - double((*snodes1).own_state[i_t_hor][i_s1p][i_w1p]));
+				//hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * (1.0 - double((*snodes1).own_state[i_t_hor][i_s1p][i_w1p]));
+				hazard_rate = hazard_rate + sdist[i_s1p] * wdist[i_w1p] * double((*snodes1).def_state[i_t_hor][i_s1p][i_w1p]) ;
 			}
 		}
 
