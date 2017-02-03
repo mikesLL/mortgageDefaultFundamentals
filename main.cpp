@@ -51,7 +51,7 @@ int main(){
 
 		double grent_store[] = { 0.02, 0.0 };  // TODO: switch these
 		double ltv0_store[] = {0.8, 0.95};
-		double rp0_store[] = { 0.06, 0.045 };
+		double rp0_store[] = { 0.06, 0.04 };   // rp = 0.045;
 			
 		int id = 0, id_grent, id_ltv0, id_rp0;
 
@@ -60,7 +60,7 @@ int main(){
 		double param_store[8][3] = { { 0.02, 0.8, 0.06 },
 		                     { 0.0, 0.8, 0.06 },
 							 { 0.02, 0.9, 0.06 },
-							 { 0.02, 0.8, 0.045 },
+							 { 0.02, 0.8, 0.04 },
 							 { 0.00, 0.9, 0.06 },
 							 { 0.00, 0.8, 0.045 },
 							 { 0.02, 0.9, 0.045 },
@@ -69,7 +69,7 @@ int main(){
 
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 0; id++) { // id <= 7
+		for (id = 3; id <= 3; id++) { // id <= 7
 			//id_grent = (id % 2 >= 1);
 			//id_ltv0 = (id % 4 >= 2);
 			//id_rp0 = (id % 8 >= 4);
