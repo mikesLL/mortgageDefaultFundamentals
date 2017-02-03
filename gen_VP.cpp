@@ -255,7 +255,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				t_sell = 0;
 				i_m_sell = 0;
 
-				w_sell = (*rr1).w_grid[w_i] + (*snodes1).p_gridt[t_hor][i_ph] - loan_bal;        // calc wealth if HH sells
+				w_sell = (*rr1).w_grid[w_i] + (1.0 - phi)*(*snodes1).p_gridt[t_hor][i_ph] - loan_bal;        // calc wealth if HH sells
 				res_sell = (*rr1).eval_v(t_sell, i_m_sell, i_s, w_sell);                                    // eval value fn if HH sells
 			
 				// CASE: value of selling > value of owning

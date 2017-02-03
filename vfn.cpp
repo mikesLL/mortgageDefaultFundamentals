@@ -317,10 +317,15 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 	double loan_bal_term; 
 	double ph0;
 
+	int i_plevel; 
+	double plevel;
+
 	for (i_t = 0; i_t < t_n; i_t++) {
 		for (i_s = 0; i_s < n_s; i_s++) {
 			for (i_m = 0; i_m < m_n; i_m++) {
 				for (i_w = 0; i_w < w_n; i_w++) {
+
+					plevel = (*snodes1).plevel_gridt[t_hor_term][(*snodes1).s2i_plevel[i_s]];
 
 					loan_bal_term = 0.0; // loan balance
 					ph0 = 0.0; 
@@ -337,6 +342,8 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 
 					//w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 					w_adj = c_fs + max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
+
+					w_adj = w_adj / plevel; 
 
 					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
 
