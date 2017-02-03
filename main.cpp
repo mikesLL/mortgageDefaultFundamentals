@@ -55,29 +55,28 @@ int main(){
 			
 		int id = 0, id_grent, id_ltv0, id_rp0;
 
-		for (id = 0; id <= 7; id++) {
-			id_grent = (id % 2 >= 1);
-			id_ltv0 = (id % 4 >= 2);
-			id_rp0 = (id % 8 >= 4);
-
-			double grent = grent_store[id_grent];
-			double ltv0 = ltv0_store[id_ltv0];
-			double rp0 = rp0_store[id_rp0];
-
-			cout << "grent = " << grent << "   ltv0 = " << ltv0 << "   rp0 = " << rp0 << endl;
-		}
-
 		t = 11;
+
+		double param_store[8][3] = { { 0.02, 0.8, 0.06 },
+		                     { 0.0, 0.8, 0.06 },
+							 { 0.02, 0.9, 0.06 },
+							 { 0.02, 0.8, 0.045 },
+							 { 0.00, 0.9, 0.06 },
+							 { 0.00, 0.8, 0.045 },
+							 { 0.02, 0.9, 0.045 },
+							 { 0.00, 0.9, 0.045 },
+		};
+
 		#pragma omp parallel for
 		
 		for (id = 0; id <= 0; id++) { // id <= 7
-			id_grent = (id % 2 >= 1);
-			id_ltv0 = (id % 4 >= 2);
-			id_rp0 = (id % 8 >= 4);
+			//id_grent = (id % 2 >= 1);
+			//id_ltv0 = (id % 4 >= 2);
+			//id_rp0 = (id % 8 >= 4);
 			
-			double grent = grent_store[id_grent];
-			double ltv0 = ltv0_store[id_ltv0];
-			double rp0 = rp0_store[id_rp0]; 
+			double grent = param_store[id][0];      //grent_store[id_grent];
+			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
+			double rp0 = param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
