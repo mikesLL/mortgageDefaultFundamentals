@@ -70,7 +70,7 @@ int main(){
 		t = 11;
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 7; id++) {
+		for (id = 0; id <= 0; id++) { // id <= 7
 			id_grent = (id % 2 >= 1);
 			id_ltv0 = (id % 4 >= 2);
 			id_rp0 = (id % 8 >= 4);
