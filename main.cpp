@@ -70,10 +70,7 @@ int main(){
 		#pragma omp parallel for
 		
 		for (id = 3; id <= 3; id++) { // id <= 7
-			//id_grent = (id % 2 >= 1);
-			//id_ltv0 = (id % 4 >= 2);
-			//id_rp0 = (id % 8 >= 4);
-			
+						
 			double grent = param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
 			double rp0 = param_store[id][2];        //rp0_store[id_rp0]; 
@@ -108,20 +105,14 @@ int main(){
 
 			double mapr = 0.06;
 			int N_term = 30;
-			mortg mortg1(&snodes1, city_data.price[t], ltv0, mapr, N_term);
-				
-			// load city_data and into ps1 and gs1; include current rent, current home price,
-			// lagged home price appreciation, Case-Shiller Futures Price, current time
-			// load_simpath store discretized approximation in snodes1 structure 
+		
+			cout << "Compute Mortgage Path" << endl;
+			mortg mortg1(&snodes1, ph0, ltv0, mapr, N_term); 
+
+			cout << "Simulate/Discretize Macro and Housing State-space" << endl;
+		
 			load_simpath(&snodes1, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
-
-			
-			cout << "Finished Loading Mortgage Class" << endl;
-
-			//snodes1.adj_tax();
-
-			//def_stats1.print_def_stats(T_max, id);     // TEST: print this out
 
 			cout << "main.cpp: begin enter data" << endl;
 			vf_F.enter_data(&snodes1, phr_in, t, t_hor, city_data.csf_1yr[t], pref, T_max);
