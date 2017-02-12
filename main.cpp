@@ -58,7 +58,7 @@ int main(){
 			
 		int id = 0, id_grent, id_ltv0, id_rp0;
 
-		int grent_id = 0;            // set = 0 for low rent growth, = 1 for high rent growth
+		int grent_id;            // set = 0 for low rent growth, = 1 for high rent growth
 
 		t = 11;
 
@@ -79,11 +79,12 @@ int main(){
 		
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 0; id++) { // id <= 7
+		for (id = 0; id <= 1; id++) { // id <= 7
 			
-			double grent = param_store[id][0];      //grent_store[id_grent];
-			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
-			double rp0 = param_store[id][2];        //rp0_store[id_rp0]; 
+			grent_id = id % 2;
+			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
+			double ltv0 = 0.8;   // param_store[id][1];       //ltv0_store[id_ltv0];
+			double rp0 = 0.055; // param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
