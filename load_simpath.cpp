@@ -31,7 +31,7 @@ Income grows in real terms as the agent ages and city-wide income increases
 
 #include "headers.h"
 
-void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
+void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent_in, double ph0_in, double ret0_in, double csf_1yr_in, int t_id, string city_init_in, int city_id, int age_begin_in) {
 
 	snodes *snodes1 = (snodes*)snodes_in;
 
@@ -68,6 +68,47 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 	double sigma_ret = 0.08;
 	double gamma0_hat = -2.27;
 	double gamma1_hat = 0.59;
+
+	int grent_id = grent_id_in;   // set = 0 for low rent growth, set = 1 fo high rent growth
+
+	// set rent growth parameters here
+	if (grent_id) {
+		alpha_hat = 0.0052;
+		rhof_hat = 0.5780;
+		theta_hat = 0.3526;
+		sigma_ret = 0.0347;
+		gamma0_hat = -2.27;
+		gamma1_hat = 0.59;
+		g_rent = 0.0029;
+	}
+	else {
+		alpha_hat = 0.0053;
+		rhof_hat = 0.6885;
+		theta_hat = 0.2990;
+		sigma_ret = 0.0390;
+		gamma0_hat = -2.27;
+		gamma1_hat = 0.59;
+		g_rent = -0.0106;
+	}
+
+	/* Parameters from MATLAB (real terms)
+	rho0_est_high: 0.5780
+	rho0_est_low : 0.6885
+	alpha0_est_high : 0.0052
+	alpha0_est_low : 0.0053
+	theta0_est_high : 0.3526
+	theta0_est_low : 0.2990
+	sigma1_est_high : 0.0347
+	sigma1_est_low : 0.0390
+	rp_avg_high : 0.0574
+	rp_avg_low : 0.0551
+	ret_avg_high : 0.0062
+	ret_avg_low : 0.0047
+
+	g_rent_avg_low : -0.0106
+	g_rent_avg_high : 0.0029
+	*/
+
 	 
 	double p_min = 0.01;                                                         // lower bound on home prices	
 
@@ -213,7 +254,7 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 			urate_str[t][n] = v1[1] + vu2;
 			fedfunds_str[t][n] = v1[2];
 			
-			matrix_mult(var_a, var_b, v0, v2, 10);          // compute the mortgage rate
+			//matrix_mult(var_a, var_b, v0, v2, 10);          // compute the mortgage rate (if were to add FRM)
 			//rm_str[t][n] = max(v2[2] + 0.03, 0.0);                  // Mortgage premium!
 		
 			// compute home price
@@ -223,8 +264,9 @@ void load_simpath(void *snodes_in, double grent_in, double rent_in, double ph0_i
 
 			// cointegrate interest rates, rents, and prices
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
-			rent_str[t][n] = exp(g_rent)*rent_str[t-1][n];
-			ph_str[t][n] = ret_tn + ph_str[t - 1][n];
+			
+			rent_str[t][n] = exp(g_rent)*rent_str[t-1][n] + pinf_lag;               // update rent, price
+			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + pinf_lag;
 			
 		}
 	}

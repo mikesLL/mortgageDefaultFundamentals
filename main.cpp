@@ -48,29 +48,39 @@ int main(){
 
 		int i_age, t, age0;
 	
+		// grent store will look something like: {0.0045, 0.0055}
+		// ltv0 = 0.8
+		// rp0 = 0.06; (baseline)
 
-		double grent_store[] = { 0.02, 0.0 };  // TODO: switch these
+		double grent_store[] = { 0.02, 0.0 };  // TODO: switch these 
 		double ltv0_store[] = {0.8, 0.95};
 		double rp0_store[] = { 0.06, 0.04 };   // rp = 0.045;
 			
 		int id = 0, id_grent, id_ltv0, id_rp0;
 
+		int grent_id = 0;            // set = 0 for low rent growth, = 1 for high rent growth
+
 		t = 11;
 
-		double param_store[8][3] = { { 0.02, 0.8, 0.06 },
-		                     { 0.0, 0.8, 0.06 },
-							 { 0.02, 0.9, 0.06 },
-							 { 0.02, 0.8, 0.03 },
-							 { 0.00, 0.9, 0.06 },
-							 { 0.00, 0.8, 0.03 },
-							 { 0.02, 0.9, 0.03 },
-							 { 0.00, 0.9, 0.03 },
-		};
+		double gr = 0.025, gr1 = 0.0;
+		double ltv = 0.8, ltv1 = 0.9;
+		double rp = 0.06, rp1 = 0.045; 
 
+		
+		double param_store[8][3] = { { 0.025, 0.8, 0.06 },
+		                     { 0.0, 0.8, 0.06 },
+							 { 0.025, 0.9, 0.06 },
+							 { 0.025, 0.8, 0.045 },
+							 { 0.00, 0.9, 0.06 },
+							 { 0.00, 0.8, 0.045 },
+							 { 0.025, 0.9, 0.045 },
+							 { 0.00, 0.9, 0.045 },
+		};
+		
 		#pragma omp parallel for
 		
-		for (id = 3; id <= 3; id++) { // id <= 7
-						
+		for (id = 0; id <= 0; id++) { // id <= 7
+			
 			double grent = param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
 			double rp0 = param_store[id][2];        //rp0_store[id_rp0]; 
@@ -111,7 +121,7 @@ int main(){
 
 			cout << "Simulate/Discretize Macro and Housing State-space" << endl;
 		
-			load_simpath(&snodes1, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
+			load_simpath(&snodes1, grent_id, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
 			cout << "main.cpp: begin enter data" << endl;
