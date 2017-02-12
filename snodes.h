@@ -75,6 +75,7 @@ public:
 	
 	vector<vector<vector<int>>> own_state;  // for each (t_hor, i_s1, w_i1 ) track whether HH defaults
 	vector<vector<vector<int>>> def_state;  // default outcome matrix
+	vector<vector<vector<double>>> def_ltv_state;  // ltv at default matrix
 
 	void w_state_swap(int i_w1_new_in);
 

@@ -299,6 +299,17 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 						(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
 						(*snodes1).def_state[t_hor][i_s][w_i] = 1;     // update default state
 						(*snodes1).w_state_swap(res_def.w_i_floor);    // update wealth transition state
+
+						// update default state
+
+
+						// NOTES HERE:
+						// Q: HOW TO COMPUTE THE LTV at DEFAULT?
+						// 0) double-check low and high rent growth causes significantly different home price paths
+						// 1) compute home price using i_s
+						// 2) Loan bal has already been computed thankfully
+						// 3) create a new structure in snodes1 to store ltv at default
+						// 4) read through the code in matlab for uploading the default parameters
 					}
 				}
 

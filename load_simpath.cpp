@@ -265,7 +265,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			// cointegrate interest rates, rents, and prices
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
 			
-			rent_str[t][n] = exp(g_rent)*rent_str[t-1][n] + pinf_lag;               // update rent, price
+			rent_str[t][n] = exp(g_rent + pinf_lag)*rent_str[t-1][n];               // update rent, price
 			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + pinf_lag;
 			
 		}

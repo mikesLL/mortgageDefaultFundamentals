@@ -127,7 +127,15 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 	own_state = ones_int_T_NS_WN;
 	def_state = zeros_int_T_NS_WN;
-	
+
+	double def_ltv_state0 = 0.0;    // default ltv state
+	def_ltv_state.resize(T_max);
+	for (i1 = 0; i1 < T_max; i1++) {
+		def_ltv_state[i1] = vector<vector<double>>(n_s, vector<double>(w_n, 0.0)); 
+	}
+
+
+
 }
 
 // own_state
