@@ -148,7 +148,7 @@ int main(){
 					vf_F = vf_P;
 				}
 				def_stats1.wtrans_iterate(T_max);
-				def_stats1.print_def_stats(T_max, id); // print out transition matrices
+				def_stats1.print_def_stats(T_max, id);   // print out transition matrices
 
 				t_hor = 0;
 
