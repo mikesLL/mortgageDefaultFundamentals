@@ -71,6 +71,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	int grent_id = grent_id_in;   // set = 0 for low rent growth, set = 1 fo high rent growth
 
+	double mean_ret = 0.0; 
 	// set rent growth parameters here
 	if (grent_id) {
 		alpha_hat = 0.0052;
@@ -80,6 +81,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		gamma0_hat = -2.7611;
 		gamma1_hat = 0.7934;
 		g_rent = 0.0029;
+		mean_ret = 0.0062;
 	}
 	else {
 		alpha_hat = 0.0053;
@@ -89,6 +91,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		gamma0_hat = -2.7945;
 		gamma1_hat = 0.5655;
 		g_rent = -0.0106;
+		mean_ret = 0.0047;
 	}
 
 	/* Parameters from MATLAB (real terms)
@@ -263,7 +266,13 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			//rm_str[t][n] = max(v2[2] + 0.03, 0.0);                  // Mortgage premium!
 		
 			// compute home price
-			ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n] - v0[0];             // ph_str is in logs 
+			if (t <= 1) {
+				ret_lag = mean_ret;
+			}
+			else {
+				ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n] - v0[0];             // ph_str is in logs 
+			}
+			
 			// adjust ret_lag for inflation
 			
 			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str[t - 1][n]);          // cointegrate rents, prices
