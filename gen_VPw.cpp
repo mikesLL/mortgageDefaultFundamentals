@@ -91,7 +91,10 @@ gen_res gen_VPw(void *snodes_in,  void *vf1_in, void *vf2_in,
 		res1.x_opt = gen_x0(coh, b_min, vf1, vf2, &ufnEV21, x_guess);              // get x policy from loop and optimization
 		res1.v_opt = ufnEV21.eval(res1.x_opt);
 		res1.valid_flag = 1;
-		ufnEV21.store_wlh2( res1.x_opt ); // use x_opt to compute wealth path and store
+
+		if ((*vf2).t_i2 >= 1) {
+			ufnEV21.store_wlh2(res1.x_opt); // use x_opt to compute wealth path and store
+		}
 	}
 	
 	if ( (res1.x_opt[0] + res1.x_opt[1] + res1.x_opt[2] + res1.x_opt[3] + res1.x_opt[4]) >  (coh + 0.01 ) ) {

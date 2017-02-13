@@ -84,7 +84,7 @@ int main(){
 			grent_id = id % 2;
 			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = 0.8;   // param_store[id][1];       //ltv0_store[id_ltv0];
-			double rp0 = 0.055; // param_store[id][2];        //rp0_store[id_rp0]; 
+			double rp0 = 0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
