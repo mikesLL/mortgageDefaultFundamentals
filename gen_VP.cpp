@@ -194,7 +194,7 @@ eval_res res_def;
 int t_sell, i_m_sell;
 double w_sell;
 eval_res res_sell;
-
+int t_i2_nonvalid;
 
 for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
 
@@ -229,7 +229,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
 
 				coh = (*rr1).w_grid[w_i] - mpmt;  // COH = liquid assets + income - mortgage payment)
-				
+
 				// load previous w_i policy as an initial guess
 				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
@@ -252,8 +252,13 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				v1 = res1.v_opt;                                                 // guess for current solution: vfn
 				x1 = res1.x_opt;                                                 // guess for current policy
 
+				
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);          // store opt result
 
+				if (res1.valid_flag <= 0){
+					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2_nonvalid, v1);          // check valid flag
+				}
+					
 				// CASE: HH SELLS
 				t_sell = 0;
 				i_m_sell = 0;
