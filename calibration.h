@@ -39,7 +39,7 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 400; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 40; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
 const int age_max = 40; //35; //65;                  // age at which household retires / annuitizes wealth  
 
@@ -64,7 +64,7 @@ const double y_atax = 1.0 - y_tax;
 const double y_replace = 0.9388;            // From Cocco, Gomes, Maenhout (2005)
 
 const double w_max = 10.0; // 40.0; //16.05;         // maximum wealth (on grid) (100's thousands)             
-const double w_min = -6.0; // -2.0; // 0.0; // 0.05;          // minimum wealth (on grid) (100's thousands) 
+const double w_min = -8.0; // -2.0; // 0.0; // 0.05;          // minimum wealth (on grid) (100's thousands) 
 
 const int w_i_zero = (int)ceil(-w_min * double(w_n) / (w_max - w_min));
 

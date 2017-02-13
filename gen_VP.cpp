@@ -311,6 +311,10 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 						ltv = loan_bal / (*snodes1).p_gridt[t_hor][(*snodes1).s2i_ph[i_s]];  // compute ltv
 						(*snodes1).def_ltv_state[t_hor][i_s][w_i] = ltv;                     // store
 
+						if (ltv <= 0.9) {
+							cout << "gen_VP.cpp: ltv error" << endl; 
+						}
+
 					}
 				}
 

@@ -135,8 +135,10 @@ eval_res vfn::eval_v(int i_t_in, int i_m_in, int i_s_in, double w_in) {
 		if (w_in >= w_max) {
 			w_i_low = w_n - 1;
 			v_tlower = vw3_grid[i_t_in][i_m_in][i_s_in][w_i_low];
-		
+
+			res1.w_i_floor = w_n - 1;
 			res1.v_out = max(vw3_grid[i_t_in][i_m_in][i_s_in][w_i_low], v_tlower);
+			res1.v_i_floor = res1.v_out;
 
 		} else {
 			res1.v_out = vw3_grid[i_t_in][i_m_in][i_s_in][0] - 1.0e6*pow(w_in - w_min, 2);

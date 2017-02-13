@@ -154,25 +154,25 @@ inline eval_res ufnEV2::eval_v( int i_s_in, double w_in) {
 
 			v_tlower = vw3_grid_ti2[i_s_in][w_i_low];
 
-			w_diff1 = (w_in - w_max);
-			w_diff2 = -vw3_d_grid_ti2[i_s_in][w_i_low] / vw3_dd_grid_ti2[i_s_in][w_i_low] + w_max;
-
-			if (w_diff1 <= w_diff2) {
-				res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] + 
-					w_diff1*vw3_d_grid_ti2[i_s_in][w_i_low] +
-					0.5*pow( w_diff1, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
-			}
-			else {
-				res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] +
-					w_diff2*vw3_d_grid_ti2[i_s_in][w_i_low] +
-					0.5*pow(w_diff2, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
-			}
+			//w_diff1 = (w_in - w_max);
+			//w_diff2 = -vw3_d_grid_ti2[i_s_in][w_i_low] / vw3_dd_grid_ti2[i_s_in][w_i_low] + w_max;
+			//
+			//if (w_diff1 <= w_diff2) {
+			///	res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] + 
+			//		w_diff1*vw3_d_grid_ti2[i_s_in][w_i_low] +
+			//		0.5*pow( w_diff1, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
+			//}
+			//else {
+			//	res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] +
+			//		w_diff2*vw3_d_grid_ti2[i_s_in][w_i_low] +
+			//		0.5*pow(w_diff2, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
+			//
 			
-			res2.v_out = max(res2.v_out , v_tlower);
+			//res2.v_out = max(res2.v_out , v_tlower);
 
-			if (res2.v_out != res2.v_out) {
-				res2.v_out = v_tlower;
-			}
+			//if (res2.v_out != res2.v_out) {
+			//	res2.v_out = v_tlower;
+			//}
 
 			res2.v_out = v_tlower; // impose satiation
 			res2.w_i_floor = w_n - 1;
