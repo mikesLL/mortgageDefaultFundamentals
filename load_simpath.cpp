@@ -258,7 +258,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			//rm_str[t][n] = max(v2[2] + 0.03, 0.0);                  // Mortgage premium!
 		
 			// compute home price
-			ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n];             // ph_str is in logs 
+			ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n] - pinf_lag;             // ph_str is in logs 
+			// adjust ret_lag for inflation
 			
 			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str[t - 1][n]);          // cointegrate rents, prices
 
