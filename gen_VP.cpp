@@ -285,7 +285,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 					res_refi = (*rr1).eval_v(t_refi, i_m_refi, i_s, w_refi);                  // Evaluate value fn if household refinances
 
 																							  // check if HH refinances (compare value fn's and check validity)
-					if ((w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0)) {
+					if ( (w_refi >= 0.0) && (res_refi.v_i_floor > v1) && (res_refi.w_i_floor >= 0) ) {
 						(*rr1).get_pol(t_refi, i_m_refi, i_s, res_refi.w_i_floor, x);              // load in policy associated with refinance
 						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_refi, res_refi.v_i_floor);   // set policy associated with refinance
 						v1 = res_refi.v_i_floor;                                                   // upadate value fn guess
