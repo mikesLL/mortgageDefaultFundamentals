@@ -66,25 +66,33 @@ int main(){
 		double ltv = 0.8, ltv1 = 0.9;
 		double rp = 0.06, rp1 = 0.045; 
 
-		
-		double param_store[8][3] = { { 0.025, 0.8, 0.06 },
-		                     { 0.0, 0.8, 0.06 },
-							 { 0.025, 0.9, 0.06 },
-							 { 0.025, 0.8, 0.045 },
-							 { 0.00, 0.9, 0.06 },
-							 { 0.00, 0.8, 0.045 },
-							 { 0.025, 0.9, 0.045 },
-							 { 0.00, 0.9, 0.045 },
-		};
+		double param_store[8][3] = { { 0.0, 0.8, 1.0 },   // rent growth, LTV0, rp0 mult
+		                             { 0.0, 0.8, 0.9 },
+							         { 0.0, 0.9, 1.0 },
+							         { 0.0, 0.9, 0.9 },
+							         { 0.0, 0.8, 1.0 },
+							         { 0.0, 0.8, 0.9 },
+							         { 0.0, 0.9, 1.0 },
+							         { 0.0, 0.9, 0.9 }, };
 		
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 1; id++) {                      // id <= 7
+		/*
+		for (id = 0; id <= 8; id++){
+
+		grent_id = id % 2 // decides whether low or high rent growth parameters
+		ltv 0 
+		}
+		
+		*/
+
+
+		for (id = 0; id <= 7; id++) {                      // id <= 7
 			
 			grent_id = id % 2;
 			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
-			double ltv0 = 0.8;   // param_store[id][1];       //ltv0_store[id_ltv0];
-			double rp0 = 0.057; ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
+			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
+			double rp0 = 0.057 * param_store[id][2] ; ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
