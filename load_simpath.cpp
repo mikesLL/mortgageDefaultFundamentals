@@ -77,8 +77,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		rhof_hat = 0.5780;
 		theta_hat = 0.3526;
 		sigma_ret = 0.0347;
-		gamma0_hat = -2.27;
-		gamma1_hat = 0.59;
+		gamma0_hat = -2.7611;
+		gamma1_hat = 0.7934;
 		g_rent = 0.0029;
 	}
 	else {
@@ -86,8 +86,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		rhof_hat = 0.6885;
 		theta_hat = 0.2990;
 		sigma_ret = 0.0390;
-		gamma0_hat = -2.27;
-		gamma1_hat = 0.59;
+		gamma0_hat = -2.7945;
+		gamma1_hat = 0.5655;
 		g_rent = -0.0106;
 	}
 
@@ -104,6 +104,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	rp_avg_low : 0.0551
 	ret_avg_high : 0.0062
 	ret_avg_low : 0.0047
+
+	gamma0_est_high: -2.7611
+	gamma0_est_low: -2.7945
+	gamma1_est_high: 0.7034
+	gamma1_est_low: 0.5655
 
 	g_rent_avg_low : -0.0106
 	g_rent_avg_high : 0.0029
