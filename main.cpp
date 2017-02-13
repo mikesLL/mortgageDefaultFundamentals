@@ -114,7 +114,7 @@ int main(){
 			vfn vf_F;
 			vfn vf_P;
 
-			double mapr = 0.06;
+			double mapr = 0.05;
 			int N_term = 30;
 		
 			cout << "Compute Mortgage Path" << endl;

@@ -254,6 +254,10 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 				(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2, v1);          // store opt result
 				
+				if (res1.valid_flag <= 0) {
+					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x1, t_i2_nonvalid, v1);
+				}
+
 				// CASE: HH SELLS
 				t_sell = 0;
 				i_m_sell = 0;
@@ -294,7 +298,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 					res_def = (*rr1).eval_v(t_def, i_m_def, i_s, w_def);               // eval value fn if HH defaults
 
 					// CASE: value of default > value of owning
-					if ( (w_def >= 0.0) && (res_def.v_i_floor > v1) && (res_def.w_i_floor >= 0) || (res1.valid_flag <= 0) ) {
+					if ( (w_def >= 0.0) && (res_def.v_i_floor > v1) && (res_def.w_i_floor >= 0) ) {
 						(*rr1).get_pol(t_def, i_m_def, i_s, res_def.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
 						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_def, res_def.v_i_floor);     // first arguments are current state variables, x containts updated policy
 
