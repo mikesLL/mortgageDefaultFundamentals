@@ -102,8 +102,8 @@ const double hu_ten_store[N_cities][t_n] = {
 const double hu_ten_def = 1.0; // .5;  // square footage in default case
 
 // If Cobb-Douglas Preferences:
-const double alpha_cd = 0.0; // 0.7;                         // Prefence weight for C: Non-durable consumption
-const double calpha_cd = 1.0; // 0.3;                        // =1.0 - alpha_sd; Preference weight for H: Housing services
+const double alpha_cd = 1.0; // 0.7;                         // Prefence weight for C: Non-durable consumption
+const double calpha_cd = 0.0; // 0.3;                        // =1.0 - alpha_sd; Preference weight for H: Housing services
 
 const double rb = 1.0304;                             // Gross return on bonds / mortgage rate; sometimes = 1.04
 
