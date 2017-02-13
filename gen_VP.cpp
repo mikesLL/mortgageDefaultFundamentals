@@ -194,7 +194,7 @@ eval_res res_def;
 int t_sell, i_m_sell;
 double w_sell;
 eval_res res_sell;
-int t_i2_nonvalid;
+int t_i2_nonvalid = 0;
 
 for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeowner problem
 

@@ -11,7 +11,7 @@
 const double loan_amt = 1.0;
 const double apr_frm = 0.06;
 const double mort_term = 30.0;
-const int mort_term_int = 3; //30;
+//const int mort_term_int = 3; //30;
 
 // state variable: mortgage rates
 const double unemp_mult = 0.25; // Proportion of income received unemployment shock
@@ -99,7 +99,7 @@ const double hu_ten_store[N_cities][t_n] = {
 	{ 1.0, 1.0 }
 };
 
-const double hu_ten_def =  .5;  // square footage in default case
+const double hu_ten_def = 1.0; // .5;  // square footage in default case
 
 // If Cobb-Douglas Preferences:
 const double alpha_cd = 0.7;                         // Prefence weight for C: Non-durable consumption
@@ -136,8 +136,8 @@ const double max_ltv = 0.80; // .95;  0.8;                        // max loan to
 const double max_lti = 0.3;
 const double mort_spread = 0.00;                       // mortgage spread above risk-free rate
 const double pmi_dpmt = 0.00;                          // if down payment below this amount, add to mortgage spread
-const double pmi_prem = 0.0; //0.01;                         // pmi premium
-const double credit_prem = .15;                       // unsecured credit apr
-const double b_min_unsec = -2.0; //-1.0;               // unsecured borrowing limit
+const double pmi_prem = 0.0; //0.01;                    // pmi premium
+const double credit_prem = .15;                         // unsecured credit apr
+const double b_min_unsec = -2.0; //-1.0;                // unsecured borrowing limit
 
 const double num_small = -1.0e20;
