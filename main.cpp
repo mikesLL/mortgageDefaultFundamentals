@@ -84,7 +84,7 @@ int main(){
 			grent_id = id % 2;
 			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = 0.8;   // param_store[id][1];       //ltv0_store[id_ltv0];
-			double rp0 = 0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
+			double rp0 = 0.057; ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
@@ -92,6 +92,8 @@ int main(){
 			
 			double duration;
 			double phr_in = city_data.rent[t];     // load in current median rent
+
+			phr_in = 0.0809;
 			double ph0 = 1.0 / rp0 * phr_in;       // rent to price parameter imposes current price
 			
 			clock_t start = clock();                // discretized states including home prices, rents, incomes
@@ -122,7 +124,7 @@ int main(){
 
 			cout << "Simulate/Discretize Macro and Housing State-space" << endl;
 		
-			load_simpath(&snodes1, grent_id, grent, city_data.rent[t], ph0, city_data.ret_lag[t],
+			load_simpath(&snodes1, grent_id, grent, phr_in, ph0, city_data.ret_lag[t],
 					city_data.csf_1yr[t], t, city_init, city_id, age0);
 
 			cout << "main.cpp: begin enter data" << endl;

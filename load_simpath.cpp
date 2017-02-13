@@ -68,6 +68,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double sigma_ret = 0.08;
 	double gamma0_hat = -2.27;
 	double gamma1_hat = 0.59;
+	//double ph0; 
 
 	int grent_id = grent_id_in;   // set = 0 for low rent growth, set = 1 fo high rent growth
 
@@ -82,6 +83,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		gamma1_hat = 0.7934;
 		g_rent = 0.0029;
 		mean_ret = 0.0062;
+		//ph0 = 1.59;
 	}
 	else {
 		alpha_hat = 0.0053;
@@ -92,6 +94,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		gamma1_hat = 0.5655;
 		g_rent = -0.0106;
 		mean_ret = 0.0047;
+		//ph0 = 1.52;
 	}
 
 	/* Parameters from MATLAB (real terms)
@@ -275,7 +278,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			
 			// adjust ret_lag for inflation
 			
-			ecm = log(rent_str[t - 1][n]) - gamma0_hat - gamma1_hat*(ph_str[t - 1][n]);          // cointegrate rents, prices
+			ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_str[t - 1][n]) );          // cointegrate rents, prices
 
 			// cointegrate interest rates, rents, and prices
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
