@@ -121,8 +121,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };     
 	double rent_nd_std[] = { 0.0 };                                            // can also set { -1.0, 0.0, 1.0 };
 	
-	double plevel_nd_std[] = { -1.0, 0.0, 1.0 };            // store price-level std nodes
-	double urate_nd_std[] = { -1.0, 0.0, 1.0 };             // store unemployment rate std nodes
+	double plevel_nd_std[] = { -1.5, 0.0, 1.5 };            // store price-level std nodes
+	double urate_nd_std[] = { -1.5, 0.0, 1.5 };             // store unemployment rate std nodes
 	double fedfunds_nd_std[] = { 0.0 };                     // fed funds mean income std nodes
 	double yi_nd_std[] = { 0.0, 0.0, 0.0 };                 // store mean income 
 	

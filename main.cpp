@@ -79,7 +79,7 @@ int main(){
 		
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 1; id++) { // id <= 7
+		for (id = 0; id <= 1; id++) {                      // id <= 7
 			
 			grent_id = id % 2;
 			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
@@ -114,7 +114,7 @@ int main(){
 			vfn vf_F;
 			vfn vf_P;
 
-			double mapr = 0.05;
+			double mapr = 0.06;
 			int N_term = 30;
 		
 			cout << "Compute Mortgage Path" << endl;

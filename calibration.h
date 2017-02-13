@@ -68,7 +68,6 @@ const double w_min = -6.0; // -2.0; // 0.0; // 0.05;          // minimum wealth 
 
 const int w_i_zero = (int)ceil(-w_min * double(w_n) / (w_max - w_min));
 
-
 const double rho = 5.0;
 //const double rho = 1.8;                  // Power: curvature parameter; governs risk-aversion  also = 1.0, 2.0, 4.0
 const int rhoi = int(floor(rho));        // Floor for identification
