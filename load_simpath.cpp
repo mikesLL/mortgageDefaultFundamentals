@@ -39,7 +39,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	// MOD HERE: limiting number of simulations for now 
 	int N_print =  1000;                          // number of observations to print to file
-	int N_sim = 100000;                                            // number of simulations
+	int N_sim = 1000000;                                            // number of simulations
 
 	int i_ph, i_rent, i_yi, i_rm, i_s;                                      // state and individual dimension indices
 
@@ -77,7 +77,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		alpha_hat = 0.0052;
 		rhof_hat = 0.5780;
 		theta_hat = 0.3526;
-		sigma_ret = 0.0347;
+		sigma_ret = 0.0347*2.0;
 		gamma0_hat = -2.7611;
 		gamma1_hat = 0.7934;
 		g_rent = 0.0029;
@@ -87,7 +87,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		alpha_hat = 0.0053;
 		rhof_hat = 0.6885;
 		theta_hat = 0.2990;
-		sigma_ret = 0.0390;
+		sigma_ret = 0.0390*2.0;
 		gamma0_hat = -2.7945;
 		gamma1_hat = 0.5655;
 		g_rent = -0.0106;
