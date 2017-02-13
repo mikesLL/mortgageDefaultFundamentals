@@ -77,7 +77,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		alpha_hat = 0.0052;
 		rhof_hat = 0.5780;
 		theta_hat = 0.3526;
-		sigma_ret = 0.0347*2.0;
+		sigma_ret = 0.0347;
 		gamma0_hat = -2.7611;
 		gamma1_hat = 0.7934;
 		g_rent = 0.0029;
@@ -87,7 +87,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		alpha_hat = 0.0053;
 		rhof_hat = 0.6885;
 		theta_hat = 0.2990;
-		sigma_ret = 0.0390*2.0;
+		sigma_ret = 0.0390;
 		gamma0_hat = -2.7945;
 		gamma1_hat = 0.5655;
 		g_rent = -0.0106;
@@ -189,7 +189,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double eps_h; // housing shock
 
 	// Macro initial conditions
-	double pinf0 = 0.3;
+	double pinf0 = 0.03; //0.3;
 	double urate0 = 0.05;
 	double fedfunds0 = 0.01; 
 	double y_inc0 = 0.8; // TODO: let be a fn of MTI
@@ -282,6 +282,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			
 			rent_str[t][n] = exp(g_rent + pinf_lag)*rent_str[t-1][n];               // update rent, price
 			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + pinf_lag;
+
+			// HERE: add code for a home price shock
+			//if (t == 1 ) {
+			//	ph_str[t][n] = - sigma_ret + pinf_lag;
+			//}
 			
 		}
 	}
