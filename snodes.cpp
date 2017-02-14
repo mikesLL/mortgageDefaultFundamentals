@@ -39,7 +39,7 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 	s2i_plevel.resize(n_s);
 	s2i_urate.resize(n_s);
 	s2i_fedfunds.resize(n_s);
-	//s2i_yi.resize(n_s);
+	s2i_yi.resize(n_s);
 
 	i2s_map.resize(n_ph);
 
