@@ -85,7 +85,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 							v1_file << "t_i = " << t_i << "," << "i_m = " << i_m << "," << "i_ph = " << i_ph << "," << "ph = " << (*snodes1).p_gridt[year1t_id][i_ph]
 								<< "," << "i_plevel = " << i_plevel << "," << "i_urate = " << i_urate << "," << "i_fedfunds = " << i_fedfunds << "," ;
 								
-							i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];
+							i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds][1];
 							if (i_s == i_s_mid) {
 
 								v1_file << "  i_s_mid";
@@ -145,7 +145,7 @@ void store_data(void *snodes_in, void *vfn_in, string file_name_in, int year1_id
 						for (i_urate = 0; i_urate < n_urate; i_urate++) {
 							for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++) {
 
-								i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];  // get macro state
+								i_s = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds][1];  // get macro state
 
 								// MODS HERE					
 								v1_file << (*vfnt).w_grid[w_i] << ","

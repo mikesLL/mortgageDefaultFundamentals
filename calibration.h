@@ -14,7 +14,7 @@ const double mort_term = 30.0;
 //const int mort_term_int = 3; //30;
 
 // state variable: mortgage rates
-const double unemp_mult = 0.0; // 0.25; // Proportion of income received unemployment shock
+const double unemp_mult = 0.25; // 0.25; // Proportion of income received unemployment shock
 
 const double mti0 = 0.3;        // Mortgage-to-income at origination
 
@@ -39,7 +39,7 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 800; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 100; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
 const int age_max = 40; //35; //65;                  // age at which household retires / annuitizes wealth  
 
@@ -53,9 +53,10 @@ const int N_cities = 8;                    // number of cities
 
 const int n_ph = 9; //9      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
-const int n_yi = 1; // 3; //3; // 3;  // labor income states
+const int n_yi = 2; // 1; // 3; //3; // 3;  // labor income states
 
-const int n_s = n_ph * n_plevel * n_urate * n_fedfunds;   // impose fedfunds determined by plevel, urate
+//const int n_s = n_ph * n_plevel * n_urate * n_fedfunds;   // impose fedfunds determined by plevel, urate
+const int n_s = n_ph * n_plevel * n_urate * n_fedfunds * n_yi;   // impose fedfunds determined by plevel, urate
 
 // Labor income related parameters
 const double maint_mult = 0.98;

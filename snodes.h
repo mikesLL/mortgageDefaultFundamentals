@@ -42,7 +42,7 @@ public:
 	vector<vector<vector<double>>> gammat;              // state transition matrix for each time period
 
 	//vector<vector<vector<int>>> i2s_map;                // maps individual dimensions to state
-	vector<vector<vector<vector<int>>>> i2s_map;                // maps individual dimensions to state
+	vector<vector<vector<vector<vector<int>>>>> i2s_map;                // maps individual dimensions to state
 
 	vector<vector<vector<vector<int>>>> i2s_map2;              // maps individual dimension to state (version2)
 

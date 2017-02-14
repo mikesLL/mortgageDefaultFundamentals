@@ -54,13 +54,17 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 				i2s_map[i_ph][i_plevel][i_urate].resize(n_fedfunds);
 				for (i_fedfunds = 0; i_fedfunds < n_fedfunds; i_fedfunds++){
 
-					i2s_map[i_ph][i_plevel][i_urate][i_fedfunds] = i_s;          // initialize i2s map
+					i2s_map[i_ph][i_plevel][i_urate][i_fedfunds].resize(n_yi);
 
-					s2i_ph[i_s] = i_ph;                                           // initialize s2_i maps
-					s2i_plevel[i_s] = i_plevel;                            // maps state to current price level
-					s2i_urate[i_s] = i_urate;                              // maps state to current unemployment rate
-					s2i_fedfunds[i_s] = i_fedfunds;                        // maps state to current fedfunds
-					i_s++;
+					for (i_yi = 0; i_yi < n_yi; i_yi++) {
+						i2s_map[i_ph][i_plevel][i_urate][i_fedfunds][i_yi] = i_s;          // initialize i2s map
+
+						s2i_ph[i_s] = i_ph;                                           // initialize s2_i maps
+						s2i_plevel[i_s] = i_plevel;                            // maps state to current price level
+						s2i_urate[i_s] = i_urate;                              // maps state to current unemployment rate
+						s2i_fedfunds[i_s] = i_fedfunds;                        // maps state to current fedfunds
+						i_s++;
+					}
 				}
 			}
 		}
@@ -68,17 +72,19 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 
 
 	// compute i_s_mid;
-	int i_plevel_mid, i_urate_mid, i_fedfunds_mid;
+	int i_plevel_mid, i_urate_mid, i_fedfunds_mid, i_yi_mid;
 
 	i_ph_mid = (int) floor( 0.5*n_ph );
 	i_plevel_mid = (int)floor(0.5*n_plevel);
 	i_urate_mid = (int)floor(0.5*n_urate);
 	i_fedfunds_mid = (int)floor(0.5*n_fedfunds);
+	i_yi_mid = 1;
+	
 
-	i_s_mid = i2s_map[i_ph_mid][i_plevel_mid][i_urate_mid][i_fedfunds_mid];
+	i_s_mid = i2s_map[i_ph_mid][i_plevel_mid][i_urate_mid][i_fedfunds_mid][i_yi_mid];
 
     for( i_ph = 0; i_ph < n_ph; i_ph++ ){
-		s_ph_midry[i_ph] = i2s_map[i_ph][i_plevel_mid][i_urate_mid][i_fedfunds_mid];
+		s_ph_midry[i_ph] = i2s_map[i_ph][i_plevel_mid][i_urate_mid][i_fedfunds_mid][i_yi_mid];
     }
 
 	int i_t;

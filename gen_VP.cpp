@@ -103,6 +103,8 @@ double ltv;
 // COMPUTE Renter problem
 for (i_s = 0; i_s < n_s; i_s++) {
 
+
+	// /i_yi = (*snodes1).s2i_yi[i_s];              // load in states
 	// pass in URATE, PLEVEL, and FEDFUNDS
 	(*rr2).urate1 = (*snodes1).urate_gridt[t_hor][(*snodes1).s2i_urate[i_s]];                   // pass in initial unemployment rate
 	(*rr2).yinc1 = (*snodes1).yi_gridt[t_hor][0];                                               // pass in income
@@ -137,7 +139,9 @@ for (i_s = 0; i_s < n_s; i_s++) {
 		x_guess = x_lag_wt[t_i2];
 
 		// compute cash on hand
-		coh = (*rr1).w_grid[w_i] - (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj;
+		coh = (*rr1).w_grid[w_i] - (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj +
+			(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];
+	    //(*snodes1).y_gridt[t_hor][i_yi = (*snodes1).s2i_yi[i_s];]              // load in states
 
 		(*rr2).i_s1 = i_s;          // pass in current state to next-period value function
 		(*rr2).t_i1 = t_i;
@@ -219,6 +223,11 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 			if (i_m > 0) {         
 				mpmt = (*mortg1).mpmt;                           // Compute mortgage payment, loan balance
 				loan_bal = (*mortg1).loan_bal[t_hor];
+
+				if ((*snodes1).s2i_yi[i_s] >= 1) {
+					mpmt = (*mortg1).mpmt - (*mortg1).mapr*loan_bal; 
+				}
+				
 			} else {
 				mpmt = 0.0;
 				loan_bal = 0.0;
@@ -228,7 +237,8 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
 
-				coh = (*rr1).w_grid[w_i] - mpmt;  // COH = liquid assets + income - mortgage payment)
+				coh = (*rr1).w_grid[w_i] - mpmt + (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];
+					// COH = liquid assets + income - mortgage payment)
 
 				// load previous w_i policy as an initial guess
 				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x

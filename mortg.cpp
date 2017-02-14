@@ -19,6 +19,7 @@ mortg::mortg( void *snodes_in, double ph0_in, double ltv0_in, double apr_in, int
 
 	loan_bal = vector<double>(N_term, 0.0);                      // initialize loan balance vector
 
+
 	i_yr = 0;
 	loan_bal[i_yr] = ltv0*ph0;                                   // initialize loan balance
 		   

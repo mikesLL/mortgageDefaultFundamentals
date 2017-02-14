@@ -39,7 +39,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	// MOD HERE: limiting number of simulations for now 
 	int N_print =  1000;                          // number of observations to print to file
-	int N_sim = 1000000;                                            // number of simulations
+	int N_sim = 100000;                                            // number of simulations
 
 	int i_ph, i_rent, i_yi, i_rm, i_s;                                      // state and individual dimension indices
 
@@ -157,6 +157,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	mt19937 gen(rd());
 	normal_distribution<> dist(0.0, 1.0);   // standard normal distribution
 
+	random_device rd_uni;                       // instantiate random generator
+	mt19937 gen_uni(rd_uni());
+	uniform_real_distribution<> dist_uni(0.0, 1.0);
+
+
 	int i = 0, j = 0;
 	cout << " N_sim = " << N_sim << endl;
 	
@@ -172,6 +177,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));             // fed-funds rate	
 	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store city-wide home prices
 	vector<vector<double>> rent_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store city-wide rent
+	vector<vector<double>> yemp_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store income
 
 	// NODES 
 	vector<vector<double>> plevel_str_nds(T_sim + 1, vector<double>(n_plevel, 0.0));           // price-level nodes
@@ -219,6 +225,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double vu1, vu2, vu3;
 
 	double pinf, pinf_lag;
+
+	double y_eps;
 	
 	// loop through simulations
 	cout << "load_simpath.cpp: Begin Simulations" << endl;
@@ -238,6 +246,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 		ph_str[t][n] = log(ph0);
 		rent_str[t][n] = rent0;
+
+		yemp_str[t][n] = 1.0; 
 
 		// simulate later time periods
 		for (t = 1; t < (T_sim + 1); t++){
@@ -286,6 +296,14 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			rent_str[t][n] = exp(g_rent + pinf_lag)*rent_str[t-1][n];               // update rent, price
 			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + pinf_lag;
 
+			y_eps = dist(gen_uni); 
+
+			if ( y_eps <= urate_str[t][n] ) {
+				yemp_str[t][n] = 0.0;
+			} else {
+				yemp_str[t][n] = 1.0;
+			}
+			
 			// HERE: add code for a home price shock
 			//if (t == 1 ) {
 			//	ph_str[t][n] = - sigma_ret + pinf_lag;
@@ -403,7 +421,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	cout << "load_simpath.cpp: Compute Y income (Median City-wide income) Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		for (n = 0; n < n_yi; n++) {
-			(*snodes1).yi_gridt[t][n] = y_inc0 * pow( 1.0 + g_y, t );    // load rent nodes into rent_gridt
+			if (n == 0) {
+				(*snodes1).yi_gridt[t][n] = 0.25* y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
+			}
+
+			(*snodes1).yi_gridt[t][n] = y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
 		}
 	}
 	
@@ -432,7 +454,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double urate_step1;
 	double fedfunds_step1;
 
-	int i_plevel, i_urate, i_fedfunds;
+	int i_plevel, i_urate, i_fedfunds, i_yemp;
 
 	vector<double> fedfunds_store_sum(n_s, 0.0);
 	vector<int> fedfunds_store_count(n_s, 0);
@@ -461,13 +483,14 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			i_plevel = (int) round( (plevel_str[t][n] - plevel_str_nds[t][0]) / plevel_step);
 			i_urate = (int) round( (urate_str[t][n] - urate_str_nds[t][0]) / urate_step);
 			i_fedfunds = (int) round( (fedfunds_str[t][n] - fedfunds_str_nds[t][0]) / fedfunds_step);
+			i_yemp = (int) ceil(yemp_str[t][0]);
 			
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
 			i_plevel = min(max(i_plevel, 0), n_plevel - 1);              // bound extremes
 			i_urate = min(max(i_urate, 0), n_urate - 1);              // bound extremes
 			i_fedfunds = min(max(i_fedfunds, 0), n_fedfunds - 1);              // bound extremes
 			 
-			s1 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];             // map node to state
+			s1 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds][i_yemp];             // map node to state
 
 			// fedfunds: store observation
 			fedfunds_store_sum[s1] += fedfunds_str[t][n];
@@ -478,13 +501,15 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			i_plevel = (int)round((plevel_str[t+1][n] - plevel_str_nds[t+1][0]) / plevel_step1);
 			i_urate = (int)round((urate_str[t+1][n] - urate_str_nds[t+1][0]) / urate_step1);
 			i_fedfunds = (int)round((fedfunds_str[t+1][n] - fedfunds_str_nds[t+1][0]) / fedfunds_step1);
+			
+			i_yemp = (int)ceil(yemp_str[t+1][0]);
 
 			i_ph = min(max(i_ph, 0), n_ph - 1);              // bound extremes
 			i_plevel = min(max(i_plevel, 0), n_plevel - 1);              // bound extremes
 			i_urate = min(max(i_urate, 0), n_urate - 1);              // bound extremes
 			i_fedfunds = min(max(i_fedfunds, 0), n_fedfunds - 1);              // bound extremes
 
-			s2 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds];          // map node to state
+			s2 = (*snodes1).i2s_map[i_ph][i_plevel][i_urate][i_fedfunds][i_yemp];          // map node to state
 			
 			gamma_store[s1][s2] += 1;                                // store  in transition matrix
 		}

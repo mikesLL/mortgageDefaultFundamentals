@@ -81,11 +81,13 @@ double ufnEV2::eval( vector<double> x ){
 			w2 = rb_eff_agg + exp(retxv[i_x2])*x[2] + x[3] + x[4];
 			
 			// evaluate value function in state
-			res1_unemp = eval_v(i_s2, w2 + unemp_mult* (*vf2).yinc1 );
-			res1_emp = eval_v(i_s2, w2 + (*vf2).yinc1 );
-			
-			vw2 = (1.0 - (*vf2).urate1 )*res1_emp.v_out +
-				(*vf2).urate1 * res1_unemp.v_out;
+			res1 = eval_v(i_s2, w2 );
+			//res1_unemp = eval_v(i_s2, w2 + unemp_mult* (*vf2).yinc1 );
+			//res1_emp = eval_v(i_s2, w2 + (*vf2).yinc1 );
+
+			vw2 = res1.v_out ;
+			///vw2 = (1.0 - (*vf2).urate1 )*res1_emp.v_out +
+			//	(*vf2).urate1 * res1_unemp.v_out;
 
 			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
 		}

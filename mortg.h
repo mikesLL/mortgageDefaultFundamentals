@@ -6,13 +6,13 @@
 #define MORTG_H
 
 class mortg {
-	
-	double mapr;          // mortgage apr
+
 	int N_term;           // mortgage term 
 	double ph0;          // initial home price
 
 
 public:
+	double mapr;          // mortgage apr
 	double mpmt;                        // mortgage payment
 	vector<double> loan_bal;            // mortgage loan balance (by year)
 
