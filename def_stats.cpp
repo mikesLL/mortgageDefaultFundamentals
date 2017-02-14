@@ -248,7 +248,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 							i_w_low = min(max(i_w_low, 0), w_n - 1);
 							i_w_high = min(max(i_w_high, 0), w_n - 1);
-							v6_file << i_w_low << "," << i_w_high ;
+							v6_file << i_w_low << "," << i_w_high << "," ;
 
 							//v6_file << (*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] << "," <<
 							//	(*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] ;
