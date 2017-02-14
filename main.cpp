@@ -66,14 +66,14 @@ int main(){
 		double ltv = 0.8, ltv1 = 0.9;
 		double rp = 0.06, rp1 = 0.045; 
 
-		double param_store[8][3] = { { 0.0, 0.8, 1.0 },   // rent growth, LTV0, rp0 mult
-		                             { 0.0, 0.8, 0.9 },
-							         { 0.0, 0.9, 1.0 },
-							         { 0.0, 0.9, 0.9 },
-							         { 0.0, 0.8, 1.0 },
-							         { 0.0, 0.8, 0.9 },
-							         { 0.0, 0.9, 1.0 },
-							         { 0.0, 0.9, 0.9 }, };
+		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // order: rent growth, LTV0, rp0 mult
+		                             { 1.0, 0.8, 1.0 },     // baseline case
+							         { 0.0, 0.8, 0.9 },     // low R/P
+							         { 1.0, 0.8, 0.9 },
+							         { 0.0, 0.9, 1.0 },     // High LTV
+							         { 1.0, 0.9, 1.0 },
+							         { 0.0, 0.9, 0.9 },     // low R/P, High LTV
+							         { 1.0, 0.9, 0.9 }, };
 		
 		#pragma omp parallel for
 		
@@ -89,7 +89,7 @@ int main(){
 
 		for (id = 0; id <= 7; id++) {                      // id <= 7
 			
-			grent_id = id % 2;
+			grent_id = round(param_store[id][0]); 
 			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
 			double rp0 = 0.057 * param_store[id][2] ; ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
