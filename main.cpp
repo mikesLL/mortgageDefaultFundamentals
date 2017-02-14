@@ -48,18 +48,12 @@ int main(){
 
 		int i_age, t, age0;
 	
-		// grent store will look something like: {0.0045, 0.0055}
-		// ltv0 = 0.8
-		// rp0 = 0.06; (baseline)
-
-		double grent_store[] = { 0.02, 0.0 };  // TODO: switch these 
+		double grent_store[] = { 0.02, 0.0 };  // rent growth 
 		double ltv0_store[] = {0.8, 0.95};
 		double rp0_store[] = { 0.06, 0.04 };   // rp = 0.045;
 			
 		int id = 0, id_grent, id_ltv0, id_rp0;
-
-		int grent_id;            // set = 0 for low rent growth, = 1 for high rent growth
-
+		
 		t = 11;
 
 		double gr = 0.025, gr1 = 0.0;
@@ -77,22 +71,12 @@ int main(){
 		
 		#pragma omp parallel for
 		
-		/*
-		for (id = 0; id <= 8; id++){
-
-		grent_id = id % 2 // decides whether low or high rent growth parameters
-		ltv 0 
-		}
-		
-		*/
-
-
 		for (id = 0; id <= 7; id++) {                      // id <= 7
 			
-			grent_id = round(param_store[id][0]); 
-			double grent = 0.0; //param_store[id][0];      //grent_store[id_grent];
-			double ltv0 = param_store[id][1];       //ltv0_store[id_ltv0];
-			double rp0 = 0.057 * param_store[id][2] ; ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
+			int grent_id = round(param_store[id][0]);     // set = 0 for low rent growth, = 1 for high rent growth
+			double grent = 0.0;                           //param_store[id][0];      //grent_store[id_grent];
+			double ltv0 = param_store[id][1];             //ltv0_store[id_ltv0];
+			double rp0 = 0.057 * param_store[id][2] ;     ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
