@@ -201,7 +201,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double pinf0 = 0.03; //0.3;
 	double urate0 = 0.05;
 	double fedfunds0 = 0.01; 
-	double y_inc0 = 0.8; // TODO: let be a fn of MTI
+	double y_inc0 = 1.0 / 0.3 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
 	double g_y = 0.01; // Real income growth
 
 	double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
