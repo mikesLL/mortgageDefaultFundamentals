@@ -348,6 +348,7 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 					w_adj = w_adj / plevel; 
 
 					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
+					
 
 					vw3_grid[i_t][i_m][i_s][i_w] = b_motive*V_perm;        // bequest value
 					// TODO: vw3_grid[i_t][i_r][i_s][i_w]; 
