@@ -232,6 +232,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	string file_name6 = "def_results/" + to_string(id) + "w_t2_state_flat.csv";
 	v6_file.open(file_name6, ios::out | ios::trunc);              // outstream, truncate
 
+	int i_w_low, i_w_high;
 	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
 	//for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
 		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
@@ -241,8 +242,16 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 					v6_file << i_s1f << "," << i_s2f << "," << i_wf << ",";
 
 						for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
-							v6_file << (*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] << "," <<
-								(*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] << ",";
+
+							i_w_low = round(((*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] - w_min) / (w_max - w_min) *(w_n - 1));
+							i_w_high = round(((*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] - w_min) / (w_max - w_min) *(w_n - 1));
+
+							i_w_low = min(max(i_w_low, 0), w_n - 1);
+							i_w_high = min(max(i_w_high, 0), w_n - 1);
+							v6_file << i_w_low << "," << i_w_high ;
+
+							//v6_file << (*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] << "," <<
+							//	(*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] ;
 						}
 						
 						v6_file << endl;
