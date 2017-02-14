@@ -63,6 +63,7 @@ snodes::snodes(int age0_in, int T_max_in, int city_id_in) {
 						s2i_plevel[i_s] = i_plevel;                            // maps state to current price level
 						s2i_urate[i_s] = i_urate;                              // maps state to current unemployment rate
 						s2i_fedfunds[i_s] = i_fedfunds;                        // maps state to current fedfunds
+						s2i_yi[i_s] = i_yi; 
 						i_s++;
 					}
 				}
