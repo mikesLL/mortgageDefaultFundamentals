@@ -423,9 +423,9 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		for (n = 0; n < n_yi; n++) {
 			if (n == 0) {
 				(*snodes1).yi_gridt[t][n] = 0.25* y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
+			} else {
+				(*snodes1).yi_gridt[t][n] = y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
 			}
-
-			(*snodes1).yi_gridt[t][n] = y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
 		}
 	}
 	
