@@ -71,18 +71,18 @@ int main(){
 		
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 7; id++) {                      // id <= 7
+		for (id = 6; id <= 7; id++) {                      // id <= 7
 
 			int grent_id = round(param_store[id][0]);     // set = 0 for low rent growth, = 1 for high rent growth
 			double grent = 0.0;                           //param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = param_store[id][1];             //ltv0_store[id_ltv0];
 
 			double rp0;
-			if (grent_id == 0) {
-				rp0 = 0.057 * param_store[id][2];     ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
+			if (grent_id ) {
+				rp0 = 0.0574 * param_store[id][2];     ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
 			}
 			else {
-				rp0 = 0.055 * param_store[id][2];
+				rp0 = 0.0551 * param_store[id][2];
 			}
 			
 			age0 = 30;
