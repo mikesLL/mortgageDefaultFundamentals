@@ -235,7 +235,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
 	for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
 		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
-			for (i_s2f = 0; i_s2f <= n_s; i_s2f++) {                //for (i_s2f = 0; i_s2f < n_s; i_s2f++) {
+			for (i_s2f = 0; i_s2f < n_s; i_s2f++) {                //for (i_s2f = 0; i_s2f < n_s; i_s2f++) {
 				for (i_wf = 0; i_wf < w_n; i_wf++) {
 					v6_file << i_t_hor << "," << i_s1f << "," << i_s2f << "," << i_wf << "," <<
 						(*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] << "," <<
