@@ -98,6 +98,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		//ph0 = 1.52;
 	}
 
+	//alpha_hat = g_rent;
+	//rhof_hat = 0.0;
+	//theta_hat = 0.0;
+
+
 	/*
     rho0_est_high: 0.6060
 	rho0_est_low : 0.6734

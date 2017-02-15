@@ -62,12 +62,12 @@ int main(){
 
 		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // order: rent growth, LTV0, rp0 mult
 		                             { 1.0, 0.8, 1.0 },     // baseline case
-							         { 0.0, 0.8, 1.1 },     // low R/P
-							         { 1.0, 0.8, 1.1 },
+							         { 0.0, 0.8, 1.2 },     // low R/P
+							         { 1.0, 0.8, 1.2 },
 							         { 0.0, 0.9, 1.0 },     // High LTV
 							         { 1.0, 0.9, 1.0 },
-							         { 0.0, 0.9, 1.1 },     // low R/P, High LTV
-							         { 1.0, 0.9, 1.1 }, };
+							         { 0.0, 0.9, 1.2 },     // low R/P, High LTV
+							         { 1.0, 0.9, 1.2 }, };
 		
 		#pragma omp parallel for
 		
