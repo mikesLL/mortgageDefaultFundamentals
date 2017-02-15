@@ -62,12 +62,12 @@ int main(){
 
 		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // order: rent growth, LTV0, rp0 mult
 		                             { 1.0, 0.8, 1.0 },     // baseline case
-							         { 0.0, 0.8, 0.9 },     // low R/P
-							         { 1.0, 0.8, 0.9 },
+							         { 0.0, 0.8, 1.1 },     // low R/P
+							         { 1.0, 0.8, 1.1 },
 							         { 0.0, 0.9, 1.0 },     // High LTV
 							         { 1.0, 0.9, 1.0 },
-							         { 0.0, 0.9, 0.9 },     // low R/P, High LTV
-							         { 1.0, 0.9, 0.9 }, };
+							         { 0.0, 0.9, 1.1 },     // low R/P, High LTV
+							         { 1.0, 0.9, 1.1 }, };
 		
 		#pragma omp parallel for
 		
@@ -77,23 +77,39 @@ int main(){
 			double grent = 0.0;                           //param_store[id][0];      //grent_store[id_grent];
 			double ltv0 = param_store[id][1];             //ltv0_store[id_ltv0];
 
+			double phr_in, gamma0_est, gamma1_est, ph0;
+
+			double ph0_low = 1.3188, ph0_high = 1.5695, ph0_def;
 			double rp0;
+
 			if (grent_id ) {
-				rp0 = 0.0574 * param_store[id][2];     ////0.06; // param_store[id][2];        //rp0_store[id_rp0]; 
+				ph0_def = ph0_high;
+				ph0 = ph0_high * param_store[id][2]; 
+				gamma0_est = -2.8092;
+				gamma1_est = 0.7155;
+			} else {
+				ph0_def = ph0_low;
+				ph0 = ph0_low * param_store[id][2];
+				gamma0_est = -2.8164;
+				gamma1_est = 0.5796;
 			}
-			else {
-				rp0 = 0.0551 * param_store[id][2];
-			}
+			phr_in = exp(gamma0_est)*pow(ph0_def, gamma1_est); // I guess do this for now using average home price
+
+			/*
+			rent_avg_high : 0.0773
+			rent_avg_low : 0.0680
+			price_avg_high : 1.5695
+			price_avg_low : 1.3188
+			rp_avg_high : 0.0552
+			rp_avg_low : 0.0564
+			*/
 			
 			age0 = 30;
 			int T_max = age_max - age0;            // optimization problem horizon
 			int t_hor = T_max;                     // household's planning horizon time index
 			
-			double duration;
-			double phr_in = city_data.rent[t];     // load in current median rent
-
-			phr_in = 0.0809;
-			double ph0 = 1.0 / rp0 * phr_in;       // rent to price parameter imposes current price
+			double duration;			
+			//double ph0 = 1.0 / rp0 * phr_in;       // rent to price parameter imposes current price
 			
 			clock_t start = clock();                // discretized states including home prices, rents, incomes
 			snodes snodes1(age0, T_max, city_id);

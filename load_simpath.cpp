@@ -47,7 +47,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	
 	city_id = 1;
 
-	double inf_mult = 104.5; // inflation multiplier
+	double inf_mult = 100.0; // 104.5; // inflation multiplier
 
 	//determnistic (real) rent growth
 	double g_rent = grent_in; // 0.0; //0.02;
@@ -74,28 +74,57 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	double mean_ret = 0.0; 
 	// set rent growth parameters here
+
 	if (grent_id) {
-		alpha_hat = 0.0052;
-		rhof_hat = 0.5780;
-		theta_hat = 0.3526;
-		sigma_ret = 0.0347;
-		gamma0_hat = -2.7611;
-		gamma1_hat = 0.7934;
+		alpha_hat = 0.0042;
+		rhof_hat = 0.6; // 0.5780;
+		theta_hat = 0.3226;
+		sigma_ret = 0.033;
+		gamma0_hat = -2.8092;
+		gamma1_hat = 0.7155;
 		g_rent = 0.0029;
-		mean_ret = 0.0062;
+		mean_ret = 0.0047;
 		//ph0 = 1.59;
 	}
 	else {
-		alpha_hat = 0.0053;
-		rhof_hat = 0.6885;
-		theta_hat = 0.2990;
-		sigma_ret = 0.0390;
-		gamma0_hat = -2.7945;
-		gamma1_hat = 0.5655;
+		alpha_hat = 0.0045;
+		rhof_hat = 0.67; // 0.6885;
+		theta_hat = 0.230;
+		sigma_ret = 0.0364;
+		gamma0_hat = -2.8164;
+		gamma1_hat = 0.5796;
 		g_rent = -0.0106;
-		mean_ret = 0.0047;
+		mean_ret = 0.0025;
 		//ph0 = 1.52;
 	}
+
+	/*
+    rho0_est_high: 0.6060
+	rho0_est_low : 0.6734
+	alpha0_est_high : 0.0042
+	alpha0_est_low : 0.0045
+	theta0_est_high : 0.3242
+	theta0_est_low : 0.2361
+	sigma1_est_high : 0.0330
+	sigma1_est_low : 0.0364
+	rp_avg_high : 0.0552
+	rp_avg_low : 0.0564
+	ret_avg_high : 0.0047
+	ret_avg_low : 0.0025
+	param : []
+	g_rent_avg_low : -0.0106
+	g_rent_avg_high : 0.0029
+	gamma0_est_high : -2.8092
+	gamma0_est_low : -2.8164
+	gamma1_est_high : 0.7155
+	gamma1_est_low : 0.5796
+	rent_avg_high : 0.0773
+	rent_avg_low : 0.0680
+	price_avg_high : 1.5695
+	price_avg_low : 1.3188
+	rp_avg_high : 0.0552
+	rp_avg_low : 0.0564
+	*/
 
 	/* Parameters from MATLAB (real terms)
 	rho0_est_high: 0.5780
@@ -113,6 +142,12 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	gamma0_est_high: -2.7611
 	gamma0_est_low: -2.7945
+	gamma1_est_high: 0.7034
+	gamma1_est_low: 0.5655
+
+	NEW:
+	gamma0_est_high: 0.6538
+	gamma0_est_low: 2.2081
 	gamma1_est_high: 0.7034
 	gamma1_est_low: 0.5655
 

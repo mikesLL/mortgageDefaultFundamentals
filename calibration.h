@@ -84,7 +84,7 @@ const double phi_buy = 0.00;  //0.02;
 // median square footage by city
 //const double hu_med[N_cities] = { 1.6, 1.7, 1.5, 1.9, 1.8, 1.6, 1.5, 1.83 };   // san fran updated
 
-const double hu_med[N_cities] = { 1.6, 1.7, 1.5, 1.9, 1.8, 1.6, 1.5, 1.83 };   // san fran updated
+const double hu_med[N_cities] = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };   // san fran updated
 
 
 // MOD HERE: assume representative house
