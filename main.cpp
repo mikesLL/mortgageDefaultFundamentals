@@ -60,18 +60,19 @@ int main(){
 		double ltv = 0.8, ltv1 = 0.9;
 		double rp = 0.06, rp1 = 0.045; 
 
-		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // order: rent growth, LTV0, rp0 mult
-		                             { 1.0, 0.8, 1.0 },     // baseline case
+		// order: rent growth, LTV0, rp0 mult
+		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // baseline case,
+		                             { 1.0, 0.8, 1.0 },     //
 							         { 0.0, 0.8, 1.2 },     // low R/P
-							         { 1.0, 0.8, 1.2 },
-							         { 0.0, 0.9, 1.0 },     // High LTV
-							         { 1.0, 0.9, 1.0 },
-							         { 0.0, 0.9, 1.2 },     // low R/P, High LTV
-							         { 1.0, 0.9, 1.2 }, };
+							         { 1.0, 0.8, 1.2 },     // 
+							         { 0.0, 0.90, 1.0 },     // high ltv
+							         { 1.0, 0.90, 1.0 },     // 
+							         { 0.0, 0.90, 1.2 },     // low R/P and High LTV
+							         { 1.0, 0.90, 1.2 } };
 		
 		#pragma omp parallel for
 		
-		for (id = 6; id <= 7; id++) {                      // id <= 7
+		for (id = 0; id <= 7; id++) {                      // id <= 7
 
 			int grent_id = round(param_store[id][0]);     // set = 0 for low rent growth, = 1 for high rent growth
 			double grent = 0.0;                           //param_store[id][0];      //grent_store[id_grent];
@@ -82,18 +83,27 @@ int main(){
 			double ph0_low = 1.3188, ph0_high = 1.5695, ph0_def;
 			double rp0;
 
-			if (grent_id ) {
-				ph0_def = ph0_high;
-				ph0 = ph0_high * param_store[id][2]; 
-				gamma0_est = -2.8092;
-				gamma1_est = 0.7155;
-			} else {
-				ph0_def = ph0_low;
-				ph0 = ph0_low * param_store[id][2];
-				gamma0_est = -2.8164;
-				gamma1_est = 0.5796;
-			}
-			phr_in = exp(gamma0_est)*pow(ph0_def, gamma1_est); // I guess do this for now using average home price
+			if (false){
+				if (grent_id) {
+					ph0_def = ph0_high;
+					ph0 = ph0_high * param_store[id][2];
+					gamma0_est = -2.8092;
+					gamma1_est = 0.7155;
+				}
+				else {
+					ph0_def = ph0_low;
+					ph0 = ph0_low * param_store[id][2];
+					gamma0_est = -2.8164;
+					gamma1_est = 0.5796;
+				}
+				phr_in = exp(gamma0_est)*pow(ph0_def, gamma1_est); // I guess do this for now using average home price
+		    }
+			
+			ph0_def = ph0_high;
+			phr_in = 0.057*ph0_def; // cli
+			ph0 = ph0_high * param_store[id][2];
+			gamma0_est = -2.8092;
+			gamma1_est = 0.7155;
 
 			/*
 			rent_avg_high : 0.0773

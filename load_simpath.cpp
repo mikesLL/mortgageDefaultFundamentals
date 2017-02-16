@@ -98,6 +98,14 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		//ph0 = 1.52;
 	}
 
+	if (true) {
+		alpha_hat = g_rent;
+		mean_ret = g_rent;
+		rhof_hat = 0.0;
+		theta_hat = 0.0;
+		sigma_ret = 0.045;
+	}
+
 	//alpha_hat = g_rent;
 	//rhof_hat = 0.0;
 	//theta_hat = 0.0;
