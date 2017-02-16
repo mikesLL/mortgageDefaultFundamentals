@@ -100,8 +100,8 @@ int main(){
 		    }
 			
 			ph0_def = ph0_high;
-			phr_in = 0.057*ph0_def; // cli
-			ph0 = ph0_high * param_store[id][2];
+			phr_in = 0.057*ph0_def;                 // holds rent fixed 
+			ph0 = ph0_high * param_store[id][2];    // ph0 can be over or undervalued
 			gamma0_est = -2.8092;
 			gamma1_est = 0.7155;
 
