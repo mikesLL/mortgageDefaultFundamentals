@@ -327,6 +327,29 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 			for (i_m = 0; i_m < m_n; i_m++) {
 				for (i_w = 0; i_w < w_n; i_w++) {
 
+					/* -OR- just estimate model for a longer time period?
+					Issue: right now, what matters for wealth is the terminal date
+					So there is no incentive to keep a home beyond date T (Thankful I figured out the issue
+
+					c_adj = r*W_adj;
+					//r = 0.05 - (0.7*0.0*0.02 + 0.3*0.01)
+
+					for now: just set r = 0.05 - inf, inf = rent growth
+					*/
+
+					// case: household is a renter
+
+					//coh_perm = 0.05*w_grid[i_w];              // coh_perm is annuitized income from wealth
+
+					// case: household is a renter
+					//if (i_t == 0) {
+					//	coh_perm = (0.05* - 0.01)*w_grid[i_w];   // coh_perm is wealth adjusted downward by rent growth
+							
+					//}
+					//else {
+					//	coh_perm = 0.05*w_grid[i_w]
+					//}
+
 					plevel = (*snodes1).plevel_gridt[t_hor_term][(*snodes1).s2i_plevel[i_s]];
 
 					loan_bal_term = 0.0; // loan balance
@@ -345,13 +368,16 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 					//w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 					w_adj = c_fs + max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
-					w_adj = w_adj / plevel; 
+					//w_adj = w_adj / plevel; 
+					//w_adj = w_adj / ( 0.5 * plevel + 0.5 *;
 
 					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
 					
 
 					vw3_grid[i_t][i_m][i_s][i_w] = b_motive*V_perm;        // bequest value
 					// TODO: vw3_grid[i_t][i_r][i_s][i_w]; 
+
+
 
 					if (i_t == 0) {
 						vw3_def_grid[i_s][i_w] = V_perm;

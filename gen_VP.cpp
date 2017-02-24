@@ -225,7 +225,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				loan_bal = (*mortg1).loan_bal[t_hor];
 
 				if ((*snodes1).s2i_yi[i_s] >= 1) {
-					mpmt = (*mortg1).mpmt - (*mortg1).mapr*loan_bal; 
+					mpmt = (*mortg1).mpmt - max((*mortg1).mapr*loan_bal, 0.3*(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]]);
 				}
 				
 			} else {
@@ -239,7 +239,6 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 
 				coh = (*rr1).w_grid[w_i] - mpmt + (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]];
 					// COH = liquid assets + income - mortgage payment)
-
 				// load previous w_i policy as an initial guess
 				(*rr1).get_pol(t_i, i_m, i_s, w_i - 1, x_lag_w);                     // get x pol sol from previous w_i and assign to x
 				t_i2_lag_w = (*rr1).xt_grid[t_i][i_m][i_s][max(w_i - 1, 0)];
@@ -301,6 +300,12 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 						v1 = res_refi.v_i_floor;                                                   // upadate value fn guess
 						(*snodes1).w_state_swap(res_refi.w_i_floor);                               // update wealth transition state
 					}
+
+					// TODO: work here
+					/*
+					right now, hh makes the mortgage payment at the same time as they observe prices
+					try: all hh's who own a home must make the mortgage payment at that time
+					*/
 
 					// COMPUTE CASE: HH DEFAULTS
 					t_def = 0;

@@ -14,7 +14,7 @@ const double mort_term = 30.0;
 //const int mort_term_int = 3; //30;
 
 // state variable: mortgage rates
-const double unemp_mult = 0.25; // 0.25; // Proportion of income received unemployment shock
+const double unemp_mult = 0.50; // 0.25; // Proportion of income received unemployment shock
 
 const double mti0 = 0.3;        // Mortgage-to-income at origination
 
