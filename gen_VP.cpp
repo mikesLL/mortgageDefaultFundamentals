@@ -227,6 +227,9 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				if ((*snodes1).s2i_yi[i_s] >= 1) {
 					mpmt = (*mortg1).mpmt - max((*mortg1).mapr*loan_bal, 0.3*(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]]);
 				}
+
+				ltv = loan_bal / (*snodes1).p_gridt[t_hor][(*snodes1).s2i_ph[i_s]];  // compute ltv
+
 				
 			} else {
 				mpmt = 0.0;
@@ -234,6 +237,8 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 			}
 
 			for (w_i = 0; w_i < w_n; w_i++) {
+				
+				(*snodes1).def_ltv_state[t_hor][i_s][w_i] = ltv;                     // store ltv
 
 				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
 
@@ -328,9 +333,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 						(*snodes1).def_state[t_hor][i_s][w_i] = 1;     // update default state
 						(*snodes1).w_state_swap(res_def.w_i_floor);    // update wealth transition state
 
-						ltv = loan_bal / (*snodes1).p_gridt[t_hor][(*snodes1).s2i_ph[i_s]];  // compute ltv
-						(*snodes1).def_ltv_state[t_hor][i_s][w_i] = ltv;                     // store
-
+						
 						if (ltv <= 0.9) {
 							cout << "gen_VP.cpp: ltv error" << endl; 
 						}
