@@ -69,6 +69,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double gamma0_hat = -2.27;
 	double gamma1_hat = 0.59;
 	//double ph0; 
+	double sigma_reti = 0.0;
 
 	int grent_id = grent_id_in;   // set = 0 for low rent growth, set = 1 fo high rent growth
 
@@ -103,7 +104,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		mean_ret = g_rent;
 		rhof_hat = 0.0;
 		theta_hat = 0.0;
-		sigma_ret =  0.045;
+		sigma_ret = 0.045;
+		sigma_reti = 0.12;   //  idiosyncratic shock
 	}
 
 	//alpha_hat = g_rent;
@@ -221,12 +223,13 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double ret_tn, ret_lag, ecm;
 
 	// store observations
-	vector<vector<double>> plevel_str(T_sim + 1, vector<double>(N_sim, 0.0));               // prive level
-	vector<vector<double>> urate_str(T_sim + 1, vector<double>(N_sim, 0.0));               // unemployment rate
-	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));             // fed-funds rate	
-	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store city-wide home prices
+	vector<vector<double>> plevel_str(T_sim + 1, vector<double>(N_sim, 0.0));           // price level
+	vector<vector<double>> urate_str(T_sim + 1, vector<double>(N_sim, 0.0));            // unemployment rate
+	vector<vector<double>> fedfunds_str(T_sim + 1, vector<double>(N_sim, 0.0));         // fed-funds rate	
+	vector<vector<double>> ph_str(T_sim + 1, vector<double>(N_sim, 0.0) );              // store individual home prices
 	vector<vector<double>> rent_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store city-wide rent
 	vector<vector<double>> yemp_str(T_sim + 1, vector<double>(N_sim, 0.0));             // store income
+	vector<vector<double>> ph_city_str(T_sim + 1, vector<double>(N_sim, 0.0));              // store city-wide home prices
 
 	// NODES 
 	vector<vector<double>> plevel_str_nds(T_sim + 1, vector<double>(n_plevel, 0.0));           // price-level nodes
@@ -235,7 +238,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	vector<vector<double>> ph_str_nds(T_sim + 1, vector<double> (n_ph, 0.0) );         // home price nds
 	vector<vector<double>> rent_str_nds(T_sim + 1, vector<double> (n_rent, 0.0) );     // rent nds
 
-	double z1, z2, z3;
+	double z1, z2, z3, z4;
 	double mult_2005 =   .56 / .51; // 1.5;                              // multiplier: convert $1992 to $2005
 	double mult_unit = 0.01;                             // multiplier: convert $1000s from parameters to $100000s in paper
 
@@ -243,8 +246,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	int t = 0, n = 0, n1 = 0, n2 = 0;                                          // time and simulation indices
 	double res_sum, res_sq_sum, res_mean, res_std, row_sum;                    // sums for computing means and standard deviations
 
- 
 	double eps_h; // housing shock
+	double eps_hi; // housing idiosyncratic shock
 
 	// Macro initial conditions
 	double pinf0 = 0.03; //0.3;
@@ -293,7 +296,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		urate_str[t][n] = urate0;           // unemployment rate
 		fedfunds_str[t][n] = fedfunds0;     // fed-funds rate
 
-		ph_str[t][n] = log(ph0);
+		ph_city_str[t][n] = log(ph0);
+		ph_str[t][n] = ph_city_str[t][n];
 		rent_str[t][n] = rent0;
 
 		yemp_str[t][n] = 1.0; 
@@ -304,6 +308,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			z1 = dist(gen);                    // draw shocks
 			z2 = dist(gen);
 			z3 = dist(gen);
+			z4 = dist(gen);
 
 			vz1 = dist(gen);                   // VAR shocks (independent)
 			vz2 = dist(gen);
@@ -313,6 +318,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			vu2 = cholQ[1][0] * vz1 + cholQ[1][1] * vz2;
  
 			eps_h = sigma_ret*z1;                // home price innovation
+			eps_hi = sigma_reti*z4;              // idiosyncratic innovation
 			
 			// compute inflation, unemp, fedfunds using the VAR + shocks
 			v0[0] = pinf_lag; // pinf_str[t - 1][n];
@@ -332,19 +338,19 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 				ret_lag = mean_ret;
 			}
 			else {
-				ret_lag = ph_str[t - 1][n] - ph_str[max(t - 2, 0)][n] - v0[0];             // ph_str is in logs 
+				ret_lag = ph_city_str[t - 1][n] - ph_city_str[max(t - 2, 0)][n] - v0[0];             // ph_str is in logs 
 			}
 			
 			// adjust ret_lag for inflation
 			
-			ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_str[t - 1][n]) );          // cointegrate rents, prices
+			ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_city_str[t - 1][n]) );          // cointegrate rents, prices
 
 			// cointegrate interest rates, rents, and prices
-			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;         // return series
+			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;     // return series
 			
-			rent_str[t][n] = exp(g_rent + pinf_lag)*rent_str[t-1][n];               // update rent, price
-			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + pinf_lag;
-
+			rent_str[t][n] = exp(g_rent + pinf_lag)*rent_str[t-1][n];          // update rent, price
+			ph_city_str[t][n] = ret_tn + ph_city_str[t - 1][n] + pinf_lag;
+			ph_str[t][n] = ret_tn + ph_str[t - 1][n] + eps_hi;                 // idiosyncratic shock
 			y_eps = dist(gen_uni); 
 
 			if ( y_eps <= urate_str[t][n] ) {
