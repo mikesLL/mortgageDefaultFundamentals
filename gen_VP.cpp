@@ -276,7 +276,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				res_sell = (*rr1).eval_v(t_sell, i_m_sell, i_s, w_sell);                                    // eval value fn if HH sells
 			
 				// CASE: value of selling > value of owning
-				if ( ( (w_sell >= 0.0) && (res_sell.v_i_floor > v1) && (res_sell.w_i_floor >= 0) ) || (res1.valid_flag <= 0) ) {
+				if ( ( (w_sell >= w_min) && (res_sell.v_i_floor > v1) && (res_sell.w_i_floor >= w_min) ) || (res1.valid_flag <= 0) ) {
 
 					(*rr1).get_pol(t_sell, i_m_sell, i_s, res_sell.w_i_floor, x);                // submit x as reference and load in x pol from t1 = 0
 					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_sell, res_sell.v_i_floor);     // first arguments are current state variables, x containts updated policy
