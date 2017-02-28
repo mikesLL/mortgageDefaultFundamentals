@@ -39,7 +39,7 @@ const int n_age = n_age_store[param_id];
 
 const double csfLevStore[] = {1.0/0.055, 1.0/0.055, 0.0, 1.0/0.055, 0.0}; // manually set futures leverage
 const double csfLev = csfLevStore[param_id];
-const int w_n = 400; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
+const int w_n = 200; // 100; // Grid points in wealth; set = 200 for fast computation, = 2000 for precision
 
 const int age_max = 40; //35; //65;                  // age at which household retires / annuitizes wealth  
 
@@ -51,7 +51,7 @@ const int pref = 0;                       // set pref = 0 for Cobb-Douglas, = 1 
 const int N_control = 6;
 const int N_cities = 8;                    // number of cities
 
-const int n_ph = 13; //9      // possible home price states
+const int n_ph = 9; //13; //9      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
 const int n_yi = 2; // 1; // 3; //3; // 3;  // labor income states
 
