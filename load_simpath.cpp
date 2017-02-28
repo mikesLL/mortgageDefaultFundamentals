@@ -104,9 +104,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		mean_ret = g_rent;
 		rhof_hat = 0.0;
 		theta_hat = 0.0;
-		sigma_ret = 0.045;
-		sigma_reti = 0.12;   //  idiosyncratic shock
+		
 	}
+
+	sigma_ret = 0.045;
+	sigma_reti = 0.12;   //  idiosyncratic shock
 
 	//alpha_hat = g_rent;
 	//rhof_hat = 0.0;
