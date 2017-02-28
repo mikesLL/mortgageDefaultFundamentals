@@ -74,13 +74,13 @@ int main(){
 
 		// as you cycle through parameterizations, the r/p will decrease
 		double param_store[8][3] = { { 1.0, 0.8, 0.8 },     // baseline case,
-		                             { 1.0, 0.8, 1.0 },     //
-		                             { 1.0, 0.8, 1.2 },     // low R/P
-		                             { 1.0, 0.8, 1.4 },     // 
-		                             { 1.0, 0.8, 1.6 },     // high ltv
-		                             { 1.0, 0.8, 1.8 },     // 
-		                             { 1.0, 0.8, 2.0 },     // low R/P and High LTV
-		                             { 1.0, 0.8, 2.2 } };
+		                             { 1.0, 0.8, 0.9 },     //
+		                             { 1.0, 0.8, 1.0 },     // low R/P
+		                             { 1.0, 0.8, 1.1 },     // 
+		                             { 1.0, 0.8, 1.2 },     // high ltv
+		                             { 1.0, 0.8, 1.3 },     // 
+		                             { 1.0, 0.8, 1.4 },     // low R/P and High LTV
+		                             { 1.0, 0.8, 1.5 } };
 
 
 		#pragma omp parallel for
