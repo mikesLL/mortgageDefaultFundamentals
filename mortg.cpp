@@ -26,7 +26,7 @@ mortg::mortg( void *snodes_in, double ph0_in, double ltv0_in, double apr_in, int
 	mpmt = fpmt(loan_bal[i_yr], mapr, N_term);                   // compute mortgage payment
 
 	for (i_yr = 1; i_yr < N_term; i_yr++) {
-		loan_bal[i_yr] = (1.0 + mapr)*loan_bal[i_yr - 1] -mpmt;  // compute loan balance by year
+		loan_bal[i_yr] = (1.0 + mapr)*loan_bal[i_yr - 1] - mpmt;  // compute loan balance by year
 	}
 }
 
