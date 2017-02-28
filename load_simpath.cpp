@@ -39,7 +39,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 	// MOD HERE: limiting number of simulations for now 
 	int N_print =  1000;                          // number of observations to print to file
-	int N_sim = 100000;                                            // number of simulations
+	int N_sim = 1000000;                                            // number of simulations
 
 	int i_ph, i_rent, i_yi, i_rm, i_s;                                      // state and individual dimension indices
 
@@ -98,7 +98,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		//ph0 = 1.52;
 	}
 
-	if (true) {
+	if (false) {
 		alpha_hat = g_rent;
 		mean_ret = g_rent;
 		rhof_hat = 0.0;
@@ -177,8 +177,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	// stdev centers (tauchen-style discretization) 
     double rm_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };
 	//double ph_nd_std[] = { -2.0, -1.0, 0.0, 1.0, 2.0 };     
-	//double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };
-	double ph_nd_std[] = { -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0 };
+	double ph_nd_std[] = { -2.0, -1.5, -1.0, -0.5, 0.0, .5, 1.0, 1.5, 2.0 };
+	//double ph_nd_std[] = { -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0 };
 	double rent_nd_std[] = { 0.0 };                                            // can also set { -1.0, 0.0, 1.0 };
 	
 	double plevel_nd_std[] = { -1.5, 0.0, 1.5 };            // store price-level std nodes
