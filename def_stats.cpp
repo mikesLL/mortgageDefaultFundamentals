@@ -233,7 +233,8 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 	v6_file.open(file_name6, ios::out | ios::trunc);              // outstream, truncate
 
 	int i_w_low, i_w_high;
-	v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
+	//v6_file << "t_hor,s1,s2,i_w1,w2_low,w2_high" << endl;                     // print headers
+	v6_file << "s1,s2,i_w1,i_w2_low,i_w2_high" << endl;                     // print headers
 	//for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
 		for (i_s1f = 0; i_s1f < n_s; i_s1f++) {
 			for (i_s2f = 0; i_s2f < n_s; i_s2f++) {                //for (i_s2f = 0; i_s2f < n_s; i_s2f++) {

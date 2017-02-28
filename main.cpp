@@ -61,6 +61,7 @@ int main(){
 		double rp = 0.06, rp1 = 0.045; 
 
 		// order: rent growth, LTV0, rp0 mult
+		/*
 		double param_store[8][3] = { { 0.0, 0.8, 1.0 },     // baseline case,
 		                             { 1.0, 0.8, 1.0 },     //
 							         { 0.0, 0.8, 1.5 },     // low R/P
@@ -69,7 +70,19 @@ int main(){
 							         { 1.0, 0.90, 1.0 },     // 
 							         { 0.0, 0.90, 1.5 },     // low R/P and High LTV
 							         { 1.0, 0.90, 1.5 } };
-		
+		*/
+
+		// as you cycle through parameterizations, the r/p will decrease
+		double param_store[8][3] = { { 1.0, 0.8, 0.8 },     // baseline case,
+		                             { 1.0, 0.8, 0.9 },     //
+		                             { 1.0, 0.8, 1.0 },     // low R/P
+		                             { 1.0, 0.8, 1.1 },     // 
+		                             { 1.0, 0.8, 1.2 },     // high ltv
+		                             { 1.0, 0.8, 1.3 },     // 
+		                             { 1.0, 0.8, 1.4 },     // low R/P and High LTV
+		                             { 1.0, 0.8, 1.5 } };
+
+
 		#pragma omp parallel for
 		
 		for (id = 0; id <= 7; id++) {                      // id <= 7
@@ -83,7 +96,7 @@ int main(){
 			double ph0_low = 1.3188, ph0_high = 1.5695, ph0_def;
 			double rp0;
 
-			if (true){
+			if (false){
 				if (grent_id) {
 					ph0_def = ph0_high;
 					ph0 = ph0_high * param_store[id][2];
@@ -99,7 +112,8 @@ int main(){
 				phr_in = exp(gamma0_est)*pow(ph0_def, gamma1_est); // I guess do this for now using average home price
 		    }
 			
-			if (false) {
+			if (true) {
+				grent_id = 1; 
 				ph0_def = ph0_high;
 				phr_in = 0.057*ph0_def;                 // holds rent fixed 
 				ph0 = ph0_high * param_store[id][2];    // ph0 can be over or undervalued
