@@ -83,7 +83,7 @@ int main(){
 			double ph0_low = 1.3188, ph0_high = 1.5695, ph0_def;
 			double rp0;
 
-			if (false){
+			if (true){
 				if (grent_id) {
 					ph0_def = ph0_high;
 					ph0 = ph0_high * param_store[id][2];
@@ -99,11 +99,13 @@ int main(){
 				phr_in = exp(gamma0_est)*pow(ph0_def, gamma1_est); // I guess do this for now using average home price
 		    }
 			
-			ph0_def = ph0_high;
-			phr_in = 0.057*ph0_def;                 // holds rent fixed 
-			ph0 = ph0_high * param_store[id][2];    // ph0 can be over or undervalued
-			gamma0_est = -2.8092;
-			gamma1_est = 0.7155;
+			if (false) {
+				ph0_def = ph0_high;
+				phr_in = 0.057*ph0_def;                 // holds rent fixed 
+				ph0 = ph0_high * param_store[id][2];    // ph0 can be over or undervalued
+				gamma0_est = -2.8092;
+				gamma1_est = 0.7155;
+			}
 
 			/*
 			rent_avg_high : 0.0773
