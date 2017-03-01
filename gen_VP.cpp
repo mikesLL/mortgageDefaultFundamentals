@@ -325,7 +325,8 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 					// CASE: value of default > value of owning
 					// convention: impose if household is able to sell home, then they sell
 					//if ( ( (w_def >= 0.0) && (res_def.v_i_floor > v1) && (res_def.w_i_floor >= 0) ) ) {
-					if (  (res_def.v_i_floor > v1) && ( ltv >= (1.0 - phi) )  ){
+					//if (  (res_def.v_i_floor > v1) && ( ltv >= (1.0 + phi) )  ){
+					if ( (res_def.v_i_floor > v1) ) {
 						(*rr1).get_pol(t_def, i_m_def, i_s, res_def.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
 						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_def, res_def.v_i_floor);     // first arguments are current state variables, x containts updated policy
 
