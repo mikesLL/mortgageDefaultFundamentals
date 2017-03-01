@@ -51,7 +51,7 @@ const int pref = 0;                       // set pref = 0 for Cobb-Douglas, = 1 
 const int N_control = 6;
 const int N_cities = 8;                    // number of cities
 
-const int n_ph = 9; //13; //9      // possible home price states
+const int n_ph = 13; //13; //9      // possible home price states
 const int n_rent = 1; // 3;  possible rent states
 const int n_yi = 2; // 1; // 3; //3; // 3;  // labor income states
 
