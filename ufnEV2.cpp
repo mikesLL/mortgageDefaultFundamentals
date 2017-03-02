@@ -30,7 +30,6 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	ph1 = (*snodes1).p_gridt[t_hor][i_ph1];      // current home price
 
 	// MODS HERE
-	int i_m1;
 	i_m1 = (*vf2).i_m1;
 	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_m1];
 
@@ -61,6 +60,7 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 double ufnEV2::eval( vector<double> x ){
 
 	double v_move;
+
 	Evw_2 = 0.0;                            // Value Function Expectation
 	uc = ufn(x[0] / (*vf2).plevel1 , hu, (*vf2).pref);        // composite utility
 	
@@ -88,7 +88,12 @@ double ufnEV2::eval( vector<double> x ){
 			// evaluate value function in state
 			res1 = eval_v(i_s2, w2 );
 
-			res1_move = eval_v_move(i_s2, w2);
+			w2_move = w2;
+			if ( (t_i2 >= 1) ) {
+				w2_move = w2 + max( (1.0 - phi)*(*snodes1).p_gridt[t_hor][i_ph2] - loan_bal1, 0.0);
+			}
+
+			res1_move = eval_v_move(i_s2, w2_move );
 
 			//res1_unemp = eval_v(i_s2, w2 + unemp_mult* (*vf2).yinc1 );
 			//res1_emp = eval_v(i_s2, w2 + (*vf2).yinc1 );

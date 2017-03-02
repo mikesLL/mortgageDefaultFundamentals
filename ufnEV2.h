@@ -54,6 +54,7 @@ class ufnEV2 {
 public:
 	int i_s1;             // current state
 	int t_hor;
+	int i_m1;
 
 	vfn *vf2;              // initialize next period structure 
 	snodes *snodes1;       // state space
