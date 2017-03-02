@@ -242,7 +242,7 @@ void def_stats::print_def_stats( int t_hor_in, int id_in) {
 
 					v6_file << i_s1f << "," << i_s2f << "," << i_wf << ",";
 
-						for (i_t_hor = 0; i_t_hor < t_hor; i_t_hor++) {
+						for (i_t_hor = 0; i_t_hor < max(t_hor,10); i_t_hor++) {
 
 							i_w_low = round(((*snodes1).w_t2_state_low[i_t_hor][i_s1f][i_s2f][i_wf] - w_min) / (w_max - w_min) *(w_n - 1));
 							i_w_high = round(((*snodes1).w_t2_state_high[i_t_hor][i_s1f][i_s2f][i_wf] - w_min) / (w_max - w_min) *(w_n - 1));
