@@ -195,7 +195,7 @@ double w_def;
 eval_res res_def;
 // TODO: think about ordering computation cases
 
-int t_sell, i_m_sell;
+int t_sell, i_m_sell, sell_flag;
 double w_sell;
 eval_res res_sell;
 int t_i2_nonvalid = 0;
@@ -276,17 +276,20 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				// CASE: HH SELLS
 				t_sell = 0;
 				i_m_sell = 0;
+				sell_flag = 0;
 
 				w_sell = (*rr1).w_grid[w_i] + (1.0 - phi)*(*snodes1).p_gridt[t_hor][i_ph] - loan_bal;        // calc wealth if HH sells
 				res_sell = (*rr1).eval_v(t_sell, i_m_sell, i_s, w_sell);                                    // eval value fn if HH sells
 			
 				// CASE: value of selling > value of owning
-				if ( ( (w_sell >= w_min) && (res_sell.v_i_floor > v1) && (res_sell.w_i_floor >= w_min) ) || (res1.valid_flag <= 0) ) {
+				//if ( ( (w_sell >= w_min) && (res_sell.v_i_floor > v1) && (res_sell.w_i_floor >= w_min) ) || (res1.valid_flag <= 0) ) {
+				if ( (res_sell.v_out > v1)  || (res1.valid_flag <= 0) ) {
+					sell_flag = 1;
 
 					(*rr1).get_pol(t_sell, i_m_sell, i_s, res_sell.w_i_floor, x);                // submit x as reference and load in x pol from t1 = 0
-					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_sell, res_sell.v_i_floor);     // first arguments are current state variables, x containts updated policy
+					(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_sell, res_sell.v_out);     // first arguments are current state variables, x containts updated policy
 
-					v1 = res_sell.v_i_floor;                                                     // update v1 with value of default
+					v1 = res_sell.v_out;                                                     // update v1 with value of default
 					(*snodes1).own_state[t_hor][i_s][w_i] = 0;                                   // update ownership state
 					(*snodes1).w_state_swap(res_sell.w_i_floor);                                  // update wealth transition state
 				}
@@ -326,9 +329,9 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 					// convention: impose if household is able to sell home, then they sell
 					//if ( ( (w_def >= 0.0) && (res_def.v_i_floor > v1) && (res_def.w_i_floor >= 0) ) ) {
 					//if (  (res_def.v_i_floor > v1) && ( ltv >= (1.0 + phi) )  ){
-					if ( (res_def.v_i_floor > v1) ) {
+					if ( (res_def.v_out > v1) ) {
 						(*rr1).get_pol(t_def, i_m_def, i_s, res_def.w_i_floor, x);                         // submit x as reference and load in x pol from t1 = 0
-						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_def, res_def.v_i_floor);     // first arguments are current state variables, x containts updated policy
+						(*rr1).set_pol_ten_v(t_i, i_m, i_s, w_i, x, t_def, res_def.v_out);     // first arguments are current state variables, x containts updated policy
 
 						v1 = res_def.v_i_floor;                        // update v1 with value of default
 						(*snodes1).own_state[t_hor][i_s][w_i] = 0;     // update ownership state
