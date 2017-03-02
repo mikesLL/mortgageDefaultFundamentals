@@ -225,7 +225,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				loan_bal = (*mortg1).loan_bal[t_hor];
 
 				if ((*snodes1).s2i_yi[i_s] >= 1) {
-					mpmt = (*mortg1).mpmt - max((*mortg1).mapr*loan_bal, 0.3*(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]]);
+					mpmt = (*mortg1).mpmt - min((*mortg1).mapr*loan_bal, 0.3*(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]]);
 				}
 
 				ltv = loan_bal / (*snodes1).p_gridt[t_hor][(*snodes1).s2i_ph[i_s]];  // compute ltv

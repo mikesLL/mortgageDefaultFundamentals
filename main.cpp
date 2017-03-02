@@ -82,7 +82,10 @@ int main(){
 		                             { 1.0, 0.8, 1.8 },     // low R/P and High LTV
 		                             { 1.0, 0.8, 2.0 } };
 
-
+		/*
+		Initial rent-price ratio: 
+		rp + 0.02, rp - 0.02? Nice
+		*/
 		#pragma omp parallel for
 		
 		for (id = 0; id <= 7; id++) {                      // id <= 7
