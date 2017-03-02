@@ -33,13 +33,17 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 	int i_m1;
 	i_m1 = (*vf2).i_m1;
 	vw3_grid_ti2 = (*vf2).vw3_grid[t_i2][i_m1];
+
+	vw3_grid_move = (*vf2).vw3_grid[0][0];
+
 	//vw3_grid_ti2 = (*vf2).vw3_grid[t_i2];
 
-	if ( (*vf2).def_flag >= 1 ) {
-		vw3_grid_ti2 = (*vf2).vw3_def_grid;
-	}
+	//if ( (*vf2).def_flag >= 1 ) {
+	//	vw3_grid_ti2 = (*vf2).vw3_def_grid;
+	//}
 	
 	vw3_d_grid_ti2 = (*vf2).vw3_d_grid[t_i2];
+	
 	vw3_dd_grid_ti2 = (*vf2).vw3_dd_grid[t_i2];
 
 	i_s2p = 0;
@@ -56,6 +60,7 @@ void ufnEV2::enter_data(void *snodes_in, void *vf2_in) {
 // given vector of control variables x, evaluate value function
 double ufnEV2::eval( vector<double> x ){
 
+	double v_move;
 	Evw_2 = 0.0;                            // Value Function Expectation
 	uc = ufn(x[0] / (*vf2).plevel1 , hu, (*vf2).pref);        // composite utility
 	
@@ -82,14 +87,19 @@ double ufnEV2::eval( vector<double> x ){
 			
 			// evaluate value function in state
 			res1 = eval_v(i_s2, w2 );
+
+			res1_move = eval_v_move(i_s2, w2);
+
 			//res1_unemp = eval_v(i_s2, w2 + unemp_mult* (*vf2).yinc1 );
 			//res1_emp = eval_v(i_s2, w2 + (*vf2).yinc1 );
 
-			vw2 = res1.v_out ;
-			///vw2 = (1.0 - (*vf2).urate1 )*res1_emp.v_out +
+			vw2 = res1.v_out;
+
+			// vw2 = (1.0 - (*vf2).urate1 )*res1_emp.v_out +
 			//	(*vf2).urate1 * res1_unemp.v_out;
 
-			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * vw2;  // compute expectation
+			Evw_2 = Evw_2 + retxp[i_x2] * (*snodes1).gammat[t_hor][i_s1][i_s2] * 
+				( (1.0 - p_move) * vw2 + p_move * res1_move.v_out )  ;  // compute expectation
 		}
 	}
 	
@@ -156,26 +166,6 @@ inline eval_res ufnEV2::eval_v( int i_s_in, double w_in) {
 
 			v_tlower = vw3_grid_ti2[i_s_in][w_i_low];
 
-			//w_diff1 = (w_in - w_max);
-			//w_diff2 = -vw3_d_grid_ti2[i_s_in][w_i_low] / vw3_dd_grid_ti2[i_s_in][w_i_low] + w_max;
-			//
-			//if (w_diff1 <= w_diff2) {
-			///	res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] + 
-			//		w_diff1*vw3_d_grid_ti2[i_s_in][w_i_low] +
-			//		0.5*pow( w_diff1, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
-			//}
-			//else {
-			//	res2.v_out = vw3_grid_ti2[i_s_in][w_i_low] +
-			//		w_diff2*vw3_d_grid_ti2[i_s_in][w_i_low] +
-			//		0.5*pow(w_diff2, 2.0)*vw3_dd_grid_ti2[i_s_in][w_i_low];
-			//
-			
-			//res2.v_out = max(res2.v_out , v_tlower);
-
-			//if (res2.v_out != res2.v_out) {
-			//	res2.v_out = v_tlower;
-			//}
-
 			res2.v_out = v_tlower; // impose satiation
 			res2.w_i_floor = w_n - 1;
 			res2.v_i_floor = res2.v_out;
@@ -189,6 +179,45 @@ inline eval_res ufnEV2::eval_v( int i_s_in, double w_in) {
 	return res2;
 }
 
+inline eval_res ufnEV2::eval_v_move(int i_s_in, double w_in) {
+	double num1, den1, w_diff1, w_diff2;
+
+	if ((w_in >= w_min) && (w_in < w_max)) {
+		w_i_d = (double)(w_n - 1.0)*(w_in - w_min) / (w_max - w_min);    // map w_in to w_i
+		w_i_low = (int)floor(w_i_d);
+		w_low = (*vf2).w_grid[w_i_low];
+
+		w_diff2 = ((*vf2).w_grid[1] - (*vf2).w_grid[0]);
+
+		alpha1 = (w_in - w_low) / w_diff2;
+
+		v_tlower = vw3_grid_move[i_s_in][w_i_low];
+		v_tupper = vw3_grid_move[i_s_in][w_i_low + 1];
+
+		res2.v_out = v_tlower + alpha1*(v_tupper - v_tlower);
+
+		res2.w_i_floor = w_i_low;
+		res2.v_i_floor = vw3_grid_move[i_s_in][w_i_low];
+	}
+	else {
+		if (w_in >= w_max) {
+			w_i_low = w_n - 1;
+
+			v_tlower = vw3_grid_move[i_s_in][w_i_low];
+
+			res2.v_out = v_tlower; // impose satiation
+			res2.w_i_floor = w_n - 1;
+			res2.v_i_floor = res2.v_out;
+		}
+		else {
+			res2.v_out = vw3_grid_move[i_s_in][0] - 1.0e6*pow(w_in - w_min, 2);
+			res2.w_i_floor = 0;
+			res2.v_i_floor = res2.v_out;
+		}
+	}
+
+	return res2;
+}
 
 // MOD HERE: given parameters, compute loan balance
 //int t_foo = 0; 

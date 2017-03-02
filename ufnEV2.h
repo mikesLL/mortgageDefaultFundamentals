@@ -30,6 +30,9 @@ class ufnEV2 {
 	int i_s2p_vec[n_s];       // store positive probability indices
 
 	vector<vector<double>> vw3_grid_ti2;
+
+	vector<vector<double>> vw3_grid_move;
+
 	vector<vector<double>> vw3_d_grid_ti2;
 	vector<vector<double>> vw3_dd_grid_ti2;
 
@@ -74,6 +77,7 @@ public:
 	void store_wlh2(vector<double> x_in);               // evaluate utility fn
 
 	inline eval_res eval_v( int i_s_in, double w_in);
+	inline eval_res eval_v_move(int i_s_in, double w_in);
 };
 
 #endif

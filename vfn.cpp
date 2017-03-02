@@ -368,7 +368,6 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 					//w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 					// allow default in terminal period
 
-
 					w_adj = c_fs + max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
 					// if renter
