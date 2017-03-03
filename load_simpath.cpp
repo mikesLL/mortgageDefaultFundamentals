@@ -252,11 +252,13 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double eps_h; // housing shock
 	double eps_hi; // housing idiosyncratic shock
 
+
 	// Macro initial conditions
 	double pinf0 = 0.03; //0.3;
 	double urate0 = 0.05;
 	double fedfunds0 = 0.01; 
-	double y_inc0 = 1.0 / 0.3 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
+
+	double y_inc0 = 1.0 / 0.4 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
 	double g_y = 0.01; // Real income growth
 
 	double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
@@ -475,12 +477,11 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		}
 	}
 
-
 	cout << "load_simpath.cpp: Compute Y income (Median City-wide income) Nodes " << endl;
 	for (t = 0; t < T_sim; t++) {
 		for (n = 0; n < n_yi; n++) {
 			if (n == 0) {
-				(*snodes1).yi_gridt[t][n] = 0.25* y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
+				(*snodes1).yi_gridt[t][n] = unemp_mult * y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
 			} else {
 				(*snodes1).yi_gridt[t][n] = y_inc0 * pow(1.0 + g_y, t);    // load rent nodes into rent_gridt
 			}
