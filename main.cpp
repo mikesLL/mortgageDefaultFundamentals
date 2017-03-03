@@ -88,7 +88,7 @@ int main(){
 		*/
 		#pragma omp parallel for
 		
-		for (id = 0; id <= 7; id++) {                      // id <= 7
+		for (id = 0; id <= 3; id++) {                      // id <= 7
 
 			int grent_id = round(param_store[id][0]);     // set = 0 for low rent growth, = 1 for high rent growth
 			double grent = 0.0;                           //param_store[id][0];      //grent_store[id_grent];
