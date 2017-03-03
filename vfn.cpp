@@ -368,7 +368,7 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 					//w_adj = c_fs + ( rb - 1.0)*max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 					// allow default in terminal period
 
-					w_adj = c_fs + max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
+					w_adj = c_fs + 1.0 / plevel * max(w_grid[i_w] + ph0 - loan_bal_term, 0.0);      // terminal wealth (adjusted)
 
 					// if renter
 					//c_perm = r*w_grid[i_w] - rent;
@@ -381,7 +381,7 @@ void vfn::set_terminal(void *mortg_in, double phr_in) {
 					//w_adj = w_adj / plevel; 
 					//w_adj = w_adj / ( 0.5 * plevel + 0.5 *;
 
-					V_perm = 1.0 / (1.0 - rho)*pow(w_adj, 1.0 - rho);                   // annuity value of c stream
+					V_perm = 1.0 / (1.0 - rho)*pow( w_adj, 1.0 - rho);                   // annuity value of c stream
 					
 
 					vw3_grid[i_t][i_m][i_s][i_w] = b_motive*V_perm;        // bequest value
