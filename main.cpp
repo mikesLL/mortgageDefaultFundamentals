@@ -99,6 +99,8 @@ int main(){
 			double ph0_low = 1.3188, ph0_high = 1.5695, ph0_def;
 			double rp0;
 
+			ph0_high = 1.7;
+
 			if (false){
 				if (grent_id) {
 					ph0_def = ph0_high;
@@ -119,6 +121,7 @@ int main(){
 				grent_id = 1; 
 				ph0_def = ph0_high;
 				phr_in = 0.057*ph0_def;                 // holds rent fixed 
+				phr_in = 0.055*ph0_def;                 // holds rent fixed 
 				ph0 = ph0_high * param_store[id][2];    // ph0 can be over or undervalued
 				gamma0_est = -2.8092;
 				gamma1_est = 0.7155;

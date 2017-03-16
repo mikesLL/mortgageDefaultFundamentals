@@ -76,16 +76,18 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double mean_ret = 0.0; 
 	// set rent growth parameters here
 
+	double rp_avg = 0.0;
 	if (grent_id) {
-		alpha_hat = 0.0042;
-		rhof_hat = 0.6; // 0.5780;
-		theta_hat = 0.3226;
+		alpha_hat = 0.0; // 0.0042;
+		rhof_hat = 0.64; // 0.5780;
+		theta_hat = 2.32; // 0.3226;
 		sigma_ret = 0.033;
 		gamma0_hat = -2.8092;
 		gamma1_hat = 0.7155;
 		g_rent = 0.0029;
-		mean_ret = 0.0047;
+		mean_ret = 0.0; // 0.0047;
 		//ph0 = 1.59;
+		rp_avg = 0.055;
 	}
 	else {
 		alpha_hat = 0.0045;
@@ -107,7 +109,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 		
 	}
 
-	sigma_ret = 0.045;
+	sigma_ret = 0.0324; // 0.045;
 	sigma_reti = 0.12;   //  idiosyncratic shock
 
 	//alpha_hat = g_rent;
@@ -254,25 +256,31 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 
 
 	// Macro initial conditions
-	double pinf0 = 0.03; //0.3;
-	double urate0 = 0.05;
-	double fedfunds0 = 0.01; 
+	double pinf0 = 0.02317; // 0.03; //0.3;
+	double urate0 = 0.058; // 0.05;
+	double fedfunds0 = 0.0426; //0.01; 
 
 	double y_inc0 = 1.0 / 0.4 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
 	double g_y = 0.01; // Real income growth
 
-	double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
+	//double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
+	double var_a[] = { -0.0042, 0.0077, -0.0047 };                       // VAR: constants
 
-	double var_b[3][3] = { {-0.2505,    0.2879,    0.3663},            // VAR: coefficients
-	                       {0.0528,    0.4644, -0.1822},
-						   {-0.5300, -0.4020, 0.7285} };
+	//double var_b[3][3] = { {-0.2505,    0.2879,    0.3663},            // VAR: coefficients
+	//                       {0.0528,    0.4644, -0.1822},
+	//					   {-0.5300, -0.4020, 0.7285} };
+	
+	double var_b[3][3] = { { 0.3842, 0.1896, 0.1670},            // VAR: coefficients
+	                       {0.3833, 0.8476, -0.1492},
+						   {-0.042, 0.0791, 0.8719} };
 	
 	//double var_b[3][3] = { { 1.0, 0.0, 0.0 },
 	//						{ 1.0, 1.0, 1.0 },
 	//						{ 0.0, 0.0, 1.0 } };
 
 	double plevel0 = 1.0;
-	double cholQ[2][2] = { { 0.0099, 0.0}, { -0.0020,  0.0104 } };
+	//double cholQ[2][2] = { { 0.0099, 0.0}, { -0.0020,  0.0104 } };
+	double cholQ[2][2] = { { 0.0076, 0.0}, { -0.0051,  0.007378 } };
 
 	double v0[] = { pinf0, urate0, fedfunds0 };             // inflation rate unemployment rate
 	double v1[] = { 0.0, 0.0, 0.0 };
@@ -348,8 +356,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			
 			// adjust ret_lag for inflation
 			
-			ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_city_str[t - 1][n]) );          // cointegrate rents, prices
-
+			//ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_city_str[t - 1][n]) );          // cointegrate rents, prices
+			ecm = rent_str[t - 1][n] / ph_city_str[t - 1][n] - rp_avg;
 			// cointegrate interest rates, rents, and prices
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;     // return series
 			

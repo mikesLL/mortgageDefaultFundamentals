@@ -241,7 +241,7 @@ for (t_i = 1; t_i < t_n; t_i++) {                        // Cycle through homeow
 				
 				(*snodes1).def_ltv_state[t_hor][i_s][w_i] = ltv;                     // store ltv
 
-				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 0.0*b_min_unsec;  // get rid of b_min_unsec for now
+				b_min = -max_ltv*((*snodes1).p_gridt[t_hor][i_ph] - loan_bal) + 1.0*b_min_unsec;  // get rid of b_min_unsec for now
 
 				coh = (*rr1).w_grid[w_i] - mpmt + (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]] * (*snodes1).plevel_gridt[t_hor][(*snodes1).s2i_plevel[i_s]];
 					// COH = liquid assets + income - mortgage payment)
