@@ -74,9 +74,9 @@ int main(){
 
 		// as you cycle through parameterizations, the r/p will decrease
 		double param_store[8][3] = { { 1.0, 0.8, 0.6 },     // baseline case,
-		                             { 1.0, 0.8, 0.8 },     //
+		                             { 1.0, 0.8, 1.0 - 0.147 },     //
 		                             { 1.0, 0.8, 1.0 },     // low R/P
-		                             { 1.0, 0.8, 1.2 },     // 
+		                             { 1.0, 0.8, 1.0 + 0.147 },     // 
 		                             { 1.0, 0.8, 1.4 },     // high ltv
 		                             { 1.0, 0.8, 1.6 },     // 
 		                             { 1.0, 0.8, 1.8 },     // low R/P and High LTV
