@@ -99,6 +99,9 @@ int i_urate, i_fedfunds, i_plevel;
 
 double ltv;
 
+//
+double rent_eff = 0.0;
+double y_eff = 0.0;
 
 // COMPUTE Renter problem
 for (i_s = 0; i_s < n_s; i_s++) {
@@ -138,9 +141,11 @@ for (i_s = 0; i_s < n_s; i_s++) {
 		// load t_i2-restricted guess as an initial starting point
 		x_guess = x_lag_wt[t_i2];
 
+		// compute income, rent
+		y_eff = (*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]] * (*snodes1).plevel_gridt[t_hor][(*snodes1).s2i_plevel[i_s]];
+		rent_eff = min( (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj, y_eff * 0.45 ) ;
 		// compute cash on hand
-		coh = (*rr1).w_grid[w_i] - (*snodes1).rent_gridt[t_hor][i_rent] * (*snodes1).rent_adj +
-			(*snodes1).yi_gridt[t_hor][(*snodes1).s2i_yi[i_s]] * (*snodes1).plevel_gridt[t_hor][(*snodes1).s2i_plevel[i_s]];
+		coh = (*rr1).w_grid[w_i] - rent_eff + y_eff;
 	    //(*snodes1).y_gridt[t_hor][i_yi = (*snodes1).s2i_yi[i_s];]              // load in states
 
 		(*rr2).i_s1 = i_s;          // pass in current state to next-period value function
