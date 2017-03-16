@@ -260,8 +260,8 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 	double urate0 = 0.058; // 0.05;
 	double fedfunds0 = 0.0426; //0.01; 
 
-	double y_inc0 = 1.0 / 0.4 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
-	double g_y = 0.01; // Real income growth
+	double y_inc0 = 0.97 +  0.0*1.0 / 0.4 * (0.06 * ph0);   // mortgage payment * income! //0.8; // TODO: let be a fn of MTI
+	double g_y = 0.00; // Real income growth
 
 	//double var_a[] = { 0.0025, 0.0395, 0.0474 };                       // VAR: constants
 	double var_a[] = { -0.0042, 0.0077, -0.0047 };                       // VAR: constants
