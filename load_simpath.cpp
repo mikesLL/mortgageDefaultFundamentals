@@ -357,7 +357,7 @@ void load_simpath(void *snodes_in, int grent_id_in, double grent_in, double rent
 			// adjust ret_lag for inflation
 			
 			//ecm = log(rent_str[t - 1][n]) - ( gamma0_hat + gamma1_hat*(ph_city_str[t - 1][n]) );          // cointegrate rents, prices
-			ecm = rent_str[t - 1][n] / ph_city_str[t - 1][n] - rp_avg;
+			ecm = rent_str[t - 1][n] / exp(ph_city_str[t - 1][n]) - rp_avg;
 			// cointegrate interest rates, rents, and prices
 			ret_tn = alpha_hat + rhof_hat*ret_lag + theta_hat*ecm + eps_h;     // return series
 			
